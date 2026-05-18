@@ -258,7 +258,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeUnit
   unitTeam: 1
   unitData: {fileID: 0}
-  _minFocusTime: 0.0001
+  _minFocusTime: 0
   breathingVisuals: {fileID: 7093903373041875667}
   walkSwayAngle: 8
   victoryBounceSpeed: 15

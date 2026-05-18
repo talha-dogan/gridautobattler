@@ -187,7 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangedUnit
   unitTeam: 1
   unitData: {fileID: 0}
-  _minFocusTime: 0.2
+  _minFocusTime: 0
   breathingVisuals: {fileID: 926385972356893927}
   walkSwayAngle: 8
   victoryBounceSpeed: 15

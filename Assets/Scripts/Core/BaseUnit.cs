@@ -98,8 +98,8 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
         // Dynamic body type enables physical pushing and sliding between units
         _rb.bodyType = RigidbodyType2D.Dynamic;
 
-        // Enable gravity so units fall and land on the ground plane
-        _rb.gravityScale = 1f;
+        // Disable gravity — units navigate a flat 2D grid, no falling needed
+        _rb.gravityScale = 0f;
 
         // Freeze rotation so units never tip over from collision impulses
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -192,17 +192,16 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
     {
         if (_pendingMove != Vector2.zero)
         {
-            // Apply horizontal force only; gravity drives vertical movement independently
+            // Apply force in the full 2D direction so units can move diagonally
+            // between grid positions without being restricted to a single axis.
             _rb.AddForce(_pendingMove * (moveSpeed * 20f));
         }
 
-        // Clamp only the horizontal velocity to respect moveSpeed.
-        // The Y component is left untouched so gravity-driven falling is never interrupted.
-        if (Mathf.Abs(_rb.linearVelocity.x) > moveSpeed)
+        // Clamp the full velocity magnitude so units never exceed their move speed
+        // in any direction (horizontal or vertical).
+        if (_rb.linearVelocity.magnitude > moveSpeed)
         {
-            _rb.linearVelocity = new Vector2(
-                Mathf.Sign(_rb.linearVelocity.x) * moveSpeed,
-                _rb.linearVelocity.y);
+            _rb.linearVelocity = _rb.linearVelocity.normalized * moveSpeed;
         }
     }
 
@@ -295,10 +294,10 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
             RunTargetSearch();
         }
 
-        // Determine horizontal direction only — vertical movement is handled by gravity.
-        float directionX = currentTarget.transform.position.x - transform.position.x;
-        float horizontalSign = directionX > 0f ? 1f : (directionX < 0f ? -1f : 0f);
-        _pendingMove = new Vector2(horizontalSign, 0f);
+        // Compute the full 2D direction vector toward the target and normalise it.
+        // This allows units to navigate diagonally between grid positions smoothly.
+        Vector2 direction = ((Vector2)currentTarget.transform.position - (Vector2)transform.position).normalized;
+        _pendingMove = direction;
     }
 
     /// <summary>Called by AttackingState.Execute every frame.</summary>
