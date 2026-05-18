@@ -114,14 +114,12 @@ public class LevelManager : MonoBehaviour
 
     public void OnLevelWin()
     {
-        int unusedUnits  = DrawingManager.Instance.meleeLimit + DrawingManager.Instance.rangedLimit;
         int baseReward   = levels[_currentLevelIndex].goldReward;
-        int bonusReward  = unusedUnits * goldPerUnusedUnit;
 
-        AddGold(baseReward + bonusReward);
+        AddGold(baseReward);
 
         string modeText      = isWaveMode ? "WAVE" : "LEVEL";
-        string rewardMessage = $"{modeText} CLEARED!\nBase Reward: {baseReward} G\nBonus: {bonusReward} G";
+        string rewardMessage = $"{modeText} CLEARED!\nBase Reward: {baseReward} G";
         GameEvents.SetStatusText(rewardMessage);
 
         _currentLevelIndex++;
@@ -158,15 +156,9 @@ public class LevelManager : MonoBehaviour
         GameEvents.SetLevelIndex(index + 1, isWaveMode);
 
         if (index == 0)
-            GameEvents.SetStatusText("1. Select Unit (Left Icons)\n2. Draw on Map\n3. Press WAR!");
+            GameEvents.SetStatusText("Press WAR! to start the battle.");
         else
             GameEvents.SetStatusText(string.Empty);
-
-        DrawingManager.Instance.SetupLimits(nextLevelData.meleeLimit, nextLevelData.rangedLimit);
-        DrawingManager.Instance.meleeUnitData   = nextLevelData.meleeData;
-        DrawingManager.Instance.rangedUnitData  = nextLevelData.rangedData;
-        DrawingManager.Instance.currentSelectedUnit = nextLevelData.meleeData;
-        DrawingManager.Instance.canDraw         = true;
 
         if (!isWaveMode)
             UnitSpawner.Instance.PrepareLevel();

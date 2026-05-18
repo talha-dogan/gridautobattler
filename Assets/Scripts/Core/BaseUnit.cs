@@ -95,10 +95,14 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
     {
         _rb = GetComponent<Rigidbody2D>();
 
-        // Changed to Dynamic for physical pushing and sliding
+        // Dynamic body type enables physical pushing and sliding between units
         _rb.bodyType = RigidbodyType2D.Dynamic;
-        _rb.gravityScale = 0f;
-        _rb.freezeRotation = true;
+
+        // Enable gravity so units fall and land on the ground plane
+        _rb.gravityScale = 1f;
+
+        // Freeze rotation so units never tip over from collision impulses
+        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         // Apply linear damping to act as natural friction when pushed
         _rb.linearDamping = 15f;
@@ -186,15 +190,19 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
 
     protected virtual void FixedUpdate()
     {
-        if (_pendingMove == Vector2.zero) return;
-
-        // Apply continuous force to move and push through other units
-        _rb.AddForce(_pendingMove * (moveSpeed * 20f));
-
-        // Limit the maximum speed
-        if (_rb.linearVelocity.magnitude > moveSpeed)
+        if (_pendingMove != Vector2.zero)
         {
-            _rb.linearVelocity = _rb.linearVelocity.normalized * moveSpeed;
+            // Apply horizontal force only; gravity drives vertical movement independently
+            _rb.AddForce(_pendingMove * (moveSpeed * 20f));
+        }
+
+        // Clamp only the horizontal velocity to respect moveSpeed.
+        // The Y component is left untouched so gravity-driven falling is never interrupted.
+        if (Mathf.Abs(_rb.linearVelocity.x) > moveSpeed)
+        {
+            _rb.linearVelocity = new Vector2(
+                Mathf.Sign(_rb.linearVelocity.x) * moveSpeed,
+                _rb.linearVelocity.y);
         }
     }
 
@@ -287,9 +295,10 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
             RunTargetSearch();
         }
 
-        // Pure direction to target. Physics system will handle pushing/avoiding.
-        Vector2 directionToTarget = ((Vector2)currentTarget.transform.position - (Vector2)transform.position).normalized;
-        _pendingMove = directionToTarget;
+        // Determine horizontal direction only — vertical movement is handled by gravity.
+        float directionX = currentTarget.transform.position.x - transform.position.x;
+        float horizontalSign = directionX > 0f ? 1f : (directionX < 0f ? -1f : 0f);
+        _pendingMove = new Vector2(horizontalSign, 0f);
     }
 
     /// <summary>Called by AttackingState.Execute every frame.</summary>

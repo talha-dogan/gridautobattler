@@ -5,8 +5,7 @@ using TDEV.Core;
 
 /// <summary>
 /// Single Responsibility: UnitSpawner ONLY handles spawning mechanics.
-/// AI drafting logic lives in WaveDirector.
-/// UI text updates are broadcast through GameEvents — no direct UI references here.
+/// Spawns enemy formations and player units in a random clump.
 /// </summary>
 public class UnitSpawner : MonoBehaviour
 {
@@ -16,8 +15,10 @@ public class UnitSpawner : MonoBehaviour
     // The center point where the enemy formation will be centered (e.g., X=5, Y=0)
     public Vector3 enemyCenterPos = new Vector3(5f, 0f, 0f);
 
-    // Spread radius used by WaveDirector when placing AI units
-    public float aiSpawnSpread = 2f;
+    [Header("Player Positioning")]
+    // The center point where the player units will be spawned
+    public Vector3 playerCenterPos = new Vector3(-5f, 0f, 0f);
+    public float playerSpawnSpread = 2f;
 
     [Header("Campaign Data")]
     public LevelDataSO currentLevelData;
@@ -58,61 +59,42 @@ public class UnitSpawner : MonoBehaviour
     // Called by the "WAR!" button in Campaign & Wave mode
     public void StartBattle()
     {
-        if (LevelManager.Instance != null && LevelManager.Instance.isWaveMode)
+        // Spawn player units in a random clump before starting the battle
+        if (currentLevelData != null)
         {
-            StartCoroutine(AiThinkingRoutine());
+            SpawnPlayerUnits(currentLevelData);
         }
-        else
+
+        if (BattleManager.Instance != null) 
         {
-            DrawingManager.Instance.canDraw = false;
-            if (BattleManager.Instance != null) BattleManager.Instance.StartBattle();
+            BattleManager.Instance.StartBattle();
         }
     }
 
     // -------------------------------------------------------------------------
-    // Wave mode coroutine — orchestrates timing only; delegates AI work to
-    // WaveDirector and UI updates to GameEvents.
+    // Player clump spawning
     // -------------------------------------------------------------------------
 
-    private IEnumerator AiThinkingRoutine()
+    private void SpawnPlayerUnits(LevelDataSO levelData)
     {
-        DrawingManager.Instance.canDraw = false;
-
-        // Notify UI via the event bus — no direct statusText reference needed
-        GameEvents.SetStatusText("AI is thinking...");
-
-        yield return new WaitForSeconds(1.5f);
-
-        // Delegate all AI drafting + spawning to WaveDirector
-        if (WaveDirector.Instance != null)
-            WaveDirector.Instance.ExecuteAiDrafting(currentLevelData, enemyCenterPos, aiSpawnSpread);
-        else
-            Debug.LogError("WaveDirector is missing in the scene! Can't draft AI army.");
-
-        yield return new WaitForSeconds(2.5f);
-
-        // Clear the status message before battle begins
-        GameEvents.SetStatusText("");
-
-        if (BattleManager.Instance != null) BattleManager.Instance.StartBattle();
-    }
-
-    // -------------------------------------------------------------------------
-    // Player path spawning
-    // -------------------------------------------------------------------------
-
-    public void SpawnUnitsOnPath(BaseUnitDataSO data, List<Vector3> points, int unitCount)
-    {
-        if (points == null || points.Count < 2 || data == null || unitCount <= 0) return;
-
-        float totalPathLength = PathUtils.GetTotalLength(points);
-        float actualSpacing = unitCount > 1 ? totalPathLength / (unitCount - 1) : 0;
-
-        for (int i = 0; i < unitCount; i++)
+        // Spawn Melee Units
+        for (int i = 0; i < levelData.meleeLimit; i++)
         {
-            float currentDist = i * actualSpacing;
-            Vector3 spawnPos = unitCount > 1 ? PathUtils.GetPointAtDistance(points, currentDist) : points[0];
-            UnitFactory.Instance.CreateUnit(data, spawnPos, Team.Player);
+            Vector3 randomOffset = new Vector3(
+                Random.Range(-playerSpawnSpread, playerSpawnSpread),
+                Random.Range(-playerSpawnSpread, playerSpawnSpread),
+                0f);
+            UnitFactory.Instance.CreateUnit(levelData.meleeData, playerCenterPos + randomOffset, Team.Player);
+        }
+
+        // Spawn Ranged Units
+        for (int i = 0; i < levelData.rangedLimit; i++)
+        {
+            Vector3 randomOffset = new Vector3(
+                Random.Range(-playerSpawnSpread, playerSpawnSpread),
+                Random.Range(-playerSpawnSpread, playerSpawnSpread),
+                0f);
+            UnitFactory.Instance.CreateUnit(levelData.rangedData, playerCenterPos + randomOffset, Team.Player);
         }
     }
 }
