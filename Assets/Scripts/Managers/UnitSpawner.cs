@@ -47,7 +47,10 @@ public class UnitSpawner : MonoBehaviour
     {
         foreach (var placement in formation.units)
         {
-            Vector3 spawnPos = enemyCenterPos + new Vector3(placement.offset.x, placement.offset.y, 0);
+            // Single-lane side-scroller: spread enemies only on the X-axis.
+            // The Y offset from the formation asset is intentionally ignored so
+            // every unit spawns at ground level; gravity handles vertical placement.
+            Vector3 spawnPos = enemyCenterPos + new Vector3(placement.offset.x, 0f, 0f);
             UnitFactory.Instance.CreateUnit(placement.unitData, spawnPos, Team.Enemy);
         }
     }
@@ -80,9 +83,11 @@ public class UnitSpawner : MonoBehaviour
         // Spawn Melee Units
         for (int i = 0; i < levelData.meleeLimit; i++)
         {
+            // Horizontal-only spread: Y is fixed at 0 so units land on the ground.
+            // Gravity will settle them onto the ground collider naturally.
             Vector3 randomOffset = new Vector3(
                 Random.Range(-playerSpawnSpread, playerSpawnSpread),
-                Random.Range(-playerSpawnSpread, playerSpawnSpread),
+                0f,
                 0f);
             UnitFactory.Instance.CreateUnit(levelData.meleeData, playerCenterPos + randomOffset, Team.Player);
         }
@@ -90,9 +95,10 @@ public class UnitSpawner : MonoBehaviour
         // Spawn Ranged Units
         for (int i = 0; i < levelData.rangedLimit; i++)
         {
+            // Horizontal-only spread: Y is fixed at 0 so units land on the ground.
             Vector3 randomOffset = new Vector3(
                 Random.Range(-playerSpawnSpread, playerSpawnSpread),
-                Random.Range(-playerSpawnSpread, playerSpawnSpread),
+                0f,
                 0f);
             UnitFactory.Instance.CreateUnit(levelData.rangedData, playerCenterPos + randomOffset, Team.Player);
         }
