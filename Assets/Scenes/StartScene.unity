@@ -766,7 +766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
   mainMenuPanel: {fileID: 1431793096}
   modeSelectionPanel: {fileID: 1252892375}
-  campaignSceneName: CampaignScene
+  campaignSceneName: GridScene
   waveSceneName: AiWaveScene
 --- !u!4 &615738184
 Transform:

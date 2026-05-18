@@ -148,7 +148,7 @@ public class LevelManager : MonoBehaviour
         UnitSpawner.Instance.currentLevelData = nextLevelData;
 
         // Broadcast the new level index so GameUIManager can update the label.
-        GameEvents.SetLevelIndex(index + 1, false);
+        GameEvents.SetLevelIndex(index + 1);
 
         if (index == 0)
             GameEvents.SetStatusText("Press WAR! to start the battle.");
@@ -205,5 +205,12 @@ public class LevelManager : MonoBehaviour
             else
                 Destroy(unit.gameObject);
         }
+
+        // Reset the logical grid so no node carries stale occupancy data into
+        // the next level. This must run after units are released — not before —
+        // because ReleaseUnit() may itself clear individual nodes, and we want
+        // a guaranteed full wipe as a safety net regardless of unit cleanup order.
+        if (GridManager.Instance != null)
+            GridManager.Instance.ResetGrid();
     }
 }

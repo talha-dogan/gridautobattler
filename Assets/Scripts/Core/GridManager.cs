@@ -146,6 +146,25 @@ public class GridManager : MonoBehaviour
         return x >= 0 && x < Columns && y >= 0 && y < Rows;
     }
 
+    /// <summary>
+    /// Clears the occupancy state of every node in the grid.
+    /// Must be called at the start of each level load so that nodes marked
+    /// occupied by the previous level's units do not block new spawns.
+    /// </summary>
+    public void ResetGrid()
+    {
+        for (int x = 0; x < Columns; x++)
+        {
+            for (int y = 0; y < Rows; y++)
+            {
+                if (gridArray[x, y] != null)
+                    gridArray[x, y].IsOccupied = false;
+            }
+        }
+
+        Debug.Log("[GridManager] Grid reset: all nodes marked as unoccupied.");
+    }
+
     // ── Debug Visualisation ───────────────────────────────────────────────────
 
     /// <summary>
