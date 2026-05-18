@@ -5,20 +5,24 @@ using TDEV.Core;
 
 /// <summary>
 /// Single Responsibility: UnitSpawner ONLY handles spawning mechanics.
-/// Spawns enemy formations and player units in a random clump.
+///
+/// Grid-based placement rules:
+///   - Player units  → Row Y=0 (bottom row), filling columns left-to-right from X=0.
+///   - Enemy units   → Row Y=7 (top row),    filling columns left-to-right from X=0.
+///
+/// Each occupied node is marked IsOccupied = true so other systems can query
+/// the grid for free cells without iterating the unit lists.
 /// </summary>
 public class UnitSpawner : MonoBehaviour
 {
     public static UnitSpawner Instance { get; private set; }
 
-    [Header("Enemy Positioning")]
-    // The center point where the enemy formation will be centered (e.g., X=5, Y=0)
-    public Vector3 enemyCenterPos = new Vector3(5f, 0f, 0f);
+    // ── Row constants ─────────────────────────────────────────────────────────
+    // Player units always spawn on the bottom row of the 8x8 grid.
+    private const int PlayerSpawnRow = 0;
 
-    [Header("Player Positioning")]
-    // The center point where the player units will be spawned
-    public Vector3 playerCenterPos = new Vector3(-5f, 0f, 0f);
-    public float playerSpawnSpread = 2f;
+    // Enemy units always spawn on the top row of the 8x8 grid.
+    private const int EnemySpawnRow = 7;
 
     [Header("Campaign Data")]
     public LevelDataSO currentLevelData;
@@ -29,78 +33,145 @@ public class UnitSpawner : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // -------------------------------------------------------------------------
-    // Campaign
-    // -------------------------------------------------------------------------
+    // ── Campaign ──────────────────────────────────────────────────────────────
 
-    // Called by LevelManager to set up the Campaign board
+    /// <summary>
+    /// Called by LevelManager to set up the Campaign board.
+    /// Spawns the enemy formation defined in the current level's ScriptableObject.
+    /// </summary>
     public void PrepareLevel()
     {
         if (currentLevelData != null && currentLevelData.enemyFormation != null)
         {
             SpawnEnemyFormation(currentLevelData.enemyFormation);
-            Debug.Log($"Campaign Level: {currentLevelData.name} deployed.");
+            Debug.Log($"[UnitSpawner] Campaign Level '{currentLevelData.name}' deployed.");
         }
     }
 
+    /// <summary>
+    /// Spawns enemy units from the formation asset onto Row Y=7, left-to-right.
+    /// Each unit in the formation list occupies the next available column.
+    /// If the formation contains more units than columns (8), extra units are skipped.
+    /// </summary>
     private void SpawnEnemyFormation(EnemyFormationSO formation)
     {
+        if (GridManager.Instance == null)
+        {
+            Debug.LogError("[UnitSpawner] GridManager.Instance is null — cannot spawn enemies.");
+            return;
+        }
+
+        int column = 0; // Start filling from the leftmost column.
+
         foreach (var placement in formation.units)
         {
-            // Single-lane side-scroller: spread enemies only on the X-axis.
-            // The Y offset from the formation asset is intentionally ignored so
-            // every unit spawns at ground level; gravity handles vertical placement.
-            Vector3 spawnPos = enemyCenterPos + new Vector3(placement.offset.x, 0f, 0f);
-            UnitFactory.Instance.CreateUnit(placement.unitData, spawnPos, Team.Enemy);
+            // Stop if we have run out of columns on the enemy row.
+            if (column >= GridManager.Columns)
+            {
+                Debug.LogWarning("[UnitSpawner] Enemy formation has more units than grid columns. Extra units skipped.");
+                break;
+            }
+
+            GridNode node = GridManager.Instance.GetNode(column, EnemySpawnRow);
+            if (node == null) { column++; continue; }
+
+            // Skip columns that are already occupied (defensive guard).
+            if (node.IsOccupied) { column++; continue; }
+
+            // Spawn the unit at the exact world-space center of this grid node.
+            UnitFactory.Instance.CreateUnit(placement.unitData, node.WorldPosition, Team.Enemy);
+
+            // Mark the node so the grid reflects the current board state.
+            node.IsOccupied = true;
+
+            column++;
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Battle start — entry point for the "WAR!" button
-    // -------------------------------------------------------------------------
+    // ── Battle start — entry point for the "WAR!" button ─────────────────────
 
-    // Called by the "WAR!" button in Campaign & Wave mode
+    /// <summary>
+    /// Called by the "WAR!" button in Campaign and Wave mode.
+    /// Spawns player units onto the grid, then signals BattleManager to begin.
+    /// </summary>
     public void StartBattle()
     {
-        // Spawn player units in a random clump before starting the battle
         if (currentLevelData != null)
         {
             SpawnPlayerUnits(currentLevelData);
         }
 
-        if (BattleManager.Instance != null) 
+        if (BattleManager.Instance != null)
         {
             BattleManager.Instance.StartBattle();
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Player clump spawning
-    // -------------------------------------------------------------------------
+    // ── Player grid spawning ──────────────────────────────────────────────────
 
+    /// <summary>
+    /// Spawns all player units (melee first, then ranged) onto Row Y=0,
+    /// filling columns left-to-right starting at X=0.
+    ///
+    /// Total units spawned = meleeLimit + rangedLimit.
+    /// If the combined count exceeds 8 (the number of columns), extra units are skipped.
+    /// </summary>
     private void SpawnPlayerUnits(LevelDataSO levelData)
     {
-        // Spawn Melee Units
-        for (int i = 0; i < levelData.meleeLimit; i++)
+        if (GridManager.Instance == null)
         {
-            // Horizontal-only spread: Y is fixed at 0 so units land on the ground.
-            // Gravity will settle them onto the ground collider naturally.
-            Vector3 randomOffset = new Vector3(
-                Random.Range(-playerSpawnSpread, playerSpawnSpread),
-                0f,
-                0f);
-            UnitFactory.Instance.CreateUnit(levelData.meleeData, playerCenterPos + randomOffset, Team.Player);
+            Debug.LogError("[UnitSpawner] GridManager.Instance is null — cannot spawn player units.");
+            return;
         }
 
-        // Spawn Ranged Units
+        int column = 0; // Tracks the next available column on the player row.
+
+        // ── Spawn Melee Units ─────────────────────────────────────────────────
+        for (int i = 0; i < levelData.meleeLimit; i++)
+        {
+            if (column >= GridManager.Columns)
+            {
+                Debug.LogWarning("[UnitSpawner] Player row is full. Remaining melee units skipped.");
+                break;
+            }
+
+            GridNode node = GridManager.Instance.GetNode(column, PlayerSpawnRow);
+            if (node == null) { column++; continue; }
+
+            // Skip columns that are already occupied (defensive guard).
+            if (node.IsOccupied) { column++; continue; }
+
+            // Spawn the unit at the exact world-space center of this grid node.
+            UnitFactory.Instance.CreateUnit(levelData.meleeData, node.WorldPosition, Team.Player);
+
+            // Mark the node so the grid reflects the current board state.
+            node.IsOccupied = true;
+
+            column++;
+        }
+
+        // ── Spawn Ranged Units ────────────────────────────────────────────────
         for (int i = 0; i < levelData.rangedLimit; i++)
         {
-            // Horizontal-only spread: Y is fixed at 0 so units land on the ground.
-            Vector3 randomOffset = new Vector3(
-                Random.Range(-playerSpawnSpread, playerSpawnSpread),
-                0f,
-                0f);
-            UnitFactory.Instance.CreateUnit(levelData.rangedData, playerCenterPos + randomOffset, Team.Player);
+            if (column >= GridManager.Columns)
+            {
+                Debug.LogWarning("[UnitSpawner] Player row is full. Remaining ranged units skipped.");
+                break;
+            }
+
+            GridNode node = GridManager.Instance.GetNode(column, PlayerSpawnRow);
+            if (node == null) { column++; continue; }
+
+            // Skip columns that are already occupied (defensive guard).
+            if (node.IsOccupied) { column++; continue; }
+
+            // Spawn the unit at the exact world-space center of this grid node.
+            UnitFactory.Instance.CreateUnit(levelData.rangedData, node.WorldPosition, Team.Player);
+
+            // Mark the node so the grid reflects the current board state.
+            node.IsOccupied = true;
+
+            column++;
         }
     }
 }

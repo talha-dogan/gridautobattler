@@ -214,15 +214,27 @@ public class BattleManager : MonoBehaviour
     }
 
     // -------------------------------------------------------------------------
-    // Target query
+    // Target query — Lane Priority system
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Provides the closest living enemy target for a given unit.
-    /// Uses sqrMagnitude instead of Vector2.Distance to avoid the expensive
-    /// Mathf.Sqrt call — valid because we only need relative comparisons.
+    /// Returns the best living target for the seeker using a three-tier Lane Priority system.
+    ///
+    /// Tier 1 — Same Lane:
+    ///   Search for living enemies whose grid row (Y) exactly matches the seeker's
+    ///   current grid row. If any exist, return the closest one.
+    ///
+    /// Tier 2 — Adjacent Lanes:
+    ///   If the seeker's own lane is completely empty, check the immediately
+    ///   neighbouring rows (seekerRow ± 1). Return the closest enemy found there.
+    ///
+    /// Tier 3 — Global Fallback:
+    ///   If both the same lane and adjacent lanes are empty, return the absolute
+    ///   closest living enemy anywhere on the board.
+    ///
+    /// All distance comparisons use sqrMagnitude to avoid the cost of Mathf.Sqrt.
     /// Units queued in _pendingRemovals are still in the list at query time but
-    /// are already in UnitState.Dead, so the Dead-state guard below filters them.
+    /// are already in UnitState.Dead, so the Dead-state guard filters them out.
     /// </summary>
     public BaseUnit GetClosestTargetFor(BaseUnit seeker)
     {
@@ -231,23 +243,95 @@ public class BattleManager : MonoBehaviour
         List<BaseUnit> opposingTeam = seeker.unitTeam == Team.Player ? enemyUnits : playerUnits;
         if (opposingTeam.Count == 0) return null;
 
-        float    closestSqrDistance = Mathf.Infinity;
-        BaseUnit closestUnit        = null;
-
-        foreach (BaseUnit potentialTarget in opposingTeam)
+        // ── Resolve the seeker's current grid row ─────────────────────────────
+        // Convert the seeker's world position to a grid row index.
+        // If GridManager is unavailable, fall back to the global closest search.
+        int seekerRow = -1;
+        if (GridManager.Instance != null)
         {
-            // Skip units that are already dead but not yet flushed from the list.
-            if (potentialTarget == null || potentialTarget.currentState == UnitState.Dead) continue;
+            GridManager.Instance.WorldToGrid(seeker.transform.position, out _, out seekerRow);
+        }
 
-            float sqrDistance = ((Vector2)seeker.transform.position -
-                                 (Vector2)potentialTarget.transform.position).sqrMagnitude;
-            if (sqrDistance < closestSqrDistance)
+        // ── Tier 1: Same-lane search ──────────────────────────────────────────
+        if (seekerRow >= 0)
+        {
+            BaseUnit sameLaneBest = FindClosestInRows(seeker, opposingTeam, seekerRow, seekerRow);
+            if (sameLaneBest != null) return sameLaneBest;
+
+            // ── Tier 2: Adjacent-lane search ──────────────────────────────────
+            // Only reached when the seeker's own lane has no living enemies.
+            int adjacentRowMin = seekerRow - 1;
+            int adjacentRowMax = seekerRow + 1;
+
+            BaseUnit adjacentLaneBest = FindClosestInRows(seeker, opposingTeam, adjacentRowMin, adjacentRowMax,
+                                                          excludeRow: seekerRow);
+            if (adjacentLaneBest != null) return adjacentLaneBest;
+        }
+
+        // ── Tier 3: Global fallback ───────────────────────────────────────────
+        // Reached when both the same lane and adjacent lanes are empty,
+        // or when GridManager is not available.
+        return FindClosestGlobal(seeker, opposingTeam);
+    }
+
+    /// <summary>
+    /// Scans the opposing team list and returns the closest living unit whose
+    /// grid row falls within [rowMin, rowMax], optionally skipping one row.
+    /// Returns null if no qualifying unit is found.
+    /// </summary>
+    private BaseUnit FindClosestInRows(BaseUnit seeker, List<BaseUnit> candidates,
+                                       int rowMin, int rowMax, int excludeRow = -999)
+    {
+        float    bestSqr  = Mathf.Infinity;
+        BaseUnit bestUnit = null;
+
+        foreach (BaseUnit candidate in candidates)
+        {
+            // Skip dead or destroyed units.
+            if (candidate == null || candidate.currentState == UnitState.Dead) continue;
+
+            // Resolve the candidate's grid row.
+            GridManager.Instance.WorldToGrid(candidate.transform.position, out _, out int candidateRow);
+
+            // Check that the row is within the requested band and not excluded.
+            if (candidateRow < rowMin || candidateRow > rowMax) continue;
+            if (candidateRow == excludeRow) continue;
+
+            float sqr = ((Vector2)seeker.transform.position -
+                         (Vector2)candidate.transform.position).sqrMagnitude;
+            if (sqr < bestSqr)
             {
-                closestSqrDistance = sqrDistance;
-                closestUnit        = potentialTarget;
+                bestSqr  = sqr;
+                bestUnit = candidate;
             }
         }
 
-        return closestUnit;
+        return bestUnit;
+    }
+
+    /// <summary>
+    /// Returns the absolute closest living unit from the candidates list,
+    /// regardless of grid position. Used as the final fallback.
+    /// </summary>
+    private BaseUnit FindClosestGlobal(BaseUnit seeker, List<BaseUnit> candidates)
+    {
+        float    bestSqr  = Mathf.Infinity;
+        BaseUnit bestUnit = null;
+
+        foreach (BaseUnit candidate in candidates)
+        {
+            // Skip dead or destroyed units.
+            if (candidate == null || candidate.currentState == UnitState.Dead) continue;
+
+            float sqr = ((Vector2)seeker.transform.position -
+                         (Vector2)candidate.transform.position).sqrMagnitude;
+            if (sqr < bestSqr)
+            {
+                bestSqr  = sqr;
+                bestUnit = candidate;
+            }
+        }
+
+        return bestUnit;
     }
 }
