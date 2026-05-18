@@ -38,12 +38,12 @@ public static class GameEvents
     /// Parameter: 1-based display index (currentLevelIndex + 1).
     /// Subscribers (e.g. GameUIManager) update the level label.
     /// </summary>
-    public static event Action<int, bool> OnLevelIndexChanged;
+    public static event Action<int> OnLevelIndexChanged;
 
-    /// <summary>Broadcasts the new level display index and whether it is wave mode.</summary>
-    public static void SetLevelIndex(int displayIndex, bool isWaveMode)
+    /// <summary>Broadcasts the new 1-based level display index.</summary>
+    public static void SetLevelIndex(int displayIndex)
     {
-        OnLevelIndexChanged?.Invoke(displayIndex, isWaveMode);
+        OnLevelIndexChanged?.Invoke(displayIndex);
     }
 
     /// <summary>
@@ -56,26 +56,6 @@ public static class GameEvents
     public static void SetGold(int newTotal)
     {
         OnGoldChanged?.Invoke(newTotal);
-    }
-
-    // -------------------------------------------------------------------------
-    // Drawing / Placement Events
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Raised by DrawingManager whenever the melee or ranged placement limits change
-    /// (on level setup or after a draw stroke is committed).
-    /// Subscribers (e.g. GameUIManager) update the button counter labels.
-    /// DrawingManager never touches TextMeshProUGUI directly.
-    /// </summary>
-    public static event Action<int, int> OnDrawLimitsChanged;
-
-    /// <summary>
-    /// Broadcasts the current melee and ranged placement limits to all UI subscribers.
-    /// </summary>
-    public static void SetDrawLimits(int meleeLimit, int rangedLimit)
-    {
-        OnDrawLimitsChanged?.Invoke(meleeLimit, rangedLimit);
     }
 
     // -------------------------------------------------------------------------
@@ -95,7 +75,7 @@ public static class GameEvents
     }
 
     /// <summary>
-    /// Raised when the player wins the current level/wave.
+    /// Raised when the player wins the current level.
     /// Parameter: gold reward breakdown string for the status display.
     /// </summary>
     public static event Action<string> OnLevelWin;
@@ -107,7 +87,7 @@ public static class GameEvents
     }
 
     /// <summary>
-    /// Raised when the player loses the current level/wave.
+    /// Raised when the player loses the current level.
     /// Parameter: flavour defeat message for the status display.
     /// </summary>
     public static event Action<string> OnLevelLose;
@@ -157,14 +137,13 @@ public static class GameEvents
     /// </summary>
     public static void ClearAllEvents()
     {
-        OnStatusTextChanged  = null;
-        OnLevelIndexChanged  = null;
-        OnGoldChanged        = null;
-        OnDrawLimitsChanged  = null;
-        OnBattleStarted      = null;
-        OnLevelWin           = null;
-        OnLevelLose          = null;
-        OnUnitSpawned        = null;
-        OnUnitDied           = null;
+        OnStatusTextChanged = null;
+        OnLevelIndexChanged = null;
+        OnGoldChanged       = null;
+        OnBattleStarted     = null;
+        OnLevelWin          = null;
+        OnLevelLose         = null;
+        OnUnitSpawned       = null;
+        OnUnitDied          = null;
     }
 }

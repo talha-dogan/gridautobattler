@@ -4,9 +4,13 @@ using TMPro;
 
 /// <summary>
 /// Central UI manager that owns all TextMeshProUGUI references and listens to
-/// GameEvents to update them. No gameplay system (BattleManager, LevelManager,
-/// WaveDirector, DrawingManager, etc.) should hold a direct reference to any UI
-/// component — all UI updates flow through this class via the event bus.
+/// GameEvents to update them. No gameplay system (BattleManager, LevelManager, etc.)
+/// should hold a direct reference to any UI component — all UI updates flow through
+/// this class via the event bus.
+///
+/// Removed in cleanup:
+///   • meleeButtonText / rangedButtonText SerializedFields (drawing system is dead)
+///   • HandleDrawLimitsChanged event handler
 /// </summary>
 public class GameUIManager : MonoBehaviour
 {
@@ -15,7 +19,7 @@ public class GameUIManager : MonoBehaviour
     // -------------------------------------------------------------------------
 
     [Header("HUD Labels")]
-    [Tooltip("Displays the current level or wave number.")]
+    [Tooltip("Displays the current level number.")]
     [SerializeField] private TextMeshProUGUI levelText;
 
     [Tooltip("Displays the player's current gold total.")]
@@ -23,13 +27,6 @@ public class GameUIManager : MonoBehaviour
 
     [Tooltip("Displays status messages (battle results, instructions, etc.).")]
     [SerializeField] private TextMeshProUGUI statusText;
-
-    [Header("Placement Button Labels")]
-    [Tooltip("Counter label on the Melee placement button (e.g. 'Mele\\n(5)').")]
-    [SerializeField] private TextMeshProUGUI meleeButtonText;
-
-    [Tooltip("Counter label on the Ranged placement button (e.g. 'Ranged\\n(3)').")]
-    [SerializeField] private TextMeshProUGUI rangedButtonText;
 
     [Header("Scene Settings")]
     [Tooltip("The exact name of the main menu scene.")]
@@ -45,7 +42,6 @@ public class GameUIManager : MonoBehaviour
         GameEvents.OnStatusTextChanged += HandleStatusTextChanged;
         GameEvents.OnLevelIndexChanged += HandleLevelIndexChanged;
         GameEvents.OnGoldChanged       += HandleGoldChanged;
-        GameEvents.OnDrawLimitsChanged += HandleDrawLimitsChanged;
     }
 
     private void OnDestroy()
@@ -54,7 +50,6 @@ public class GameUIManager : MonoBehaviour
         GameEvents.OnStatusTextChanged -= HandleStatusTextChanged;
         GameEvents.OnLevelIndexChanged -= HandleLevelIndexChanged;
         GameEvents.OnGoldChanged       -= HandleGoldChanged;
-        GameEvents.OnDrawLimitsChanged -= HandleDrawLimitsChanged;
     }
 
     // -------------------------------------------------------------------------
@@ -71,12 +66,11 @@ public class GameUIManager : MonoBehaviour
     /// <summary>
     /// Updates the level label.
     /// displayIndex is 1-based (currentLevelIndex + 1).
-    /// isWaveMode switches the prefix between "LEVEL" and "WAVE".
     /// </summary>
-    private void HandleLevelIndexChanged(int displayIndex, bool isWaveMode)
+    private void HandleLevelIndexChanged(int displayIndex)
     {
         if (levelText != null)
-            levelText.text = (isWaveMode ? "WAVE " : "LEVEL ") + displayIndex;
+            levelText.text = "LEVEL " + displayIndex;
     }
 
     /// <summary>Updates the gold label with the new total.</summary>
@@ -84,17 +78,6 @@ public class GameUIManager : MonoBehaviour
     {
         if (goldText != null)
             goldText.text = newTotal + " G";
-    }
-
-    /// <summary>
-    /// Updates the melee and ranged placement button counter labels.
-    /// Triggered by DrawingManager via GameEvents.SetDrawLimits() whenever
-    /// limits are initialised or a draw stroke is committed.
-    /// </summary>
-    private void HandleDrawLimitsChanged(int meleeLimit, int rangedLimit)
-    {
-        if (meleeButtonText  != null) meleeButtonText.text  = $"Mele\n({meleeLimit})";
-        if (rangedButtonText != null) rangedButtonText.text = $"Ranged\n({rangedLimit})";
     }
 
     // -------------------------------------------------------------------------

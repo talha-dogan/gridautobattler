@@ -1,8 +1,13 @@
 using UnityEngine;
-using System.Collections.Generic;
 
-namespace TDEV.Core // Kodu bu zırhın içine alıyoruz
+namespace TDEV.Core
 {
+    /// <summary>
+    /// Defines all data for a single campaign level:
+    /// player army limits, unit data references, the enemy formation, and the gold reward.
+    /// The old AI cost-based wave drafting fields (availableEnemies / EnemyCostData)
+    /// have been removed — the project now uses static EnemyFormationSO assets exclusively.
+    /// </summary>
     [CreateAssetMenu(fileName = "NewLevelData", menuName = "TDEV/Level Data")]
     public class LevelDataSO : ScriptableObject
     {
@@ -20,23 +25,5 @@ namespace TDEV.Core // Kodu bu zırhın içine alıyoruz
 
         [Header("Level Rewards")]
         public int goldReward;
-
-        [Header("AI Draft Options")]
-        public List<EnemyCostData> availableEnemies;
-    }
-
-    [System.Serializable]
-    public class EnemyCostData
-    {
-        public BaseUnitDataSO enemyData;
-        public int spawnCost;
-
-        [Header("Tactical Tags")]
-        public bool isGoodAgainstRanged;
-        public bool isGoodAgainstMelee;
-
-        // Tank flag — carried over from DynamicWaveDataSO to keep a single
-        // unified definition. Used by WaveDirector for future tactical weighting.
-        public bool isTank;
     }
 }
