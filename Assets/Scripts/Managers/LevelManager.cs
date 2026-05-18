@@ -13,10 +13,6 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    [Header("Game Mode")]
-    // Set this to true in WaveScene Inspector
-    public bool isWaveMode = false;
-
     [Header("Level Sequence")]
     public List<LevelDataSO> levels;
 
@@ -118,8 +114,7 @@ public class LevelManager : MonoBehaviour
 
         AddGold(baseReward);
 
-        string modeText      = isWaveMode ? "WAVE" : "LEVEL";
-        string rewardMessage = $"{modeText} CLEARED!\nBase Reward: {baseReward} G";
+        string rewardMessage = $"LEVEL CLEARED!\nBase Reward: {baseReward} G";
         GameEvents.SetStatusText(rewardMessage);
 
         _currentLevelIndex++;
@@ -153,15 +148,15 @@ public class LevelManager : MonoBehaviour
         UnitSpawner.Instance.currentLevelData = nextLevelData;
 
         // Broadcast the new level index so GameUIManager can update the label.
-        GameEvents.SetLevelIndex(index + 1, isWaveMode);
+        GameEvents.SetLevelIndex(index + 1, false);
 
         if (index == 0)
             GameEvents.SetStatusText("Press WAR! to start the battle.");
         else
             GameEvents.SetStatusText(string.Empty);
 
-        if (!isWaveMode)
-            UnitSpawner.Instance.PrepareLevel();
+        // Always prepare the level in grid/campaign mode.
+        UnitSpawner.Instance.PrepareLevel();
     }
 
     // -------------------------------------------------------------------------
