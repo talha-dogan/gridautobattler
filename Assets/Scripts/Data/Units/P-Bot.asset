@@ -15,8 +15,8 @@ MonoBehaviour:
   unitName: P-Bot
   unitType: 0
   unitPrefab: {fileID: 7983632528740636094, guid: a25d5664655aacd4cbbaac95c8c04daf, type: 3}
-  maxHealth: 150
-  attackDamage: 30
+  maxHealth: 100
+  attackDamage: 5
   attackRange: 2
   attackCooldown: 0.2
   moveSpeed: 13

@@ -15,8 +15,8 @@ MonoBehaviour:
   unitName: E-Bot
   unitType: 0
   unitPrefab: {fileID: 7983632528740636094, guid: 1fc92c486ff2eb64a87cd611ec06c10e, type: 3}
-  maxHealth: 50
-  attackDamage: 10
+  maxHealth: 100
+  attackDamage: 2
   attackRange: 2
   attackCooldown: 0.2
   moveSpeed: 13

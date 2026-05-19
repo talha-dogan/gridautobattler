@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 672a930d3935f25489f2800c0adecbb7, type: 3}
+  m_Name: L19_Formation
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFormationSO
+  units:
+  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
+    offset: {x: 0, y: 0}
+  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
+    offset: {x: 0, y: 0}
+  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
+    offset: {x: 0, y: 0}
+  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+    offset: {x: 0, y: 0}

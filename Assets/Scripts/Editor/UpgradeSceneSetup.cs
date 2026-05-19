@@ -6,16 +6,12 @@ using UnityEngine.UI;
 /// One-shot editor utility that wires up the Upgrade Scene's ShowcasePawn system.
 ///
 /// What it does:
-///   1. Deletes the old Player_Pawn (0-3) objects (they carry combat components
-///      that do not belong in the Upgrade Scene).
-///   2. Reads the world-space centre of each UI Player drop zone (0-7).
-///   3. Instantiates a ShowcasePawn prefab at each position.
+///   1. Deletes the old Player_Pawn (0-3) objects.
+///   2. Reads the screen-space centre of each UI Player drop zone (0-7) and converts it to World Space.
+///   3. Instantiates a ShowcasePawn prefab at each proper world position.
 ///   4. Adds ShowcasePawnController to each instance for idle breathing.
-///   5. Links the ShowcasePawn's CharacterEquipmentVisuals to the matching
-///      UpgradeCharacterDropZoneUI so drops update the SpriteRenderer layers.
-///   6. Makes the UI Player Image fully transparent (alpha = 0) so only the
-///      world-space pawn is visible, while the RectTransform still acts as
-///      the drop target.
+///   5. Links the ShowcasePawn's CharacterEquipmentVisuals to the matching UI.
+///   6. Makes the UI Player Image fully transparent so only the world-space pawn is visible.
 /// </summary>
 public class UpgradeSceneSetup : EditorWindow
 {
@@ -31,7 +27,7 @@ public class UpgradeSceneSetup : EditorWindow
         "Player_Pawn (3)"
     };
 
-    // Hierarchy paths of the 8 UI drop zone objects (left 4 + right 4).
+    // Hierarchy paths of the 8 UI drop zone objects.
     private static readonly string[] DROP_ZONE_PATHS =
     {
         "--- UI CANVAS ---/Canvas/Left_Army_Panel/Left_Army/Army_Left/Player",
@@ -44,9 +40,7 @@ public class UpgradeSceneSetup : EditorWindow
         "--- UI CANVAS ---/Canvas/Right_Army_Panel/Right_Army/Army_Right/Player (7)"
     };
 
-    // World-space Y spacing between pawns (matches the UI slot height in world units).
-    // Canvas is ScreenSpaceOverlay at 1920x1080 with scaleFactor ~2.
-    // Each UI slot is 500px tall at scale 0.5 => 250 canvas units => ~2.5 world units.
+    // Scale modifier for spawned pawns.
     private const float PAWN_SCALE = 1.5f;
 
     [MenuItem("TDEV/Upgrade Scene Setup")]
@@ -59,6 +53,16 @@ public class UpgradeSceneSetup : EditorWindow
             EditorUtility.DisplayDialog(
                 "Hata",
                 $"ShowcasePawn prefabı bulunamadı:\n{SHOWCASE_PREFAB_PATH}",
+                "Tamam");
+            return;
+        }
+
+        // Make sure we have a Main Camera to calculate world positions.
+        if (Camera.main == null)
+        {
+            EditorUtility.DisplayDialog(
+                "Hata",
+                "Sahnede 'MainCamera' etiketli bir kamera bulunamadı. Dünya koordinatları hesaplanamıyor.",
                 "Tamam");
             return;
         }
@@ -81,6 +85,9 @@ public class UpgradeSceneSetup : EditorWindow
         {
             pawnsContainer = new GameObject("--- SHOWCASE PAWNS ---");
             Undo.RegisterCreatedObjectUndo(pawnsContainer, "Create Pawns Container");
+
+            // Explicitly ensure the container itself is at the world origin.
+            pawnsContainer.transform.position = Vector3.zero;
         }
 
         // ── Step 4: Spawn ShowcasePawns at each drop zone position ────────────
@@ -96,6 +103,7 @@ public class UpgradeSceneSetup : EditorWindow
                 continue;
             }
 
+            // Verify it has the required UI script.
             UpgradeCharacterDropZoneUI dropZone = dropZoneGO.GetComponent<UpgradeCharacterDropZoneUI>();
             if (dropZone == null)
             {
@@ -103,8 +111,7 @@ public class UpgradeSceneSetup : EditorWindow
                 continue;
             }
 
-            // Make the UI Image transparent so only the world-space pawn is visible.
-            // The RectTransform still acts as the IDropHandler target.
+            // Make the UI Image transparent.
             Image img = dropZoneGO.GetComponent<Image>();
             if (img != null)
             {
@@ -114,13 +121,13 @@ public class UpgradeSceneSetup : EditorWindow
                 img.color = c;
             }
 
-            // Convert the UI RectTransform's centre to world space.
+            // Calculate ACTUAL World Space Position from UI.
             RectTransform rt = dropZoneGO.GetComponent<RectTransform>();
             Vector3 worldPos = rt != null
-                ? GetRectWorldCenter(rt)
+                ? GetWorldPositionFromUI(rt)
                 : dropZoneGO.transform.position;
 
-            // Check if a ShowcasePawn already exists at this slot to avoid duplicates.
+            // Remove existing duplicate pawn if any.
             string pawnName = $"ShowcasePawn_Slot{i}";
             GameObject existingPawn = GameObject.Find(pawnName);
             if (existingPawn != null)
@@ -133,17 +140,17 @@ public class UpgradeSceneSetup : EditorWindow
             pawnInstance.name = pawnName;
             Undo.RegisterCreatedObjectUndo(pawnInstance, $"Spawn ShowcasePawn Slot {i}");
 
-            // Position in world space at the drop zone centre.
-            pawnInstance.transform.SetParent(pawnsContainer.transform);
+            // Assign parent and correct world position/scale.
+            pawnInstance.transform.SetParent(pawnsContainer.transform, true);
             pawnInstance.transform.position = worldPos;
             pawnInstance.transform.localScale = Vector3.one * PAWN_SCALE;
 
-            // Add ShowcasePawnController for idle breathing.
+            // Add controller.
             ShowcasePawnController controller = pawnInstance.GetComponent<ShowcasePawnController>();
             if (controller == null)
                 controller = Undo.AddComponent<ShowcasePawnController>(pawnInstance);
 
-            // Auto-wire the UnitBreathingVisuals reference.
+            // Auto-wire breathing visual.
             UnitBreathingVisuals breathing = pawnInstance.GetComponentInChildren<UnitBreathingVisuals>();
             if (breathing != null)
             {
@@ -152,7 +159,7 @@ public class UpgradeSceneSetup : EditorWindow
                 so.ApplyModifiedProperties();
             }
 
-            // Link the ShowcasePawn's CharacterEquipmentVisuals to the drop zone.
+            // Auto-wire equipment visual.
             CharacterEquipmentVisuals equipVisuals = pawnInstance.GetComponent<CharacterEquipmentVisuals>();
             if (equipVisuals != null)
             {
@@ -184,16 +191,11 @@ public class UpgradeSceneSetup : EditorWindow
     // Helpers
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Finds a GameObject in the active scene by its full hierarchy path.
-    /// Traverses the path segments separated by '/'.
-    /// </summary>
     private static GameObject FindByPath(string path)
     {
         string[] parts = path.Split('/');
         GameObject current = null;
 
-        // Find the root object.
         foreach (GameObject root in UnityEngine.SceneManagement.SceneManager
                      .GetActiveScene().GetRootGameObjects())
         {
@@ -206,7 +208,6 @@ public class UpgradeSceneSetup : EditorWindow
 
         if (current == null) return null;
 
-        // Traverse children.
         for (int i = 1; i < parts.Length; i++)
         {
             Transform child = current.transform.Find(parts[i]);
@@ -218,14 +219,39 @@ public class UpgradeSceneSetup : EditorWindow
     }
 
     /// <summary>
-    /// Returns the world-space centre of a RectTransform.
-    /// Works for both Overlay and Camera-space canvases.
+    /// Accurately converts a UI RectTransform's position to actual 3D/2D World Space 
+    /// using the Main Camera, preventing pawns from spawning in pixel-coordinate space.
     /// </summary>
-    private static Vector3 GetRectWorldCenter(RectTransform rt)
+    private static Vector3 GetWorldPositionFromUI(RectTransform rt)
     {
-        Vector3[] corners = new Vector3[4];
-        rt.GetWorldCorners(corners);
-        // Average of the four corners gives the centre.
-        return (corners[0] + corners[1] + corners[2] + corners[3]) / 4f;
+        Camera cam = Camera.main;
+        if (cam == null) return rt.position;
+
+        Canvas canvas = rt.GetComponentInParent<Canvas>();
+        Vector3 screenPos;
+
+        // If the Canvas is Overlay, rt.position is already in pixel coordinates.
+        // If it's Camera Space or World Space, we need to convert it to screen space first.
+        if (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            screenPos = rt.position;
+        }
+        else
+        {
+            screenPos = cam.WorldToScreenPoint(rt.position);
+        }
+
+        // Calculate a proper distance from the camera.
+        // For Orthographic cameras (2D), distance doesn't affect scale, but we need them in front.
+        // For Perspective cameras, this determines how far away they spawn.
+        float distanceFromCamera = Mathf.Abs(cam.transform.position.z);
+
+        // Convert the pixel coordinates to actual world scene coordinates.
+        Vector3 worldPos = cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, distanceFromCamera));
+
+        // Force Z to 0 (Standard for 2D sorting). Change this if you need them at a specific depth.
+        worldPos.z = 0f;
+
+        return worldPos;
     }
 }
