@@ -15,13 +15,13 @@ MonoBehaviour:
   unitName: E-Bot-Ranged
   unitType: 1
   unitPrefab: {fileID: 7983632528740636094, guid: a1b6ef7a80527a4438fe54438744d06f, type: 3}
-  maxHealth: 100
+  maxHealth: 300
   attackDamage: 4
   attackRange: 10
   attackCooldown: 0.35
-  moveSpeed: 10
+  moveSpeed: 20
   idleBreathingSpeed: 3
   moveBreathingSpeed: 8
   breathingAmplitude: 0.05
   projectilePrefab: {fileID: 5938624687632628301, guid: 251baa22b2f2a39459d8dcac2fafdbc4, type: 3}
-  projectileSpeed: 20
+  projectileSpeed: 10
