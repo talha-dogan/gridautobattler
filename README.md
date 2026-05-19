@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ⚔️ Grid Auto-Battler
 
 > **A Grid-Based Side-Scroller Auto-Battler** built in Unity 6 with URP 2D.
@@ -517,3 +518,6 @@ The main battle scene hierarchy is organized into tagged groups:
 ---
 
 *Built with ❤️ by TDEVGAMES*
+=======
+
+>>>>>>> 6cd9287b41716bf7324e21b53fe3b780d3323405

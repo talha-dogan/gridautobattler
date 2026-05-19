@@ -44,6 +44,12 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
     protected float attackCooldown;
     protected float lastAttackTime;
 
+    // Accumulated equipment bonuses — stored separately so they can be
+    // stripped and re-applied cleanly when a unit is recycled from the pool.
+    private float _equipmentBonusHealth;
+    private float _equipmentBonusDamage;
+    private float _equipmentBonusAttackSpeed;
+
     // ── Target Search Timer ───────────────────────────────────────────────────
     private float _targetSearchTimer = 0f;
     private const float _targetSearchInterval = 0.2f;
@@ -466,6 +472,59 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
             ChangeState(UnitState.Victory);
             currentTarget = null;
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // Equipment Bonus API — called by UnitEquipmentManager
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Adds equipment stat bonuses on top of the base stats set by Initialize().
+    /// Accumulates into private tracking fields so bonuses can be fully reversed
+    /// by ResetEquipmentBonuses() without touching the original base values.
+    /// </summary>
+    public void ApplyEquipmentBonus(float bonusHealth, float bonusDamage, float bonusAttackSpeed)
+    {
+        // Track the cumulative bonus so it can be reversed cleanly on reset.
+        _equipmentBonusHealth      += bonusHealth;
+        _equipmentBonusDamage      += bonusDamage;
+        _equipmentBonusAttackSpeed += bonusAttackSpeed;
+
+        // Apply to live stats.
+        maxHealth     += bonusHealth;
+        currentHealth += bonusHealth;
+        attackDamage  += bonusDamage;
+
+        // bonusAttackSpeed reduces cooldown (lower = faster); clamp to a minimum
+        // of 0.05 s so units can never reach an infinite attack rate.
+        attackCooldown = Mathf.Max(0.05f, attackCooldown - bonusAttackSpeed);
+
+        // Notify listeners that health pool has changed (e.g. health bar UI).
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+    /// <summary>
+    /// Reverses all previously applied equipment bonuses, restoring the unit's
+    /// stats to the values set by the last Initialize() call.
+    /// Must be called before re-applying a new loadout (e.g. pool reuse).
+    /// </summary>
+    public void ResetEquipmentBonuses()
+    {
+        // Reverse every accumulated bonus.
+        maxHealth      -= _equipmentBonusHealth;
+        currentHealth  -= _equipmentBonusHealth;
+        attackDamage   -= _equipmentBonusDamage;
+        attackCooldown += _equipmentBonusAttackSpeed;
+
+        // Clamp health so a large bonus removal never drives it below zero.
+        currentHealth = Mathf.Max(0f, currentHealth);
+
+        // Clear the accumulators.
+        _equipmentBonusHealth      = 0f;
+        _equipmentBonusDamage      = 0f;
+        _equipmentBonusAttackSpeed = 0f;
+
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public virtual void Attack(IDamageable target) { }

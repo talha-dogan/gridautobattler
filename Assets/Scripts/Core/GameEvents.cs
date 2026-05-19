@@ -127,6 +127,23 @@ public static class GameEvents
     }
 
     // -------------------------------------------------------------------------
+    // Equipment Events
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Raised when a piece of equipment is assigned to a character slot in the
+    /// Upgrade Scene. Subscribers can react to update stat previews or save state.
+    /// Parameters: armySlotIndex (0-7), the newly equipped EquipmentDataSO.
+    /// </summary>
+    public static event System.Action<int, EquipmentDataSO> OnEquipmentChanged;
+
+    /// <summary>Broadcasts that a character's equipment loadout has changed.</summary>
+    public static void EquipmentChanged(int armySlotIndex, EquipmentDataSO equipment)
+    {
+        OnEquipmentChanged?.Invoke(armySlotIndex, equipment);
+    }
+
+    // -------------------------------------------------------------------------
     // Cleanup helper — call this when loading a new scene to prevent stale
     // subscribers from a previous scene from receiving events.
     // -------------------------------------------------------------------------
@@ -145,5 +162,6 @@ public static class GameEvents
         OnLevelLose         = null;
         OnUnitSpawned       = null;
         OnUnitDied          = null;
+        OnEquipmentChanged  = null;
     }
 }

@@ -1481,8 +1481,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
   levels:
-  - {fileID: 11400000, guid: f04ab303dce0ab240a7d132c7e3f207a, type: 2}
-  - {fileID: 11400000, guid: cf615b58ea81e204a91aca05c6bc354d, type: 2}
+  - {fileID: 11400000, guid: 2b7e0cc6739614b46be03bb2f2f5e78f, type: 2}
+  - {fileID: 11400000, guid: f93a17bd541835a4b88fa23efe3aeceb, type: 2}
+  - {fileID: 11400000, guid: dc6dbfe8aaa25164db3c69e12659d78f, type: 2}
+  - {fileID: 11400000, guid: de3c368a3acd5e64eaa918b2d4333dfc, type: 2}
+  - {fileID: 11400000, guid: 1efcefd4b6530b14ab90afc93c53db02, type: 2}
+  - {fileID: 11400000, guid: 32897c48befaa3e45b49a4bcd410521c, type: 2}
+  - {fileID: 11400000, guid: 1fc64e011622a814d94b27ac7e86bcc9, type: 2}
+  - {fileID: 11400000, guid: f181a3997798a614fb9706e26ce0bc0e, type: 2}
+  - {fileID: 11400000, guid: 0693fffe666eeea40b2598ebf944239d, type: 2}
+  - {fileID: 11400000, guid: f6ee34befec177c498d290e85b225d6b, type: 2}
   currentGold: 0
   goldPerUnusedUnit: 25
 --- !u!1 &992033205
