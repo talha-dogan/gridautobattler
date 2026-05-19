@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8345865076430f94a932d10a678022f0, type: 3}
-  m_Name: Halmet_Weapon
+  m_Name: Halmet
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   equipmentName: Halmet
   slot: 0
-  bonusHealth: 10
+  bonusHealth: 20
   bonusDamage: 10
   bonusAttackSpeed: 0.2
   spriteReference:
-    m_AssetGUID: 
+    m_AssetGUID: 9e4774a3025a95c44a326933233473e4
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

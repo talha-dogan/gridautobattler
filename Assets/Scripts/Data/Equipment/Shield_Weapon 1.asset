@@ -18,7 +18,7 @@ MonoBehaviour:
   bonusDamage: 10
   bonusAttackSpeed: 0.2
   spriteReference:
-    m_AssetGUID: 
+    m_AssetGUID: e083f2a225ac7714d8033bf6a469f125
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

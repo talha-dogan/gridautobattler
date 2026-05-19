@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8345865076430f94a932d10a678022f0, type: 3}
-  m_Name: Vest_Weapon 1
+  m_Name: Pants
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
-  equipmentName: Vest
-  slot: 1
-  bonusHealth: 10
-  bonusDamage: 10
-  bonusAttackSpeed: 0.2
+  equipmentName: Pants
+  slot: 2
+  bonusHealth: 20
+  bonusDamage: 20
+  bonusAttackSpeed: 10
   spriteReference:
-    m_AssetGUID: 
+    m_AssetGUID: 65f1f4b30a53f09418dac71188119390
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

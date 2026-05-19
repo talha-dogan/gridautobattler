@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DamageTextData
   m_EditorClassIdentifier: Assembly-CSharp::DamageTextDataSO
   textPrefab: {fileID: 5954637744734086675, guid: 2a54f3cdfac2ad54e926788d8abdb537, type: 3}
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0.2830189, g: 0, b: 0, a: 1}
   floatSpeed: 1
   fadeDuration: 0.3
   spawnHeightOffset: 1

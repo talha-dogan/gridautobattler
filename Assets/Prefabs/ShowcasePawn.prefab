@@ -86,7 +86,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.85333335, y: 0.85333335}
+  m_Size: {x: 0.54, y: 0.5158333}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -208,7 +208,7 @@ Transform:
   m_GameObject: {fileID: 4178004136450040032}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.53, z: 0}
+  m_LocalPosition: {x: 0.008, y: -0.921, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -268,7 +268,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.83416665, y: 0.5725}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -451,7 +451,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 4, y: 9.309091}
+  m_Size: {x: 1, y: 2.3272727}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -569,6 +569,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8553699396459336297}
   - component: {fileID: 9050168865525035965}
+  - component: {fileID: 547349833024361263}
   m_Layer: 0
   m_Name: ShowcasePawn
   m_TagString: Untagged
@@ -614,3 +615,18 @@ MonoBehaviour:
   pantsRenderer: {fileID: 4855495330515006276}
   weaponRenderer: {fileID: 3142784862182683170}
   shieldRenderer: {fileID: 78169821576676476}
+--- !u!114 &547349833024361263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7983632528740636094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2fb39b9417b88d48bf25f8ab36158ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShowcasePawnController
+  _breathingVisuals: {fileID: 5613376396537005212}
+  _breathingSpeed: 3
+  _breathingAmplitude: 0.04

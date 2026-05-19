@@ -14,7 +14,97 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: 6ac28de5949127b409fdbd04773da6b8
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 07e6f2a97c9953a42935c2457ef7b9a1
+    m_Address: Assets/Art/Items/armor.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c6f6737022d3f041a8ee8ac32c1b64e
+    m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1f7cb2c465487ce4fb6b205f6798b3a0
+    m_Address: Assets/Art/Items/Buckler without Crescents-Photoroom.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2308beb59aacb1d4eb57c504bad331b3
+    m_Address: Assets/Scripts/Data/Equipment/Vest.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2658f3a7acd73254ebcb56d77a1e7cee
+    m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 3.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2779f594a385e9144899f31937ad73b9
+    m_Address: Assets/Art/Items/Round Shield without Crescent-Photoroom.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39a15bedad0de1b46aaa3fe3d259a501
+    m_Address: Assets/Scripts/Data/Equipment/Pants.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 429c2069b2c485a4c90ed3d033d1a0bc
+    m_Address: Assets/Scripts/Data/Equipment/Sword_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4e5fd9db8fa862b4d8e4abe71d2ebead
+    m_Address: Assets/Art/Items/Glock34Trijicon.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51f3933304cec364eaa9169ad20adcd6
+    m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65f1f4b30a53f09418dac71188119390
+    m_Address: Assets/Art/Items/Pants.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e4774a3025a95c44a326933233473e4
+    m_Address: Assets/Art/Items/Halmet.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a3baba269cfe20840a4e5366659d4400
+    m_Address: Assets/Art/Items/Bullet 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a59fff6cde49f6f4bb3150bfbf4eacff
+    m_Address: Assets/Art/Items/Sword.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb878b422ef9ef34788b6990359a0a84
+    m_Address: Assets/Art/Items/Stick.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c52dd0a4d29a7824b8206e8fa148ea98
+    m_Address: Assets/Scripts/Data/Equipment/Halmet.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df7493b00e2a1474a92f3a16dd5a9557
+    m_Address: Assets/GameData/PlayerArmyData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e083f2a225ac7714d8033bf6a469f125
+    m_Address: Assets/Art/Items/Kite Shield without Crescent-Photoroom.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4e0b4a5fff7d0f543a2ea1f464596cbf, type: 2}
   m_SchemaSet:

@@ -15,10 +15,10 @@ MonoBehaviour:
   equipmentName: Sword
   slot: 3
   bonusHealth: 10
-  bonusDamage: 10
-  bonusAttackSpeed: 0.2
+  bonusDamage: 20
+  bonusAttackSpeed: 0.5
   spriteReference:
-    m_AssetGUID: 
+    m_AssetGUID: a59fff6cde49f6f4bb3150bfbf4eacff
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

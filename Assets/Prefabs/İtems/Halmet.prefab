@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 586, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 150, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1264316306375661388
@@ -88,6 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fb44d812307c1346a1d2b8c44f95b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeDragItemUI
-  _equipmentData: {fileID: 11400000, guid: 429c2069b2c485a4c90ed3d033d1a0bc, type: 2}
+  _equipmentData: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
   _itemIcon: {fileID: 4253416286525877636}
   _rootCanvas: {fileID: 0}

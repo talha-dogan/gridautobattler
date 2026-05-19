@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   equipmentName: Shield
   slot: 4
-  bonusHealth: 10
+  bonusHealth: 20
   bonusDamage: 10
   bonusAttackSpeed: 0.2
   spriteReference:
-    m_AssetGUID: 
+    m_AssetGUID: 2779f594a385e9144899f31937ad73b9
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1
