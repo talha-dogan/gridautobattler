@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 12811ad272efa6c4c8203e1029755bd6
+    m_Address: Assets/Scripts/Data/Equipment/Gun_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1f7cb2c465487ce4fb6b205f6798b3a0
     m_Address: Assets/Art/Items/Buckler without Crescents-Photoroom.png
     m_ReadOnly: 0

@@ -31,10 +31,6 @@ public class PawnShopUI : MonoBehaviour
     [Tooltip("Army data to read the current pawn count.")]
     [SerializeField] private PlayerArmyDataSO _armyData;
 
-    [Header("Debug")]
-    [Tooltip("Amount of coins to test via the Inspector context menu.")]
-    [SerializeField] private int _debugCoinAmount = 100;
-
     // Defines the key used to load gold from PlayerPrefs as a fallback
     private const string GOLD_SAVE_KEY = "PlayerGold";
 
@@ -69,13 +65,6 @@ public class PawnShopUI : MonoBehaviour
     // Debugging / Inspector Tools
     // -------------------------------------------------------------------------
 
-    [ContextMenu("Test Coin Update")]
-    private void TestCoinUpdateFromInspector()
-    {
-        // Simulates a gold change event using the debug value from the Inspector
-        HandleGoldChanged(_debugCoinAmount);
-        Debug.Log($"[PawnShopUI] Tested UI update with {_debugCoinAmount} coins.");
-    }
 
     // -------------------------------------------------------------------------
     // GameEvents handlers

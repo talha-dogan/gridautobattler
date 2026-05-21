@@ -156,6 +156,9 @@ public class UpgradeCharacterDropZoneUI : MonoBehaviour, IDropHandler
         GameEvents.EquipmentChanged(_armySlotIndex, incomingEquipment);
 
         Debug.Log($"[UpgradeCharacterDropZoneUI] Slot {_armySlotIndex}: '{incomingEquipment.equipmentName}' ({targetSlot}) takıldı.");
+
+        // Item tek kullanımlık: başarıyla takıldıktan sonra sahneden kaldır.
+        dragItem.ConsumeItem();
     }
 
     // -------------------------------------------------------------------------
