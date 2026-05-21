@@ -5,10 +5,10 @@ using TDEV.Core;
 /// Singleton that owns the authoritative 8x8 GridNode data model.
 ///
 /// Grid specification:
-///   - Origin (Node[0,0] / A1) world center : (1.3, 1.3)
-///   - Cell size (center-to-center distance) : 2.6 units
+///   - Origin (Node[0,0] / H1) world center
+///   - Cell size (center-to-center distance)
 ///   - Columns (X axis)                      : 0 – 7  (left → right)
-///   - Rows    (Y axis)                       : 0 – 7  (bottom → top)
+///   - Rows    (Y axis)                      : 0 – 7  (bottom → top)
 ///
 /// The grid is generated once in Awake() and never changes at runtime.
 /// All other systems query it through the public API below.
@@ -21,13 +21,18 @@ public class GridManager : MonoBehaviour
     // ── Grid Constants ────────────────────────────────────────────────────────
     // Total number of columns and rows on the board.
     public const int Columns = 8;
-    public const int Rows    = 8;
+    public const int Rows = 8;
 
-    // World-space position of the center of Node[0,0] (bottom-left cell).
-    private static readonly Vector3 OriginWorldPosition = new Vector3(1.3f, 1.3f, 0f);
+    // ── Adjustable Grid Settings ──────────────────────────────────────────────
+    [Header("Grid Setup")]
+    [Tooltip("World-space position of the center of Node[0,0] (bottom-left cell H1).")]
+    [SerializeField] private Vector3 originWorldPosition = new Vector3(1.3f, 1.3f, 0f);
 
-    // Distance between the centers of two adjacent cells (horizontal or vertical).
-    public const float CellSize = 2.6f;
+    [Tooltip("Distance between the centers of two adjacent cells (horizontal or vertical).")]
+    [SerializeField] private float cellSize = 2.6f;
+
+    // Expose cellSize for other scripts that might need it
+    public float CellSize => cellSize;
 
     // ── Grid Data ─────────────────────────────────────────────────────────────
     // The 2D array that holds every node on the board.
@@ -57,8 +62,8 @@ public class GridManager : MonoBehaviour
     /// Allocates the 8x8 array and calculates the world position of every node.
     ///
     /// Formula for node (x, y):
-    ///   worldX = OriginWorldPosition.x + x * CellSize
-    ///   worldY = OriginWorldPosition.y + y * CellSize
+    ///   worldX = originWorldPosition.x + x * cellSize
+    ///   worldY = originWorldPosition.y + y * cellSize
     /// </summary>
     private void GenerateGrid()
     {
@@ -70,8 +75,8 @@ public class GridManager : MonoBehaviour
             {
                 // Calculate the exact world-space center of this cell.
                 Vector3 worldPos = new Vector3(
-                    OriginWorldPosition.x + x * CellSize,
-                    OriginWorldPosition.y + y * CellSize,
+                    originWorldPosition.x + x * cellSize,
+                    originWorldPosition.y + y * cellSize,
                     0f
                 );
 
@@ -80,7 +85,7 @@ public class GridManager : MonoBehaviour
         }
 
         Debug.Log($"[GridManager] Grid generated: {Columns}x{Rows} nodes. " +
-                  $"Origin={OriginWorldPosition}, CellSize={CellSize}");
+                  $"Origin={originWorldPosition}, CellSize={cellSize}");
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -130,8 +135,8 @@ public class GridManager : MonoBehaviour
     /// <param name="y">Output row index.</param>
     public void WorldToGrid(Vector3 worldPosition, out int x, out int y)
     {
-        x = Mathf.RoundToInt((worldPosition.x - OriginWorldPosition.x) / CellSize);
-        y = Mathf.RoundToInt((worldPosition.y - OriginWorldPosition.y) / CellSize);
+        x = Mathf.RoundToInt((worldPosition.x - originWorldPosition.x) / cellSize);
+        y = Mathf.RoundToInt((worldPosition.y - originWorldPosition.y) / cellSize);
 
         // Clamp to valid grid range so callers never receive an out-of-bounds index.
         x = Mathf.Clamp(x, 0, Columns - 1);
@@ -182,8 +187,8 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < Rows; y++)
             {
                 Vector3 center = new Vector3(
-                    OriginWorldPosition.x + x * CellSize,
-                    OriginWorldPosition.y + y * CellSize,
+                    originWorldPosition.x + x * cellSize,
+                    originWorldPosition.y + y * cellSize,
                     0f
                 );
 
@@ -193,12 +198,12 @@ public class GridManager : MonoBehaviour
 
                 // Draw a small cross at the node center.
                 float crossSize = 0.2f;
-                Gizmos.DrawLine(center + Vector3.left  * crossSize, center + Vector3.right * crossSize);
-                Gizmos.DrawLine(center + Vector3.down  * crossSize, center + Vector3.up    * crossSize);
+                Gizmos.DrawLine(center + Vector3.left * crossSize, center + Vector3.right * crossSize);
+                Gizmos.DrawLine(center + Vector3.down * crossSize, center + Vector3.up * crossSize);
 
                 // Draw a wire square representing the cell boundary.
                 Gizmos.color = new Color(1f, 1f, 1f, 0.15f);
-                Gizmos.DrawWireCube(center, new Vector3(CellSize, CellSize, 0f));
+                Gizmos.DrawWireCube(center, new Vector3(cellSize, cellSize, 0f));
             }
         }
     }

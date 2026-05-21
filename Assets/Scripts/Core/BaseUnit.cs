@@ -538,6 +538,10 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
         if (DamageTextManager.Instance != null)
             DamageTextManager.Instance.SpawnDamageText(transform.position, amount);
 
+        // Hit sesi
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySoundAtPosition(SoundType.HitFlesh, transform.position);
+
         if (currentHealth <= 0 && currentState != UnitState.Dead) Die();
     }
 

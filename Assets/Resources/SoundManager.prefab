@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6632228772126769346
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4864593331221759119}
+  - component: {fileID: 7203301878577050504}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4864593331221759119
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6632228772126769346}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 100, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7203301878577050504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6632228772126769346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 885a77ada15d8474cbabba444442eaf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
+  soundLibrary:
+  - soundType: 0
+    clips:
+    - {fileID: 8300000, guid: ebcb836648f4db74294c130906af6b97, type: 3}
+    volume: 0.8
+    pitchMin: 0.9
+    pitchMax: 1.1
+  - soundType: 1
+    clips:
+    - {fileID: 8300000, guid: 7d3449c4e6b440746b46727b392cbf7a, type: 3}
+    volume: 0.7
+    pitchMin: 0.9
+    pitchMax: 1.1
+  - soundType: 2
+    clips:
+    - {fileID: 8300000, guid: 6260d414a95811940a38a06447dbad0d, type: 3}
+    volume: 0.6
+    pitchMin: 0.85
+    pitchMax: 1.15
+  - soundType: 4
+    clips:
+    - {fileID: 8300000, guid: 6357d335096716a4db24cad2ad3d1a7c, type: 3}
+    volume: 0.75
+    pitchMin: 0.9
+    pitchMax: 1.1
+  - soundType: 5
+    clips:
+    - {fileID: 8300000, guid: 2381d4e729f939142bc5fed45b99fb0d, type: 3}
+    volume: 1
+    pitchMin: 1
+    pitchMax: 1
+  - soundType: 6
+    clips:
+    - {fileID: 8300000, guid: 6357d335096716a4db24cad2ad3d1a7c, type: 3}
+    volume: 0.9
+    pitchMin: 0.8
+    pitchMax: 0.9
+  battleBGM: {fileID: 8300000, guid: 9c9b4ce09144ed44e96972bb4112042c, type: 3}
+  menuBGM: {fileID: 8300000, guid: 842ced70e449e124f91fb2e85d5c0a43, type: 3}
+  bgmVolume: 0.4
+  bgmFadeDuration: 1.5
+  initialPoolSize: 10
+  maxPoolSize: 20
+  masterSFXVolume: 1
+  masterBGMVolume: 1

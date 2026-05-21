@@ -83,6 +83,10 @@ public class RangedUnit : BaseUnit
         // Use a safe fallback speed if the data value was left at zero.
         float pSpeed = (rangedData.projectileSpeed > 0f) ? rangedData.projectileSpeed : 20f;
 
+        // Silah sesi — ateşli silah
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySoundAtPosition(SoundType.WeaponShoot, transform.position);
+
         // Launch — the projectile will return itself to the factory pool when done.
         projectile.Launch(targetUnit, attackDamage, pSpeed, unitTeam);
     }

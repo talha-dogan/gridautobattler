@@ -23,6 +23,10 @@ public class MeleeUnit : BaseUnit
             weaponVisuals.SwingWeapon(meleeData.swingAngle, meleeData.swingDuration);
         }
 
+        // Silah sesi — yakın dövüş salınımı
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySoundAtPosition(SoundType.WeaponMeleeSwing, transform.position);
+
         targetUnit.TakeDamage(attackDamage);
     }
 }
