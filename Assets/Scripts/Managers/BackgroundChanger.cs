@@ -59,8 +59,8 @@ public class BackgroundChanger : MonoBehaviour
         if (!changeBGOnLevelChange) return;
         if (backgrounds == null || backgrounds.Count == 0) return;
 
-        // Convert 1-based display index to 0-based list index, clamped to list bounds.
-        int listIndex = Mathf.Clamp(displayIndex - 1, 0, backgrounds.Count - 1);
+        // Convert 1-based display index to 0-based list index, wraps around when list ends.
+        int listIndex = (displayIndex - 1) % backgrounds.Count;
 
         Sprite target = backgrounds[listIndex];
         if (target == null) return;
