@@ -44,6 +44,22 @@ public class UpgradeDragItemUI : MonoBehaviour,
 
     public EquipmentDataSO EquipmentData => _equipmentData;
 
+    /// <summary>
+    /// Sahne üzerindeki bu item nesnesini yok eder.
+    /// Bir karaktere başarıyla takıldığında UpgradeCharacterDropZoneUI tarafından çağrılır.
+    /// </summary>
+    public void ConsumeItem()
+    {
+        // Ghost hâlâ varsa temizle.
+        if (_dragGhost != null)
+        {
+            Destroy(_dragGhost);
+            _dragGhost = null;
+        }
+
+        Destroy(gameObject);
+    }
+
     public void Initialize(EquipmentDataSO data, Canvas rootCanvas)
     {
         _equipmentData = data;

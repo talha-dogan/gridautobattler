@@ -97,6 +97,11 @@ public class PlayerArmyDataSO : ScriptableObject
     [Tooltip("One entry per player unit slot. Index 0 = bottom lane, Index 7 = top lane.")]
     public List<ArmySlot> armySlots = new List<ArmySlot>(8);
 
+    [Header("Pawn Shop")]
+    [Tooltip("Kaç adet pawn satın alındı (1-8). Başlangıçta 1 pawn ücretsiz verilir.")]
+    [Range(1, 8)]
+    public int unlockedPawnCount = 1;
+
     // -------------------------------------------------------------------------
     // Runtime helpers
     // -------------------------------------------------------------------------

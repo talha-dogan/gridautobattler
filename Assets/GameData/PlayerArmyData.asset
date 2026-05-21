@@ -15,9 +15,15 @@ MonoBehaviour:
   armySlots:
   - baseUnitData: {fileID: 0}
     helmet: {fileID: 0}
-    vest: {fileID: 0}
+    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
     pants: {fileID: 0}
     weapon: {fileID: 0}
+    shield: {fileID: 0}
+  - baseUnitData: {fileID: 0}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 11400000, guid: 429c2069b2c485a4c90ed3d033d1a0bc, type: 2}
     shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
     helmet: {fileID: 0}
@@ -46,18 +52,13 @@ MonoBehaviour:
   - baseUnitData: {fileID: 0}
     helmet: {fileID: 0}
     vest: {fileID: 0}
-    pants: {fileID: 0}
+    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
     weapon: {fileID: 0}
-    shield: {fileID: 0}
+    shield: {fileID: 11400000, guid: 51f3933304cec364eaa9169ad20adcd6, type: 2}
   - baseUnitData: {fileID: 0}
     helmet: {fileID: 0}
     vest: {fileID: 0}
     pants: {fileID: 0}
     weapon: {fileID: 0}
     shield: {fileID: 0}
-  - baseUnitData: {fileID: 0}
-    helmet: {fileID: 0}
-    vest: {fileID: 0}
-    pants: {fileID: 0}
-    weapon: {fileID: 0}
-    shield: {fileID: 0}
+  unlockedPawnCount: 1

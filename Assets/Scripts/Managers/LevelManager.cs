@@ -22,6 +22,9 @@ public class LevelManager : MonoBehaviour
     public int currentGold = 0;
     public int goldPerUnusedUnit = 25;
 
+    // Defines the key used to save and load gold from PlayerPrefs
+    private const string GOLD_SAVE_KEY = "PlayerGold";
+
     // Flavour defeat messages referencing strategy tropes
     private string[] defeatJokes = new string[]
     {
@@ -50,7 +53,7 @@ public class LevelManager : MonoBehaviour
 
         // Listen for battle outcomes broadcast by BattleManager.
         // LevelManager no longer needs a direct reference to BattleManager for outcomes.
-        GameEvents.OnLevelWin  += HandleLevelWin;
+        GameEvents.OnLevelWin += HandleLevelWin;
         GameEvents.OnLevelLose += HandleLevelLose;
     }
 
@@ -58,12 +61,15 @@ public class LevelManager : MonoBehaviour
     {
         // Always unsubscribe to prevent stale references after scene unload.
         GameEvents.OnStatusTextChanged -= HandleStatusTextChanged;
-        GameEvents.OnLevelWin          -= HandleLevelWin;
-        GameEvents.OnLevelLose         -= HandleLevelLose;
+        GameEvents.OnLevelWin -= HandleLevelWin;
+        GameEvents.OnLevelLose -= HandleLevelLose;
     }
 
     private void Start()
     {
+        // Load the saved gold amount from device storage. Default is 0 if no save exists.
+        currentGold = PlayerPrefs.GetInt(GOLD_SAVE_KEY, 0);
+
         // Broadcast initial gold so the UI label is correct from frame one.
         GameEvents.SetGold(currentGold);
         LoadLevel(_currentLevelIndex);
@@ -73,32 +79,16 @@ public class LevelManager : MonoBehaviour
     // GameEvents handlers
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Receives status text updates from the event bus and forwards them to
-    /// GameUIManager via another event — LevelManager never touches UI directly.
-    /// </summary>
     private void HandleStatusTextChanged(string message)
     {
         // Re-broadcast so GameUIManager can update the TextMeshProUGUI component.
-        // This keeps LevelManager free of any UI component references.
-        // (GameUIManager subscribes to OnStatusTextChanged directly as well,
-        //  so this handler is intentionally left as a pass-through hook for
-        //  any future LevelManager-specific status logic.)
     }
 
-    /// <summary>
-    /// Handles the win signal broadcast by BattleManager via GameEvents.
-    /// The empty rewardMessage parameter is ignored here; the full reward
-    /// string is built locally where the economy data is available.
-    /// </summary>
     private void HandleLevelWin(string _)
     {
         OnLevelWin();
     }
 
-    /// <summary>
-    /// Handles the loss signal broadcast by BattleManager via GameEvents.
-    /// </summary>
     private void HandleLevelLose(string _)
     {
         OnLevelLose();
@@ -110,7 +100,7 @@ public class LevelManager : MonoBehaviour
 
     public void OnLevelWin()
     {
-        int baseReward   = levels[_currentLevelIndex].goldReward;
+        int baseReward = levels[_currentLevelIndex].goldReward;
 
         AddGold(baseReward);
 
@@ -166,18 +156,41 @@ public class LevelManager : MonoBehaviour
     public void AddGold(int amount)
     {
         currentGold += amount;
-        // Broadcast the new total — GameUIManager updates the gold label.
+
+        // Save the updated gold amount to device storage
+        PlayerPrefs.SetInt(GOLD_SAVE_KEY, currentGold);
+        PlayerPrefs.Save();
+
+        // Broadcast the new total — GameUIManager and PawnShopUI updates the gold label.
+        GameEvents.SetGold(currentGold);
+    }
+
+    /// <summary>
+    /// Call this method when spending gold (e.g., buying a pawn).
+    /// </summary>
+    public void SpendGold(int amount)
+    {
+        currentGold -= amount;
+
+        // Ensure it doesn't drop below zero
+        if (currentGold < 0) currentGold = 0;
+
+        // Save the updated gold amount to device storage
+        PlayerPrefs.SetInt(GOLD_SAVE_KEY, currentGold);
+        PlayerPrefs.Save();
+
+        // Broadcast the new total
         GameEvents.SetGold(currentGold);
     }
 
     // -------------------------------------------------------------------------
-    // Coroutine-based delayed transitions (replaces fragile Invoke calls)
+    // Coroutine-based delayed transitions
     // -------------------------------------------------------------------------
 
     private IEnumerator NextLevelRoutine()
     {
         yield return new WaitForSeconds(3f);
-        if (this == null) yield break; // Guard: object may have been destroyed
+        if (this == null) yield break;
         LoadLevel(_currentLevelIndex);
     }
 
@@ -194,9 +207,6 @@ public class LevelManager : MonoBehaviour
 
     private void ClearBoard()
     {
-        // FindObjectsInactive.Exclude ensures we only find units that are currently
-        // ACTIVE in the scene. Units already returned to the pool are inactive and
-        // must NOT be released again — doing so causes a double-release exception.
         BaseUnit[] remainingUnits = FindObjectsByType<BaseUnit>(FindObjectsInactive.Exclude);
         foreach (var unit in remainingUnits)
         {
@@ -206,10 +216,6 @@ public class LevelManager : MonoBehaviour
                 Destroy(unit.gameObject);
         }
 
-        // Reset the logical grid so no node carries stale occupancy data into
-        // the next level. This must run after units are released — not before —
-        // because ReleaseUnit() may itself clear individual nodes, and we want
-        // a guaranteed full wipe as a safety net regardless of unit cleanup order.
         if (GridManager.Instance != null)
             GridManager.Instance.ResetGrid();
     }

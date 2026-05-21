@@ -1,5 +1,6 @@
 using UnityEngine;
 using TDEV.Core;
+using System.Collections.Generic;
 
 /// <summary>
 /// Single Responsibility: UnitSpawner ONLY handles spawning mechanics.
@@ -41,6 +42,15 @@ public class UnitSpawner : MonoBehaviour
 
     [Header("Campaign Data")]
     public LevelDataSO currentLevelData;
+
+    [Header("Player Army Data (Upgrade Scene'den gelir)")]
+    [Tooltip("Upgrade Scene'de yapılan ekipman ve karakter seçimlerini taşıyan ScriptableObject. " +
+             "Her iki sahneye de aynı asset atanmalı.")]
+    [SerializeField] public PlayerArmyDataSO playerArmyData;
+
+    [Tooltip("Oyuncu birimlerinin spawn edileceği temel prefab. " +
+             "PlayerArmyDataSO'daki slot başına bir tane spawn edilir.")]
+    [SerializeField] public GameObject playerPawnPrefab;
 
     private void Awake()
     {
@@ -146,10 +156,20 @@ public class UnitSpawner : MonoBehaviour
     /// <summary>
     /// Called by the "WAR!" button in Campaign and Wave mode.
     /// Spawns player units onto the grid, then signals BattleManager to begin.
+    ///
+    /// Priority:
+    ///   1. If playerArmyData is assigned, spawn from the army roster (Upgrade Scene flow).
+    ///   2. Otherwise fall back to the legacy LevelDataSO melee/ranged limits.
     /// </summary>
     public void StartBattle()
     {
-        if (currentLevelData != null)
+        // ── Priority 1: Upgrade Scene army roster ─────────────────────────────
+        if (playerArmyData != null && playerPawnPrefab != null)
+        {
+            SpawnPlayerUnitsFromArmy();
+        }
+        // ── Priority 2: Legacy LevelDataSO fallback ───────────────────────────
+        else if (currentLevelData != null)
         {
             SpawnPlayerUnits(currentLevelData);
         }
@@ -160,7 +180,96 @@ public class UnitSpawner : MonoBehaviour
         }
     }
 
-    // ── Player grid spawning ──────────────────────────────────────────────────
+    // ── Player grid spawning — Army Roster (Upgrade Scene) ───────────────────
+
+    /// <summary>
+    /// Spawns player units from the PlayerArmyDataSO army roster.
+    ///
+    /// Rules:
+    ///   • Only slots within unlockedPawnCount are spawned.
+    ///   • Each spawned unit gets its equipment applied via UnitEquipmentManager.
+    ///   • Slots are filled from row 0 upward on Column X=0.
+    /// </summary>
+    private void SpawnPlayerUnitsFromArmy()
+    {
+        if (GridManager.Instance == null)
+        {
+            Debug.LogError("[UnitSpawner] GridManager.Instance is null — cannot spawn player units from army.");
+            return;
+        }
+
+        playerArmyData.EnsureCapacity();
+
+        int row = 0;
+        int unlockedCount = Mathf.Clamp(playerArmyData.unlockedPawnCount, 1, 8);
+
+        for (int slotIndex = 0; slotIndex < unlockedCount; slotIndex++)
+        {
+            if (row >= GridManager.Rows)
+            {
+                Debug.LogWarning("[UnitSpawner] Player column is full. Remaining army slots skipped.");
+                break;
+            }
+
+            PlayerArmyDataSO.ArmySlot armySlot = playerArmyData.GetSlot(slotIndex);
+            if (armySlot == null) { row++; continue; }
+
+            GridNode node = GridManager.Instance.GetNode(PlayerSpawnColumn, row);
+            if (node == null) { row++; continue; }
+            if (node.IsOccupied) { row++; continue; }
+
+            // Spawn the pawn prefab at the grid node's world position.
+            GameObject go = Instantiate(playerPawnPrefab, node.WorldPosition, Quaternion.identity);
+            go.name = $"Player_Pawn_{slotIndex}";
+
+            BaseUnit unit = go.GetComponent<BaseUnit>();
+            if (unit == null)
+            {
+                Debug.LogWarning($"[UnitSpawner] playerPawnPrefab '{playerPawnPrefab.name}' has no BaseUnit component. Slot {slotIndex} skipped.");
+                Destroy(go);
+                row++;
+                continue;
+            }
+
+            // Use the slot's baseUnitData if available; otherwise fall back to LevelDataSO.
+            BaseUnitDataSO dataToUse = armySlot.baseUnitData;
+            if (dataToUse == null && currentLevelData != null)
+                dataToUse = currentLevelData.meleeData;
+
+            if (dataToUse == null)
+            {
+                Debug.LogWarning($"[UnitSpawner] No BaseUnitDataSO for army slot {slotIndex} and no fallback in LevelDataSO. Slot skipped.");
+                Destroy(go);
+                row++;
+                continue;
+            }
+
+            // Initialise base stats.
+            unit.Initialize(dataToUse, Team.Player);
+
+            // Apply equipment bonuses + visuals from the army slot.
+            UnitEquipmentManager equipManager = go.GetComponent<UnitEquipmentManager>();
+            if (equipManager != null)
+            {
+                equipManager.ApplyEquipment(armySlot);
+            }
+            else
+            {
+                Debug.LogWarning($"[UnitSpawner] playerPawnPrefab '{playerPawnPrefab.name}' has no UnitEquipmentManager. Equipment skipped for slot {slotIndex}.");
+            }
+
+            // Register with BattleManager.
+            if (BattleManager.Instance != null)
+                BattleManager.Instance.RegisterUnit(unit);
+
+            node.IsOccupied = true;
+            row++;
+
+            Debug.Log($"[UnitSpawner] Army slot {slotIndex} spawned at row {row - 1} with data '{dataToUse.unitName}'.");
+        }
+    }
+
+    // ── Player grid spawning — Legacy LevelDataSO ─────────────────────────────
 
     /// <summary>
     /// Spawns all player units (melee first, then ranged) onto Column X=0 (far left),

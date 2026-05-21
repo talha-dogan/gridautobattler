@@ -127,6 +127,22 @@ public static class GameEvents
     }
 
     // -------------------------------------------------------------------------
+    // Pawn Shop Events
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Raised when the number of unlocked pawns changes.
+    /// Parameter: new unlocked pawn count (1-8).
+    /// </summary>
+    public static event Action<int> OnPawnCountChanged;
+
+    /// <summary>Broadcasts the updated unlocked pawn count.</summary>
+    public static void SetPawnCount(int newCount)
+    {
+        OnPawnCountChanged?.Invoke(newCount);
+    }
+
+    // -------------------------------------------------------------------------
     // Equipment Events
     // -------------------------------------------------------------------------
 
@@ -163,5 +179,6 @@ public static class GameEvents
         OnUnitSpawned       = null;
         OnUnitDied          = null;
         OnEquipmentChanged  = null;
+        OnPawnCountChanged  = null;
     }
 }

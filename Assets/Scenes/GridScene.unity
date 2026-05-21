@@ -1162,6 +1162,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSpawner
   currentLevelData: {fileID: 0}
+  playerArmyData: {fileID: 11400000, guid: df7493b00e2a1474a92f3a16dd5a9557, type: 2}
+  playerPawnPrefab: {fileID: 7983632528740636094, guid: 1b95784c3dbd73045a3727d5524645f1, type: 3}
 --- !u!1 &565262735
 GameObject:
   m_ObjectHideFlags: 0
