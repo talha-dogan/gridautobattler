@@ -1471,6 +1471,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca470a39b717b30469f3846330ca1091, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LootBoxManager
+  _boxImage: {fileID: 1706836877}
+  _closedSprite: {fileID: 21300000, guid: 6ed24c2f3fa4bc04f8c7dbcd8c9408b6, type: 3}
+  _openSprite: {fileID: 21300000, guid: 25db311c566656448ad01562f7a9a8ff, type: 3}
+  _openDuration: 2.5
   _lootPrefabs:
   - {fileID: 5646264348367117747, guid: aa11cf40783c0f048a16630238b0edc9, type: 3}
   - {fileID: 8730786497456198461, guid: 19c1751886ff0ee45b82b7e81cc643fe, type: 3}
@@ -2403,6 +2407,7 @@ RectTransform:
   m_Children:
   - {fileID: 413407741}
   - {fileID: 1706836875}
+  - {fileID: 1709736716}
   - {fileID: 1751885216}
   - {fileID: 32947130}
   - {fileID: 1280408542}
@@ -2603,7 +2608,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 400, y: -50}
+  m_AnchoredPosition: {x: 0, y: -300}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &643212009
@@ -2650,7 +2655,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 93368250
+  m_TextStyleHashCode: 2194
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -3994,13 +3999,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeManager
   _armyData: {fileID: 11400000, guid: df7493b00e2a1474a92f3a16dd5a9557, type: 2}
-  _inventoryContent: {fileID: 1055514320}
+  _inventoryContent: {fileID: 1709736716}
   _inventoryItemPrefab: {fileID: 7758972462958517064, guid: 646ffc792a28c7e458b633408609c303, type: 3}
   _rootCanvas: {fileID: 1366633615}
   _gridSceneName: GridScene
   _startingInventory:
-  - {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
   - {fileID: 11400000, guid: 429c2069b2c485a4c90ed3d033d1a0bc, type: 2}
+  - {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
+  - {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
+  - {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
+  - {fileID: 11400000, guid: 0c6f6737022d3f041a8ee8ac32c1b64e, type: 2}
+  - {fileID: 11400000, guid: 12811ad272efa6c4c8203e1029755bd6, type: 2}
 --- !u!114 &1092592840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4830,10 +4839,10 @@ RectTransform:
   m_Children:
   - {fileID: 2129650113}
   - {fileID: 568286646}
+  - {fileID: 560351781}
   - {fileID: 90386128}
   - {fileID: 2032432326}
   - {fileID: 643212008}
-  - {fileID: 560351781}
   m_Father: {fileID: 978317703}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6027,7 +6036,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -6102,6 +6111,66 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1706836874}
   m_CullTransparentMesh: 1
+--- !u!1 &1709736715
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1709736716}
+  - component: {fileID: 1709736717}
+  m_Layer: 5
+  m_Name: ItemHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1709736716
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709736715}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2, y: 1.6666664, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 560351781}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 8.699982, y: 45.833332}
+  m_SizeDelta: {x: 777.3, y: 501}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1709736717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709736715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
+  m_Padding:
+    m_Left: 10
+    m_Right: 10
+    m_Top: 10
+    m_Bottom: 10
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 240, y: 230}
+  m_Spacing: {x: 8, y: 8}
+  m_Constraint: 1
+  m_ConstraintCount: 3
 --- !u!1001 &1733889753
 PrefabInstance:
   m_ObjectHideFlags: 0

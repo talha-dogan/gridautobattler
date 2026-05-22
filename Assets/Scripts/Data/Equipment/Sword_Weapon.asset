@@ -19,7 +19,8 @@ MonoBehaviour:
   bonusAttackSpeed: 0.5
   spriteReference:
     m_AssetGUID: a59fff6cde49f6f4bb3150bfbf4eacff
-    m_SubObjectName: 
-    m_SubObjectType: 
+    m_SubObjectName: Sword
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
     m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1
