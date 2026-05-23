@@ -2,20 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 /// <summary>
 /// Central manager for the Upgrade Scene.
-/// Owns the player's equipment inventory (the pool of unequipped items),
-/// drives the inventory UI list, and handles the async transition to GridScene.
+/// Owns the player's equipment inventory (the pool of unequipped items)
+/// as a pure data list, and handles the async transition to GridScene.
 ///
 /// Responsibilities (SRP):
-///   1. Maintain the runtime inventory list (add / remove).
-///   2. Rebuild the inventory scroll list UI whenever the inventory changes.
-///   3. Load GridScene asynchronously when the READY button is pressed.
+///   1. Maintain the runtime inventory list (add / remove) — data only, no UI.
+///   2. Load GridScene asynchronously when the READY button is pressed.
 ///
-/// All other systems (drop zones, drag items) communicate with this class
-/// through its public API — no direct coupling to UI components outside this class.
+/// UI management is fully delegated to StashDropZoneUI and the drag-drop system.
 /// </summary>
 public class UpgradeManager : MonoBehaviour
 {
@@ -33,13 +30,6 @@ public class UpgradeManager : MonoBehaviour
     [Tooltip("Tüm 8 karakter slotunu içeren ordu veri varlığı.")]
     [SerializeField] private PlayerArmyDataSO _armyData;
 
-    [Header("Envanter UI")]
-    [Tooltip("Envanter eşyalarının spawn edileceği Content transform (ScrollRect içindeki).")]
-    [SerializeField] private Transform _inventoryContent;
-
-    [Tooltip("Envanter slotu prefab'ı — UpgradeDragItemUI bileşeni içermeli.")]
-    [SerializeField] private GameObject _inventoryItemPrefab;
-
     [Tooltip("Envanter listesinin üzerinde bulunduğu kök Canvas (sürükleme hayaleti için).")]
     [SerializeField] private Canvas _rootCanvas;
 
@@ -47,19 +37,12 @@ public class UpgradeManager : MonoBehaviour
     [Tooltip("READY butonuna basıldığında yüklenecek sahnenin adı.")]
     [SerializeField] private string _gridSceneName = "GridScene";
 
-    [Header("Başlangıç Envanteri (Test)")]
-    [Tooltip("Sahne açıldığında envantere eklenecek başlangıç eşyaları.")]
-    [SerializeField] private List<EquipmentDataSO> _startingInventory = new List<EquipmentDataSO>();
-
     // -------------------------------------------------------------------------
     // Runtime state
     // -------------------------------------------------------------------------
 
-    // The player's current unequipped item pool.
+    // The player's current unequipped item pool — data only.
     private readonly List<EquipmentDataSO> _inventory = new List<EquipmentDataSO>();
-
-    // Cached references to spawned inventory slot GameObjects for efficient rebuild.
-    private readonly List<GameObject> _spawnedSlots = new List<GameObject>();
 
     // -------------------------------------------------------------------------
     // Unity lifecycle
@@ -84,16 +67,6 @@ public class UpgradeManager : MonoBehaviour
 
     private void Start()
     {
-        // Populate the inventory with the starting items defined in the Inspector.
-        foreach (EquipmentDataSO item in _startingInventory)
-        {
-            if (item != null)
-                _inventory.Add(item);
-        }
-
-        // Build the initial inventory UI.
-        RebuildInventoryUI();
-
         // Refresh all drop zone visuals to reflect any pre-existing equipment in armyData.
         RefreshAllDropZones();
     }
@@ -111,22 +84,19 @@ public class UpgradeManager : MonoBehaviour
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Adds an item to the player's inventory and refreshes the UI list.
-    /// Called by UpgradeCharacterDropZoneUI when a swap displaces an existing item.
+    /// Adds an item to the player's inventory data list.
+    /// Called by StashDropZoneUI or UpgradeCharacterDropZoneUI when a swap displaces an existing item.
     /// </summary>
     public void AddToInventory(EquipmentDataSO item)
     {
         if (item == null) return;
 
         _inventory.Add(item);
-        RebuildInventoryUI();
-
         Debug.Log($"[UpgradeManager] Envantere eklendi: '{item.equipmentName}'");
     }
 
     /// <summary>
-    /// Removes the first occurrence of the item from the player's inventory
-    /// and refreshes the UI list.
+    /// Removes the first occurrence of the item from the player's inventory data list.
     /// Called by UpgradeCharacterDropZoneUI when an item is equipped.
     /// </summary>
     public void RemoveFromInventory(EquipmentDataSO item)
@@ -135,14 +105,9 @@ public class UpgradeManager : MonoBehaviour
 
         bool removed = _inventory.Remove(item);
         if (removed)
-        {
-            RebuildInventoryUI();
             Debug.Log($"[UpgradeManager] Envanterden çıkarıldı: '{item.equipmentName}'");
-        }
         else
-        {
             Debug.LogWarning($"[UpgradeManager] Envanterden çıkarılmak istenen eşya bulunamadı: '{item.equipmentName}'");
-        }
     }
 
     /// <summary>
@@ -170,55 +135,16 @@ public class UpgradeManager : MonoBehaviour
 
     /// <summary>
     /// Reacts to equipment changes broadcast by UpgradeCharacterDropZoneUI.
-    /// Currently used as a hook for future systems (e.g. stat preview panels).
+    /// Hook for future systems (e.g. stat preview panels).
     /// </summary>
     private void HandleEquipmentChanged(int slotIndex, EquipmentDataSO equipment)
     {
         // Hook for future stat preview or validation logic.
-        // The inventory UI is already updated by AddToInventory / RemoveFromInventory.
     }
 
     // -------------------------------------------------------------------------
-    // Private helpers — UI
+    // Private helpers
     // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Destroys all existing inventory slot GameObjects and re-spawns them
-    /// from the current _inventory list. Called whenever the inventory changes.
-    /// </summary>
-    private void RebuildInventoryUI()
-    {
-        if (_inventoryContent == null || _inventoryItemPrefab == null)
-        {
-            Debug.LogWarning("[UpgradeManager] Envanter UI için Content veya Prefab atanmamış.");
-            return;
-        }
-
-        // Destroy all previously spawned slots.
-        foreach (GameObject slot in _spawnedSlots)
-        {
-            if (slot != null) Destroy(slot);
-        }
-        _spawnedSlots.Clear();
-
-        // Spawn one slot per inventory item.
-        foreach (EquipmentDataSO item in _inventory)
-        {
-            GameObject slotGO = Instantiate(_inventoryItemPrefab, _inventoryContent);
-            _spawnedSlots.Add(slotGO);
-
-            // Initialise the drag component with the item data and root canvas.
-            UpgradeDragItemUI dragItem = slotGO.GetComponent<UpgradeDragItemUI>();
-            if (dragItem != null)
-            {
-                dragItem.Initialize(item, _rootCanvas);
-            }
-            else
-            {
-                Debug.LogWarning($"[UpgradeManager] Envanter prefab'ında UpgradeDragItemUI bileşeni bulunamadı: '{_inventoryItemPrefab.name}'");
-            }
-        }
-    }
 
     /// <summary>
     /// Finds all UpgradeCharacterDropZoneUI components in the scene and tells
@@ -233,10 +159,6 @@ public class UpgradeManager : MonoBehaviour
             zone.RefreshAllVisuals();
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Private helpers — Scene transition
-    // -------------------------------------------------------------------------
 
     /// <summary>
     /// Loads the GridScene asynchronously.
