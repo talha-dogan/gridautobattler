@@ -458,7 +458,16 @@ Flow:
 
 `GameEvents` is a **static C# event bus** — no `MonoBehaviour`, no scene 
 
-...no MonoBehaviour, no scene references. It enables loose coupling by allowing different systems to communicate without direct references to each other.C#public static class GameEvents
+# AutoBattler — Technical Architecture Documentation
+
+---
+
+## Event System (Static Action Bus)
+
+No `MonoBehaviour`, no scene references. Loose coupling is achieved by allowing different systems to communicate without direct references to each other.
+
+```csharp
+public static class GameEvents
 {
     // Fired when a unit dies.
     public static Action<BaseUnit> OnUnitDied;
@@ -469,7 +478,22 @@ Flow:
     // Fired when the player wins the level.
     public static Action<int> OnLevelWin; // int: goldReward
 }
-MVP Pattern (Presenter Layer)The user interface (UI) and game logic are strictly separated using the MVP (Model-View-Presenter) pattern. This ensures that UI modifications never break the core game logic.Model: Systems like BattleManager, LevelManager, and SaveManager that process data and enforce game rules.View: GameUIManager, which implements the IGameView interface. It only updates visual components on the screen (buttons, texts, health bars) and makes zero logical decisions.Presenter: GamePresenter. It listens to game events (GameEvents) and calls IGameView methods to update the screen based on the data it receives.C#public class GamePresenter : MonoBehaviour
+```
+
+---
+
+## MVP Pattern (Presenter Layer)
+
+UI and game logic are strictly separated using the **MVP (Model-View-Presenter)** pattern. This ensures that UI modifications never break the core game logic.
+
+| Layer | Component | Responsibility |
+|---|---|---|
+| **Model** | `BattleManager`, `LevelManager`, `SaveManager` | Processes data and enforces game rules |
+| **View** | `GameUIManager` (implements `IGameView`) | Updates visual components only — makes zero logical decisions |
+| **Presenter** | `GamePresenter` | Listens to `GameEvents`, calls `IGameView` methods to update the screen |
+
+```csharp
+public class GamePresenter : MonoBehaviour
 {
     private IGameView _view;
 
@@ -491,7 +515,55 @@ MVP Pattern (Presenter Layer)The user interface (UI) and game logic are strictly
         _view.ShowVictoryScreen(reward);
     }
 }
-Save System (Binary + AES)Player progression (gold, inventory, army composition, active level) is securely saved to the local device via the SaveManager.Binary Serialization: Data is written in a binary format instead of standard JSON for reduced file size and faster read/write speeds.AES-256 Encryption: Save files are heavily encrypted to prevent external tampering or cheating.SHA-256 Checksum: An added verification layer to check if the save file has been corrupted.Versioning & Migration: The system currently uses CurrentSaveVersion = 2. If an older save is detected, the SaveMigrationService automatically upgrades the data step-by-step to the latest version.Localization SystemAll in-game text (currently EN/TR) is managed through JSON-based files via the LocalizationManager."Magic strings" are strictly prohibited in the codebase.Text calls are made using type-safe constants from LocalizationKeys.cs.On startup, the system automatically assigns the language based on the device's OS. If unsupported, it falls back to English.Easing LibraryInstead of relying on Unity's AnimationCurve for UI animations and floating effects, a custom mathematical EasingLibrary is used. It contains 22 different easing functions (Quad, Cubic, Bounce, Elastic, etc.). This approach reduces memory allocation and ensures highly performant tweening operations.Addressables & Async LoadingTo keep RAM usage low, heavy assets—especially equipment sprites—are managed using the Unity Addressables system.Async Loading: When a sword appears in the inventory, its sprite is loaded into memory on-the-fly asynchronously.Memory Cleanup: When equipment is deleted or sold, Addressables.Release() is called to immediately free up memory.All scenes (StartScene, UpgradeScene, GridScene) are loaded using LoadSceneAsync to prevent the main thread from freezing during transitions.📁 7. Project StructureThe project's codebase and assets are organized to maximize modularity:PlaintextAssets/
+```
+
+---
+
+## Save System (Binary + AES)
+
+Player progression (gold, inventory, army composition, active level) is securely saved to the local device via `SaveManager`.
+
+- **Binary Serialization** — Data is written in binary format instead of JSON for reduced file size and faster read/write speeds.
+- **AES-256 Encryption** — Save files are heavily encrypted to prevent external tampering or cheating.
+- **SHA-256 Checksum** — An added verification layer to detect save file corruption.
+- **Versioning & Migration** — The system uses `CurrentSaveVersion = 2`. If an older save is detected, `SaveMigrationService` automatically upgrades the data step-by-step to the latest version.
+
+---
+
+## Localization System
+
+All in-game text (currently **EN / TR**) is managed through JSON-based files via `LocalizationManager`.
+
+- "Magic strings" are strictly prohibited in the codebase.
+- Text calls are made using type-safe constants from `LocalizationKeys.cs`.
+- On startup, the system automatically assigns the language based on the device OS. Falls back to **English** if unsupported.
+
+---
+
+## Easing Library
+
+Instead of relying on Unity's `AnimationCurve` for UI animations and floating effects, a custom mathematical `EasingLibrary` is used.
+
+- Contains **22 different easing functions** (Quad, Cubic, Bounce, Elastic, etc.)
+- Reduces memory allocation.
+- Ensures highly performant tweening operations.
+
+---
+
+## Addressables & Async Loading
+
+To keep RAM usage low, heavy assets — especially equipment sprites — are managed using the **Unity Addressables** system.
+
+- **Async Loading** — When a sword appears in the inventory, its sprite is loaded into memory on-the-fly asynchronously.
+- **Memory Cleanup** — When equipment is deleted or sold, `Addressables.Release()` is called to immediately free up memory.
+- All scenes (`StartScene`, `UpgradeScene`, `GridScene`) are loaded using `LoadSceneAsync` to prevent main-thread freezing during transitions.
+
+---
+
+## Project Structure
+
+```
+Assets/
 ├── Scripts/
 │   ├── Core/          // Managers, Bootstrap, Singletons
 │   ├── Units/         // BaseUnit, MeleeUnit, RangedUnit, AI Logic
@@ -505,4 +577,78 @@ Save System (Binary + AES)Player progression (gold, inventory, army composition,
 │   └── VFX/           // Particle systems
 ├── ScriptableObjects/ // Created instances of data (Levels, Equipments)
 └── AddressableAssets/ // Sprites, audio clips, localized JSONs
-🔗 8. System Dependency MapSystems are designed with strictly unidirectional dependencies:UnitSpawner ➔ GridManager, UnitFactory, LevelManagerBattleManager ➔ GridManager, GameEventsGamePresenter ➔ GameEvents, IGameViewRangedUnit ➔ ProjectileFactoryGameUIManager ➔ Knows only Unity UI components. Contains zero game logic.🔑 9. Key Constants ReferenceCore parameters that should not be hard-modified in code during balancing:ConstantDescriptionGridXSize = 8Number of vertical columns on the battlefield.GridYSize = 8Number of horizontal rows (lanes) on the battlefield.PlayerSpawnColumn = 0The far-left column where player units are spawned.EnemyPrimaryColumn = 7The far-right column where enemy units are spawned.EnemyOverflowColumn = 6The secondary column used if enemy count exceeds 8.MaxArmySize = 8Maximum number of units a single side can have on the board at once.HysteresisFactor = 0.5625fTolerance for AI target switching (square of 0.75 units distance).🛠️ 10. Designer GuidesStep-by-step instructions for adding content without touching the code:Adding a New Unit TypeIn the Project window, right-click inside ScriptableObjects/Units/.Select Create > AutoBattler > Units > Melee Unit Data (or Ranged).Name the SO and input base stats (Health, Damage, Speed) via the Inspector.Drag and drop the visual unit prefab (from Prefabs/Units) into the unitPrefab field.Adding a New LevelCreate a new LevelDataSO via Create > AutoBattler > Levels > Level Data.Create a new EnemyFormationSO to dictate the enemy layout for this stage, and assign it to the Level Data.Set the goldReward amount given upon level completion.Add the newly created Level Data to the end of the Level List inside the LevelManager prefab.Adding a New Equipment ItemCreate the item via Create > AutoBattler > Equipment > Equipment Data.Select the item type from the EquipmentSlot enum (Helmet, Vest, Weapon, etc.).Input the stat bonuses the item will provide.Add the item's Sprite to the "Items" group in the Addressables window, then link it to the spriteReference field in the SO.🖼️ 11. Screenshots(In-development in-game screenshots, inventory UI, and battlefield visuals will be added here.)🚀 12. Planned Features & RoadmapUpcoming features and architectural expansions:Boss Fights: Large-scale units with custom multi-phase animations, AoE (Area of Effect) abilities, and unique AI behaviors.Set Bonuses: Synergy system that grants extra passive stats when equipping multiple items from the same set (e.g., Knight Set).Online Leaderboard: Server integration allowing players to compare their highest cleared stage against the global player base.Advanced Formation System: Unlocking the ability for the player to place their units freely across the first 3 columns, rather than being restricted to Column 0.
+```
+
+---
+
+## System Dependency Map
+
+Systems are designed with **strictly unidirectional** dependencies:
+
+```
+UnitSpawner     ──►  GridManager, UnitFactory, LevelManager
+BattleManager   ──►  GridManager, GameEvents
+GamePresenter   ──►  GameEvents, IGameView
+RangedUnit      ──►  ProjectileFactory
+GameUIManager   ──►  Unity UI components only (zero game logic)
+```
+
+---
+
+## Key Constants Reference
+
+Core parameters that should **not** be hard-modified in code during balancing:
+
+| Constant | Value | Description |
+|---|---|---|
+| `GridXSize` | `8` | Number of vertical columns on the battlefield |
+| `GridYSize` | `8` | Number of horizontal rows (lanes) on the battlefield |
+| `PlayerSpawnColumn` | `0` | Far-left column where player units are spawned |
+| `EnemyPrimaryColumn` | `7` | Far-right column where enemy units are spawned |
+| `EnemyOverflowColumn` | `6` | Secondary column used if enemy count exceeds 8 |
+| `MaxArmySize` | `8` | Maximum number of units a single side can have on the board |
+| `HysteresisFactor` | `0.5625f` | Tolerance for AI target switching (square of 0.75 units distance) |
+
+---
+
+## Designer Guides
+
+Step-by-step instructions for adding content **without touching the code**:
+
+### Adding a New Unit Type
+
+1. In the Project window, right-click inside `ScriptableObjects/Units/`.
+2. Select **Create > AutoBattler > Units > Melee Unit Data** (or Ranged).
+3. Name the SO and input base stats (Health, Damage, Speed) via the Inspector.
+4. Drag and drop the visual unit prefab (from `Prefabs/Units`) into the `unitPrefab` field.
+
+### Adding a New Level
+
+1. Create a new `LevelDataSO` via **Create > AutoBattler > Levels > Level Data**.
+2. Create a new `EnemyFormationSO` to dictate the enemy layout, and assign it to the Level Data.
+3. Set the `goldReward` amount given upon level completion.
+4. Add the newly created Level Data to the end of the Level List inside the `LevelManager` prefab.
+
+### Adding a New Equipment Item
+
+1. Create the item via **Create > AutoBattler > Equipment > Equipment Data**.
+2. Select the item type from the `EquipmentSlot` enum (Helmet, Vest, Weapon, etc.).
+3. Input the stat bonuses the item will provide.
+4. Add the item's sprite to the **"Items"** group in the Addressables window, then link it to the `spriteReference` field in the SO.
+
+---
+
+## Screenshots
+
+> In-development in-game screenshots, inventory UI, and battlefield visuals will be added here.
+
+---
+
+## Planned Features & Roadmap
+
+| Feature | Description |
+|---|---|
+| **Boss Fights** | Large-scale units with custom multi-phase animations, AoE abilities, and unique AI behaviors |
+| **Set Bonuses** | Synergy system granting extra passive stats when equipping multiple items from the same set (e.g., Knight Set) |
+| **Online Leaderboard** | Server integration for comparing highest cleared stages against the global player base |
+| **Advanced Formation System** | Allows players to place units freely across the first 3 columns instead of being restricted to Column 0 |
