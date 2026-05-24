@@ -5,17 +5,10 @@ using UnityEngine;
 /// Manages Pawn purchasing business logic.
 ///
 /// SRP: Only answers the question "can a pawn be bought?" and executes the purchase.
-/// UI updates belong to PawnShopUI, coin tracking to LevelManager/PlayerPrefs, 
+/// UI updates belong to PawnShopUI, coin tracking to LevelManager/GameSaveService,
 /// and pawn count to PlayerArmyDataSO.
 ///
-/// Both the ShowcasePawn (world-space) and ShowCasePawnHolderSlot (canvas UI) 
-/// for each index are toggled together — they are always synchronized.
-///
-/// Dependencies (DIP — Injected via Inspector):
-///   • PlayerArmyDataSO      — reads/writes unlockedPawnCount
-///   • LevelManager          — reads/writes currentGold (active economy system when present)
-///   • _showcasePawns        — world-space pawn root objects (ordered 0-7)
-///   • _holderSlots          — canvas UI slot objects (ordered 0-7, matches pawns)
+/// Save/Load: PlayerPrefs yerine GameSaveService kullanır.
 /// </summary>
 public class PawnShopManager : MonoBehaviour
 {
@@ -26,9 +19,6 @@ public class PawnShopManager : MonoBehaviour
     public const int PawnCost = 300;
     public const int MaxPawns = 8;
 
-    // Defines the key used to load and save gold from PlayerPrefs as a fallback
-    private const string GOLD_SAVE_KEY = "PlayerGold";
-
     // -------------------------------------------------------------------------
     // Inspector
     // -------------------------------------------------------------------------
@@ -38,11 +28,9 @@ public class PawnShopManager : MonoBehaviour
     [SerializeField] private PlayerArmyDataSO _armyData;
 
     [Header("Showcase Pawns (Ordered 0-7) — World Space")]
-    [Tooltip("Drag the 8 ShowcasePawn root objects in the scene here in order.")]
     [SerializeField] private List<GameObject> _showcasePawns = new List<GameObject>();
 
     [Header("Holder Slots (Ordered 0-7) — Canvas UI")]
-    [Tooltip("Drag the 8 ShowCasePawnHolderSlot objects in the canvas here in order. Index must match _showcasePawns.")]
     [SerializeField] private List<GameObject> _holderSlots = new List<GameObject>();
 
     // -------------------------------------------------------------------------
@@ -51,10 +39,14 @@ public class PawnShopManager : MonoBehaviour
 
     private void Start()
     {
-        // Adjust pawn + slot visibilities based on saved unlockedPawnCount.
-        ApplyVisibility();
+        // GameSaveService'ten pawn sayısını yükle
+        if (_armyData != null && GameSaveService.Instance != null)
+        {
+            int saved = GameSaveService.Instance.GetUnlockedPawnCount();
+            _armyData.unlockedPawnCount = Mathf.Clamp(saved, 1, MaxPawns);
+        }
 
-        // Broadcast current pawn count to the UI.
+        ApplyVisibility();
         GameEvents.SetPawnCount(_armyData != null ? _armyData.unlockedPawnCount : 1);
     }
 
@@ -62,10 +54,6 @@ public class PawnShopManager : MonoBehaviour
     // Public API
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Called by BuyPawnButton.OnClick().
-    /// Unlocks a new pawn + slot if coins are sufficient and max hasn't been reached.
-    /// </summary>
     public void TryBuyPawn()
     {
         if (_armyData == null)
@@ -80,9 +68,11 @@ public class PawnShopManager : MonoBehaviour
             return;
         }
 
-        // Check LevelManager first, fallback to PlayerPrefs if it's null (e.g., in UpgradeScene)
+        // Altın kontrolü: önce LevelManager, yoksa GameSaveService
         LevelManager levelManager = LevelManager.Instance;
-        int currentGold = levelManager != null ? levelManager.currentGold : PlayerPrefs.GetInt(GOLD_SAVE_KEY, 0);
+        int currentGold = levelManager != null
+            ? levelManager.currentGold
+            : (GameSaveService.Instance != null ? GameSaveService.Instance.GetGold() : 0);
 
         if (currentGold < PawnCost)
         {
@@ -90,43 +80,32 @@ public class PawnShopManager : MonoBehaviour
             return;
         }
 
-        // Deduct gold and update storage/events safely
+        // Altın harca
         if (levelManager != null)
         {
-            // If LevelManager exists, let it handle the spending and internal storage saving
             levelManager.SpendGold(PawnCost);
         }
-        else
+        else if (GameSaveService.Instance != null)
         {
-            // If LevelManager does not exist, update PlayerPrefs directly and broadcast the change
-            currentGold -= PawnCost;
-            PlayerPrefs.SetInt(GOLD_SAVE_KEY, currentGold);
-            PlayerPrefs.Save();
-
-            // Notify UI components (like PawnShopUI) to refresh the coin text
-            GameEvents.SetGold(currentGold);
+            int newGold = currentGold - PawnCost;
+            GameSaveService.Instance.SetGold(newGold);
+            GameEvents.SetGold(newGold);
         }
 
-        // Unlock the new pawn + slot.
+        // Pawn kilidi aç
         _armyData.unlockedPawnCount++;
-        ApplyVisibility();
+        GameSaveService.Instance?.SetUnlockedPawnCount(_armyData.unlockedPawnCount);
 
-        // Broadcast the updated pawn count (PawnShopUI listens to this).
+        ApplyVisibility();
         GameEvents.SetPawnCount(_armyData.unlockedPawnCount);
 
-        Debug.Log($"[PawnShopManager] Pawn purchased! " +
-                  $"New count: {_armyData.unlockedPawnCount}/{MaxPawns}, " +
-                  $"Remaining coins: {(levelManager != null ? levelManager.currentGold : currentGold)}");
+        Debug.Log($"[PawnShopManager] Pawn purchased! New count: {_armyData.unlockedPawnCount}/{MaxPawns}");
     }
 
     // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Toggles both world-space pawns and canvas holder slots based on unlockedPawnCount.
-    /// Index 0 .. (unlockedPawnCount - 1) will be active, others inactive.
-    /// </summary>
     private void ApplyVisibility()
     {
         if (_armyData == null) return;
@@ -137,11 +116,9 @@ public class PawnShopManager : MonoBehaviour
         {
             bool active = i < unlocked;
 
-            // World-space pawn
             if (i < _showcasePawns.Count && _showcasePawns[i] != null)
                 _showcasePawns[i].SetActive(active);
 
-            // Canvas UI holder slot
             if (i < _holderSlots.Count && _holderSlots[i] != null)
                 _holderSlots[i].SetActive(active);
         }

@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 /// Responsibilities (SRP):
 ///   1. Maintain the runtime inventory list (add / remove) — data only, no UI.
 ///   2. Load GridScene asynchronously when the READY button is pressed.
+///   3. Persist inventory to GameSaveService on every change.
 ///
 /// UI management is fully delegated to StashDropZoneUI and the drag-drop system.
 /// </summary>
@@ -41,7 +42,6 @@ public class UpgradeManager : MonoBehaviour
     // Runtime state
     // -------------------------------------------------------------------------
 
-    // The player's current unequipped item pool — data only.
     private readonly List<EquipmentDataSO> _inventory = new List<EquipmentDataSO>();
 
     // -------------------------------------------------------------------------
@@ -50,32 +50,25 @@ public class UpgradeManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton setup — only one UpgradeManager should exist per scene.
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
         {
             Destroy(gameObject);
             return;
         }
 
-        // Subscribe to equipment change events so the UI stays in sync.
         GameEvents.OnEquipmentChanged += HandleEquipmentChanged;
     }
 
     private void Start()
     {
-        // Refresh all drop zone visuals to reflect any pre-existing equipment in armyData.
         RefreshAllDropZones();
     }
 
     private void OnDestroy()
     {
-        if (Instance == this)
-            Instance = null;
-
+        if (Instance == this) Instance = null;
         GameEvents.OnEquipmentChanged -= HandleEquipmentChanged;
     }
 
@@ -83,49 +76,74 @@ public class UpgradeManager : MonoBehaviour
     // Public API — Inventory management
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Adds an item to the player's inventory data list.
-    /// Called by StashDropZoneUI or UpgradeCharacterDropZoneUI when a swap displaces an existing item.
-    /// </summary>
     public void AddToInventory(EquipmentDataSO item)
     {
         if (item == null) return;
-
         _inventory.Add(item);
+        PersistInventory();
         Debug.Log($"[UpgradeManager] Envantere eklendi: '{item.equipmentName}'");
     }
 
-    /// <summary>
-    /// Removes the first occurrence of the item from the player's inventory data list.
-    /// Called by UpgradeCharacterDropZoneUI when an item is equipped.
-    /// </summary>
     public void RemoveFromInventory(EquipmentDataSO item)
     {
         if (item == null) return;
-
         bool removed = _inventory.Remove(item);
         if (removed)
+        {
+            PersistInventory();
             Debug.Log($"[UpgradeManager] Envanterden çıkarıldı: '{item.equipmentName}'");
+        }
         else
+        {
             Debug.LogWarning($"[UpgradeManager] Envanterden çıkarılmak istenen eşya bulunamadı: '{item.equipmentName}'");
+        }
     }
 
-    /// <summary>
-    /// Returns a read-only view of the current inventory.
-    /// Use this for UI display or save-game serialisation.
-    /// </summary>
     public IReadOnlyList<EquipmentDataSO> GetInventory() => _inventory.AsReadOnly();
+
+    // -------------------------------------------------------------------------
+    // Public API — Army slot persistence
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Tüm army slotlarını GameSaveService'e yazar.
+    /// UpgradeCharacterDropZoneUI ekipman değişikliğinde çağırır.
+    /// </summary>
+    public void PersistArmySlots()
+    {
+        if (_armyData == null || GameSaveService.Instance == null) return;
+
+        var slotDataList = new List<ArmySlotSaveData>();
+
+        for (int i = 0; i < _armyData.armySlots.Count; i++)
+        {
+            var slot = _armyData.armySlots[i];
+            if (slot == null) continue;
+
+            slotDataList.Add(new ArmySlotSaveData
+            {
+                slotIndex      = i,
+                baseUnitDataName = slot.baseUnitData != null ? slot.baseUnitData.name : string.Empty,
+                weaponAssetName  = slot.weapon  != null ? slot.weapon.name  : string.Empty,
+                helmetAssetName  = slot.helmet  != null ? slot.helmet.name  : string.Empty,
+                vestAssetName    = slot.vest    != null ? slot.vest.name    : string.Empty,
+                pantsAssetName   = slot.pants   != null ? slot.pants.name   : string.Empty,
+                shieldAssetName  = slot.shield  != null ? slot.shield.name  : string.Empty,
+            });
+        }
+
+        GameSaveService.Instance.SetArmySlots(slotDataList);
+    }
 
     // -------------------------------------------------------------------------
     // Public API — Scene transition
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Assign this method to the READY button's OnClick event.
-    /// Starts an asynchronous load of the GridScene.
-    /// </summary>
     public void OnReadyButtonPressed()
     {
+        // Sahne geçişinden önce son kaydı yap
+        PersistArmySlots();
+        PersistInventory();
         StartCoroutine(LoadGridSceneAsync());
     }
 
@@ -133,56 +151,46 @@ public class UpgradeManager : MonoBehaviour
     // GameEvents handlers
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Reacts to equipment changes broadcast by UpgradeCharacterDropZoneUI.
-    /// Hook for future systems (e.g. stat preview panels).
-    /// </summary>
     private void HandleEquipmentChanged(int slotIndex, EquipmentDataSO equipment)
     {
-        // Hook for future stat preview or validation logic.
+        PersistArmySlots();
     }
 
     // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Finds all UpgradeCharacterDropZoneUI components in the scene and tells
-    /// each one to refresh its visuals from the current ArmyData.
-    /// Called once on Start to sync the UI with any pre-existing equipment.
-    /// </summary>
     private void RefreshAllDropZones()
     {
         UpgradeCharacterDropZoneUI[] dropZones = FindObjectsByType<UpgradeCharacterDropZoneUI>(FindObjectsInactive.Include);
         foreach (UpgradeCharacterDropZoneUI zone in dropZones)
-        {
             zone.RefreshAllVisuals();
-        }
     }
 
-    /// <summary>
-    /// Loads the GridScene asynchronously.
-    /// Clears the GameEvents bus before the scene unloads to prevent stale subscribers.
-    /// </summary>
+    private void PersistInventory()
+    {
+        if (GameSaveService.Instance == null) return;
+
+        var names = new List<string>();
+        foreach (var item in _inventory)
+        {
+            if (item != null) names.Add(item.name);
+        }
+        GameSaveService.Instance.SetInventory(names);
+    }
+
     private IEnumerator LoadGridSceneAsync()
     {
         Debug.Log($"[UpgradeManager] GridScene yükleniyor: '{_gridSceneName}'...");
 
-        // Clear stale event subscribers from the current scene before unloading.
         GameEvents.ClearAllEvents();
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_gridSceneName);
-
-        // Prevent the scene from activating until it is fully loaded.
         asyncLoad.allowSceneActivation = false;
 
-        // Wait until the scene is 90% loaded (Unity's threshold before activation).
         while (asyncLoad.progress < 0.9f)
-        {
             yield return null;
-        }
 
-        // Activate the scene.
         asyncLoad.allowSceneActivation = true;
     }
 }

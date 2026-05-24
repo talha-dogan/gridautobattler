@@ -542,6 +542,10 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
         if (SoundManager.Instance != null)
             SoundManager.Instance.PlaySoundAtPosition(SoundType.HitFlesh, transform.position);
 
+        // Hit VFX
+        if (VFXManager.Instance != null)
+            VFXManager.Instance.PlayVFX(VFXType.HitFlesh, transform.position);
+
         if (currentHealth <= 0 && currentState != UnitState.Dead) Die();
     }
 
@@ -549,6 +553,10 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
     {
         ChangeState(UnitState.Dead);
         _pendingMove = Vector2.zero;
+
+        // Death VFX
+        if (VFXManager.Instance != null)
+            VFXManager.Instance.PlayVFX(VFXType.UnitDeath, transform.position);
 
         OnDeath?.Invoke(this);
 

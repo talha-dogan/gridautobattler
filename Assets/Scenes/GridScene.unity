@@ -692,6 +692,7 @@ Transform:
   - {fileID: 1251512803}
   - {fileID: 1701195044}
   - {fileID: 1253711918}
+  - {fileID: 773334402}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!213 &162030551
@@ -1777,6 +1778,51 @@ Transform:
   - {fileID: 535915208}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &685475133
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 685475134}
+  - component: {fileID: 685475135}
+  m_Layer: 0
+  m_Name: GameBootstrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &685475134
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685475133}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1734841120}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &685475135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685475133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7376b008c577b409e1a5fe3f020b18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameBootstrap
+  gameSaveServicePrefab: {fileID: 0}
 --- !u!114 &726700008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1846,6 +1892,75 @@ Transform:
   - {fileID: 216541206}
   m_Father: {fileID: 1063562436}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &773334401
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 773334402}
+  - component: {fileID: 773334403}
+  m_Layer: 0
+  m_Name: VFX-Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &773334402
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773334401}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 139280409}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &773334403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773334401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 194e6d8cd0739cf499b05ea804b71c42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VFXManager
+  vfxLibrary:
+  - vfxType: 0
+    prefab: {fileID: 6729948598702482667, guid: 7093a571714081b4c966eba7f3bc80d5, type: 3}
+    initialPoolSize: 5
+    maxPoolSize: 10
+  - vfxType: 0
+    prefab: {fileID: 8658603761447935923, guid: 7ca6d9121bfbc6c4f8ed01385bdbb1e9, type: 3}
+    initialPoolSize: 5
+    maxPoolSize: 10
+  - vfxType: 2
+    prefab: {fileID: 8725400778445927308, guid: 7d0e400626a20df409475076aa7ce58a, type: 3}
+    initialPoolSize: 5
+    maxPoolSize: 10
+  - vfxType: 3
+    prefab: {fileID: 6843525273755568831, guid: 0705aa2a9d9fd7d459ba18c6db96b4bc, type: 3}
+    initialPoolSize: 5
+    maxPoolSize: 10
+  - vfxType: 4
+    prefab: {fileID: 3286184312766171270, guid: fa2ec9e904b0a704a9803dea20bf37cd, type: 3}
+    initialPoolSize: 5
+    maxPoolSize: 10
+  - vfxType: 5
+    prefab: {fileID: 4206873631345827973, guid: ef3828f65a360834b8cfadc1619cbc20, type: 3}
+    initialPoolSize: 5
+    maxPoolSize: 10
 --- !u!1 &827552280
 GameObject:
   m_ObjectHideFlags: 0
@@ -4539,7 +4654,7 @@ RectTransform:
   - {fileID: 230137514}
   - {fileID: 201897179}
   - {fileID: 992033206}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1816988153}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4621,6 +4736,7 @@ Transform:
   m_Children:
   - {fileID: 519420032}
   - {fileID: 619394802}
+  - {fileID: 685475134}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1791113248
@@ -4790,7 +4906,8 @@ Transform:
   m_LocalPosition: {x: 1920, y: 1080, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1657744057}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1907371178
@@ -5043,7 +5160,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1734841120}
   - {fileID: 1063562436}
-  - {fileID: 1657744057}
   - {fileID: 676736844}
   - {fileID: 139280409}
   - {fileID: 1220786410}

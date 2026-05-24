@@ -3,16 +3,18 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 /// <summary>
-/// Central UI manager that owns all TextMeshProUGUI references and listens to
-/// GameEvents to update them. No gameplay system (BattleManager, LevelManager, etc.)
-/// should hold a direct reference to any UI component — all UI updates flow through
-/// this class via the event bus.
+/// MVP pattern — View katmanı.
 ///
-/// Removed in cleanup:
-///   • meleeButtonText / rangedButtonText SerializedFields (drawing system is dead)
-///   • HandleDrawLimitsChanged event handler
+/// Bu sınıf yalnızca UI bileşenlerini yönetir; iş mantığı GamePresenter'da.
+/// GamePresenter, IGameView arayüzü üzerinden bu sınıfa erişir.
+///
+/// Sorumluluklar:
+///   • TextMeshProUGUI referanslarını tutar.
+///   • IGameView metodlarını implement eder (Show* metodları).
+///   • GamePresenter'ı oluşturur ve yaşam döngüsünü yönetir.
+///   • Hiçbir gameplay sistemi bu sınıfa doğrudan referans tutmaz.
 /// </summary>
-public class GameUIManager : MonoBehaviour
+public class GameUIManager : MonoBehaviour, IGameView
 {
     // -------------------------------------------------------------------------
     // Inspector-assigned UI references
@@ -33,51 +35,52 @@ public class GameUIManager : MonoBehaviour
     public string menuSceneName = "StartScene";
 
     // -------------------------------------------------------------------------
+    // MVP — Presenter
+    // -------------------------------------------------------------------------
+
+    private GamePresenter _presenter;
+
+    // -------------------------------------------------------------------------
     // Unity lifecycle
     // -------------------------------------------------------------------------
 
     private void Awake()
     {
-        // Subscribe to all UI-relevant events on the bus.
-        GameEvents.OnStatusTextChanged += HandleStatusTextChanged;
-        GameEvents.OnLevelIndexChanged += HandleLevelIndexChanged;
-        GameEvents.OnGoldChanged       += HandleGoldChanged;
+        // Presenter'ı oluştur; bu sınıfı IGameView olarak geçir.
+        // Presenter, GameEvents'e abone olur ve tüm UI güncellemelerini
+        // IGameView metodları üzerinden bu sınıfa iletir.
+        _presenter = new GamePresenter(this);
     }
 
     private void OnDestroy()
     {
-        // Always unsubscribe to prevent stale delegate references after scene unload.
-        GameEvents.OnStatusTextChanged -= HandleStatusTextChanged;
-        GameEvents.OnLevelIndexChanged -= HandleLevelIndexChanged;
-        GameEvents.OnGoldChanged       -= HandleGoldChanged;
+        // Presenter'ın event aboneliklerini temizle.
+        _presenter?.Dispose();
     }
 
     // -------------------------------------------------------------------------
-    // GameEvents handlers — each handler owns exactly one UI concern
+    // IGameView — View implementasyonu
     // -------------------------------------------------------------------------
 
-    /// <summary>Updates the status text label with the incoming message.</summary>
-    private void HandleStatusTextChanged(string message)
+    /// <inheritdoc/>
+    public void ShowStatusText(string message)
     {
         if (statusText != null)
             statusText.text = message;
     }
 
-    /// <summary>
-    /// Updates the level label.
-    /// displayIndex is 1-based (currentLevelIndex + 1).
-    /// </summary>
-    private void HandleLevelIndexChanged(int displayIndex)
+    /// <inheritdoc/>
+    public void ShowLevelIndex(int displayIndex)
     {
         if (levelText != null)
             levelText.text = "LEVEL " + displayIndex;
     }
 
-    /// <summary>Updates the gold label with the new total.</summary>
-    private void HandleGoldChanged(int newTotal)
+    /// <inheritdoc/>
+    public void ShowGold(int amount)
     {
         if (goldText != null)
-            goldText.text = newTotal + " G";
+            goldText.text = amount + " G";
     }
 
     // -------------------------------------------------------------------------

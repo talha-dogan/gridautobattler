@@ -1,29 +1,20 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Audio;
 using TMPro;
 using System.Collections.Generic;
 
 /// <summary>
 /// Settings panelini yönetir.
 /// SFX, Müzik, Grafik Kalitesi, Çözünürlük ve Oyun Verisi Sıfırlama seçeneklerini içerir.
-/// Ayarlar PlayerPrefs üzerinden kalıcı olarak saklanır.
+///
+/// Save/Load: PlayerPrefs yerine GameSaveService (binary + AES) kullanır.
 /// </summary>
 public class SettingsManager : MonoBehaviour
 {
     // ─────────────────────────────────────────────────────────────────────────
-    // PlayerPrefs Anahtarları
-    // ─────────────────────────────────────────────────────────────────────────
-    private const string KEY_SFX_VOLUME   = "Settings_SFXVolume";
-    private const string KEY_MUSIC_VOLUME = "Settings_MusicVolume";
-    private const string KEY_QUALITY      = "Settings_Quality";
-    private const string KEY_RESOLUTION   = "Settings_Resolution";
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Inspector — Panel Referansı
+    // Inspector — Panel
     // ─────────────────────────────────────────────────────────────────────────
     [Header("─── Panel ───────────────────────────────────────────────")]
-    [Tooltip("Settings panelinin kök GameObject'i.")]
     [SerializeField] private GameObject settingsPanel;
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -53,7 +44,7 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private TMP_Dropdown resolutionDropdown;
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Inspector — Reset Butonu
+    // Inspector — Reset
     // ─────────────────────────────────────────────────────────────────────────
     [Header("─── Reset ────────────────────────────────────────────────")]
     [SerializeField] private GameObject resetConfirmPanel;
@@ -67,6 +58,7 @@ public class SettingsManager : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
     // Unity Lifecycle
     // ─────────────────────────────────────────────────────────────────────────
+
     private void Awake()
     {
         LoadSettings();
@@ -82,27 +74,25 @@ public class SettingsManager : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
     // Public — Panel Aç/Kapat
     // ─────────────────────────────────────────────────────────────────────────
+
     public void OpenSettings()
     {
-        if (settingsPanel != null)
-            settingsPanel.SetActive(true);
+        if (settingsPanel != null) settingsPanel.SetActive(true);
     }
 
     public void CloseSettings()
     {
-        if (settingsPanel != null)
-            settingsPanel.SetActive(false);
-
-        if (resetConfirmPanel != null)
-            resetConfirmPanel.SetActive(false);
+        if (settingsPanel != null)      settingsPanel.SetActive(false);
+        if (resetConfirmPanel != null)  resetConfirmPanel.SetActive(false);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // Public — SFX
     // ─────────────────────────────────────────────────────────────────────────
+
     public void OnSFXVolumeChanged(float value)
     {
-        PlayerPrefs.SetFloat(KEY_SFX_VOLUME, value);
+        GameSaveService.Instance?.SetSFXVolume(value);
 
         if (sfxValueText != null)
             sfxValueText.text = Mathf.RoundToInt(value * 100f) + "%";
@@ -114,9 +104,10 @@ public class SettingsManager : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
     // Public — Müzik
     // ─────────────────────────────────────────────────────────────────────────
+
     public void OnMusicVolumeChanged(float value)
     {
-        PlayerPrefs.SetFloat(KEY_MUSIC_VOLUME, value);
+        GameSaveService.Instance?.SetMusicVolume(value);
 
         if (musicValueText != null)
             musicValueText.text = Mathf.RoundToInt(value * 100f) + "%";
@@ -128,66 +119,55 @@ public class SettingsManager : MonoBehaviour
     // ─────────────────────────────────────────────────────────────────────────
     // Public — Grafik Kalitesi
     // ─────────────────────────────────────────────────────────────────────────
+
     public void OnQualityChanged(int index)
     {
         QualitySettings.SetQualityLevel(index);
-        PlayerPrefs.SetInt(KEY_QUALITY, index);
+        GameSaveService.Instance?.SetQualityLevel(index);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // Public — Çözünürlük
     // ─────────────────────────────────────────────────────────────────────────
+
     public void OnResolutionChanged(int index)
     {
         if (_resolutions == null || index >= _resolutions.Length) return;
 
         Resolution res = _resolutions[index];
         Screen.SetResolution(res.width, res.height, Screen.fullScreen);
-        PlayerPrefs.SetInt(KEY_RESOLUTION, index);
         _currentResolutionIndex = index;
+        GameSaveService.Instance?.SetResolutionIndex(index);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // Public — Reset Game Data
     // ─────────────────────────────────────────────────────────────────────────
+
     public void ShowResetConfirm()
     {
-        if (resetConfirmPanel != null)
-            resetConfirmPanel.SetActive(true);
+        if (resetConfirmPanel != null) resetConfirmPanel.SetActive(true);
     }
 
     public void HideResetConfirm()
     {
-        if (resetConfirmPanel != null)
-            resetConfirmPanel.SetActive(false);
+        if (resetConfirmPanel != null) resetConfirmPanel.SetActive(false);
     }
 
     public void ConfirmResetGameData()
     {
-        // Oyun verilerini sil (ayarlar hariç)
-        float sfxVol   = PlayerPrefs.GetFloat(KEY_SFX_VOLUME,   1f);
-        float musicVol = PlayerPrefs.GetFloat(KEY_MUSIC_VOLUME, 1f);
-        int   quality  = PlayerPrefs.GetInt(KEY_QUALITY,        QualitySettings.GetQualityLevel());
-        int   resIdx   = PlayerPrefs.GetInt(KEY_RESOLUTION,     _currentResolutionIndex);
-
-        PlayerPrefs.DeleteAll();
-
-        // Ayarları geri yaz
-        PlayerPrefs.SetFloat(KEY_SFX_VOLUME,   sfxVol);
-        PlayerPrefs.SetFloat(KEY_MUSIC_VOLUME, musicVol);
-        PlayerPrefs.SetInt(KEY_QUALITY,        quality);
-        PlayerPrefs.SetInt(KEY_RESOLUTION,     resIdx);
-        PlayerPrefs.Save();
+        // Ayarlar korunarak oyun verisi sıfırlanır
+        GameSaveService.Instance?.ResetGameData();
 
         Debug.Log("[SettingsManager] Oyun verisi sıfırlandı.");
 
-        if (resetConfirmPanel != null)
-            resetConfirmPanel.SetActive(false);
+        if (resetConfirmPanel != null) resetConfirmPanel.SetActive(false);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // Private — Init
     // ─────────────────────────────────────────────────────────────────────────
+
     private void InitResolutionDropdown()
     {
         if (resolutionDropdown == null) return;
@@ -195,8 +175,11 @@ public class SettingsManager : MonoBehaviour
         _resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
-        var options = new List<string>();
-        int savedIndex = PlayerPrefs.GetInt(KEY_RESOLUTION, -1);
+        var options    = new List<string>();
+        int savedIndex = GameSaveService.Instance != null
+            ? GameSaveService.Instance.GetResolutionIndex()
+            : -1;
+
         _currentResolutionIndex = 0;
 
         for (int i = 0; i < _resolutions.Length; i++)
@@ -229,7 +212,10 @@ public class SettingsManager : MonoBehaviour
         var names = new List<string>(QualitySettings.names);
         qualityDropdown.AddOptions(names);
 
-        int saved = PlayerPrefs.GetInt(KEY_QUALITY, QualitySettings.GetQualityLevel());
+        int saved = GameSaveService.Instance != null
+            ? GameSaveService.Instance.GetQualityLevel()
+            : QualitySettings.GetQualityLevel();
+
         qualityDropdown.value = Mathf.Clamp(saved, 0, names.Count - 1);
         qualityDropdown.RefreshShownValue();
         qualityDropdown.onValueChanged.AddListener(OnQualityChanged);
@@ -237,9 +223,10 @@ public class SettingsManager : MonoBehaviour
 
     private void LoadSettings()
     {
-        // Değerleri PlayerPrefs'ten oku; yoksa varsayılan kullan
-        float sfxVol   = PlayerPrefs.GetFloat(KEY_SFX_VOLUME,   1f);
-        float musicVol = PlayerPrefs.GetFloat(KEY_MUSIC_VOLUME, 1f);
+        if (GameSaveService.Instance == null) return;
+
+        float sfxVol   = GameSaveService.Instance.GetSFXVolume();
+        float musicVol = GameSaveService.Instance.GetMusicVolume();
 
         if (SoundManager.Instance != null)
         {
@@ -250,10 +237,9 @@ public class SettingsManager : MonoBehaviour
 
     private void ApplyLoadedSettings()
     {
-        float sfxVol   = PlayerPrefs.GetFloat(KEY_SFX_VOLUME,   1f);
-        float musicVol = PlayerPrefs.GetFloat(KEY_MUSIC_VOLUME, 1f);
+        float sfxVol   = GameSaveService.Instance != null ? GameSaveService.Instance.GetSFXVolume()   : 1f;
+        float musicVol = GameSaveService.Instance != null ? GameSaveService.Instance.GetMusicVolume() : 1f;
 
-        // Slider değerlerini ayarla (listener'ları tetiklemeden)
         if (sfxSlider != null)
         {
             sfxSlider.SetValueWithoutNotify(sfxVol);
