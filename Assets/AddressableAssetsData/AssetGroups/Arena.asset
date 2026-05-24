@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Arena
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Arena
+  m_GUID: 6166d8c418df54540a994a483fb00e77
+  m_SerializeEntries:
+  - m_GUID: 15f67b4ceb169e14face8b20613bd4ad
+    m_Address: steampunk_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20039c2281e8af04d9e3f29ce5f6f339
+    m_Address: Grey
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b1083a5570ada143ad0706e1b5aad66
+    m_Address: White
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b3138334777cfb479b06c6ff6d36072
+    m_Address: gameplay_ui_v3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4591512e8650f784a8cb9b323d5fac64
+    m_Address: thermopylae_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ab8ee8909c013943ae510e872dc1c85
+    m_Address: Arena
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 595ced49b33f4fb468d514830628a83f
+    m_Address: Grey
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5dd0ced5bfa2aa44a8646aa7a2d6a219
+    m_Address: canakkale_gameplay_ui_v2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 62c0fd0e173d302428ca83d9e9ff0f82
+    m_Address: canakkale_gameplay_ui_v2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68e5ac5dc6f4de248b6b110d08c9bcef
+    m_Address: underwater_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6bc504811a6c50744ad7ef356f5f91e5
+    m_Address: BlueLight
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d5db978b859b7f4cb721fc008bc97fb
+    m_Address: BaseMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9189f541e61955147ae77945f6bfadc0
+    m_Address: space_viking_cats_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b468e13eb50883744ba2581a789f43fb
+    m_Address: gameplay_ui_v2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b99465b4fe16a7c4898a2d55527085fd
+    m_Address: gameplay_ui_sea
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c1aa932c1921b544bbf897f0223856a5
+    m_Address: waterloo_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db6cae2dad904304fad08c7474a6f1a0
+    m_Address: normandy_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de7d04176f7deba48bcc6560c2435d95
+    m_Address: White
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfd6897a36308de429b33c5e78644196
+    m_Address: BlueLightMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6fcaaa7d7f5ab144826378d876b1baf
+    m_Address: tenochtitlan_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f67b8c7aa7124d24ea53d2434ec75e9b
+    m_Address: red_cliffs_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe4f3a2246a3e0d429eec70dffdd1513
+    m_Address: hastings_war_ui
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 4e0b4a5fff7d0f543a2ea1f464596cbf, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6f03d677e3e302d43803b9ba8fbdd846, type: 2}
+    - {fileID: 11400000, guid: 259884a591a17fa4fb5dd9ff9c204139, type: 2}
