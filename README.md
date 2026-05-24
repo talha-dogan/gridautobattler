@@ -652,3 +652,235 @@ Step-by-step instructions for adding content **without touching the code**:
 | **Set Bonuses** | Synergy system granting extra passive stats when equipping multiple items from the same set (e.g., Knight Set) |
 | **Online Leaderboard** | Server integration for comparing highest cleared stages against the global player base |
 | **Advanced Formation System** | Allows players to place units freely across the first 3 columns instead of being restricted to Column 0 |
+
+
+
+
+
+
+## 🚧 Feature Updates
+
+The following systems are identified as missing or incomplete based on the project's technical requirements. Each item below represents a planned implementation task.
+
+---
+
+### D — Google Sheets Sync
+
+None of the three required items are currently implemented.
+
+| Item | Status | Notes |
+|---|---|---|
+| **Sheets API integration** | ❌ Missing | Connect via Google Sheets API (OAuth2 or Service Account) to read balance data remotely |
+| **CSV export tooling** | ❌ Missing | Editor tool to export `LevelDataSO`, `UnitDataSO` and similar ScriptableObjects to CSV and re-import changes back |
+| **Auto-refresh (Editor only)** | ❌ Missing | `[InitializeOnLoad]` or `AssetPostprocessor` hook that pulls the latest Sheet data automatically before Play Mode or build |
+
+**Suggested path:** `Assets/Scripts/Editor/GoogleSheetsSyncTool.cs` — an Editor Window that writes Sheet values into SO fields via `SerializedObject` / `SerializedProperty`. Zero impact on runtime code.
+
+---
+
+### E — Additive Scene Loading
+
+Async loading is already in place. The missing piece is additive scene strategy.
+
+| Item | Status | Notes |
+|---|---|---|
+| **Async loading** | ✅ Done | `LoadSceneAsync` with `allowSceneActivation` control |
+| **Memory cleanup** | ✅ Done | Addressable handle release on unload |
+| **Additive scenes** | ❌ Missing | Scenes currently replace each other entirely. A persistent `UIScene` loaded additively would avoid reloading the UI layer on every arena reset |
+
+**Suggested path:** Load `UIScene` once with `LoadSceneMode.Additive` on boot and keep it alive across arena reloads. `GridScene` resets independently without touching UI memory.
+
+---
+
+### H — Input System
+
+No input architecture is documented or implemented beyond implicit `MonoBehaviour` pointer callbacks in the drag-drop UI.
+
+| Item | Status | Notes |
+|---|---|---|
+| **New Unity Input System** | ❌ Missing | Project does not use `com.unity.inputsystem`. Legacy `Input.*` calls vs new `InputAction` approach is undefined |
+| **Gamepad support** | ❌ Missing | No `PlayerInput` component or Action Map defined for controller navigation |
+| **Keyboard bindings** | ❌ Missing | Shortcut keys (e.g. `Space` → WAR!, `I` → inventory) not mapped in any Action Map |
+
+**Suggested path:** Create `Assets/Settings/InputActions.inputactions` with three Action Maps: `UI`, `Battle`, `Upgrade`. Bind `Pointer` device for drag-drop, `Keyboard` for shortcuts, `Gamepad` for menu navigation.
+
+---
+
+### I — Quick Gameplay Testing
+
+All four items under this category are absent. This directly impacts iteration speed during development.
+
+| Item | Status | Notes |
+|---|---|---|
+| **Start from any level / stage** | ❌ Missing | `LevelManager` has no `[SerializeField] int _debugStartLevel` override for Editor entry points |
+| **Start with any inventory / hero** | ❌ Missing | No `DebugArmyPresetSO` or Inspector-driven preset to override `PlayerArmyDataSO` at startup |
+| **Start with any game time** | ❌ Missing | `SaveManager` has no Editor-only field to override `totalPlayTimeSeconds` for time-gated feature testing |
+| **Stress testing** | ❌ Missing | No tool to spawn beyond `MaxArmySize` limits and measure FPS / memory spikes under heavy unit load |
+
+**Suggested path:** `Assets/Scripts/Editor/DebugGameplayLauncher.cs` — an Editor Window that injects level index, army preset, and playtime into `GameBootstrapper` on Play Mode entry. All code wrapped in `#if UNITY_EDITOR`; never included in builds.
+
+---
+
+### J — Localization Key Naming Convention
+
+The custom `LocalizationManager` works correctly. The gap is the absence of a defined key naming standard, which causes inconsistency as the key count grows.
+
+| Item | Status | Notes |
+|---|---|---|
+| **Unity Localization package** | ⚠️ Not used | Project uses a custom JSON-based system. Migration to `com.unity.localization` is optional unless explicitly required |
+| **Key naming: `domain.object.field`** | ❌ Undefined | `LocalizationKeys.cs` has no enforced naming convention |
+
+**Proposed key naming standard:**
+
+```
+ui.button.start_game
+ui.button.war
+ui.label.gold
+ui.popup.victory.title
+ui.popup.defeat.title
+unit.name.melee_bot
+unit.name.ranged_bot
+equipment.name.iron_sword
+equipment.description.iron_sword
+error.save.corrupted
+error.save.version_mismatch
+```
+
+All new keys added to `LocalizationKeys.cs` must follow the `domain.object.field` pattern. Existing keys should be migrated in a single refactor pass to avoid split conventions.
+
+---
+
+### Summary
+
+| Section | Status | Priority |
+|---|---|---|
+| A — Data-Driven & Architecture | ✅ Complete | — |
+| B — Spawns, Pooling & MVP | ✅ Complete | — |
+| C — Addressables | ✅ Complete | — |
+| D — Google Sheets Sync | ❌ Not started | 🔴 High |
+| E — Level Load / Unload | ⚠️ Partial (additive missing) | 🟡 Medium |
+| F — Animation Curve Mastery | ✅ Complete | — |
+| G — Save System | ✅ Complete | — |
+| H — Input System | ❌ Not started | 🔴 High |
+| I — Quick Gameplay Testing | ❌ Not started | 🟠 Medium–High |
+| J — Localization Key Naming | ⚠️ Partial (standard missing) | 🟡 Medium |
+
+---
+
+---
+
+# 🔍 Pre-Work Gap Analysis
+
+Pre-Work Sheet ile mevcut mimari karşılaştırıldığında aşağıdaki eksikler tespit edilmiştir.
+
+---
+
+## ✅ Tamamlananlar (Pre-Work → Proje)
+
+| Pre-Work Başlığı | Kapsanan Konular |
+|---|---|
+| **A — Data-Driven & Architecture** | SOLID, Abstraction, Singleton (×9), ScriptableObject Architecture, Factory Pattern, Polymorphism, Base Entity Definitions, Decoupling — **tümü mevcut** |
+| **B — Spawns & Pooling & UI-Logic Separation** | ProjectileFactory, DamageTextManager, VFXManager, UnitFactory, SoundManager, EnemyFormationSO + StatProgressionSO, MVP Pattern — **tümü mevcut** |
+| **C — Addressables** | Lazy loading, Memory unload (`Addressables.Release`), Sprite bundles (Arena / Audio / Items / UI / Units grupları) — **tümü mevcut** |
+| **E — Level Load / Unload** | `LoadSceneAsync` + `allowSceneActivation` kontrolü — **kısmen mevcut** |
+| **F — Animation Curve Mastery** | EasingLibrary (22 fonksiyon), StatProgressionSO (`healthCurve`, `damageCurve`, `spawnPacingCurve`, `movementCurve`) — **tümü mevcut** |
+| **G — Save System** | Binary format, AES-256 + SHA-256, Versioning (`v2`), Migration (`SaveMigrationService`), Meta data (`savedAt`, `saveCount`, `totalPlayTimeSeconds`) — **tümü mevcut** |
+
+---
+
+## ❌ Eksik / Belgelenmemiş Alanlar
+
+### D — Google Sheets Sync `[EKSİK — Hiç Uygulanmamış]`
+
+Pre-Work Sheet'te istenen 3 maddenin hiçbiri projede mevcut değil:
+
+| Konu | Durum | Yapılması Gereken |
+|---|---|---|
+| **Sheets API entegrasyonu** | ❌ Yok | Google Sheets API (OAuth2 veya Service Account) ile bağlantı kurulacak |
+| **CSV export tooling** | ❌ Yok | `LevelDataSO`, `UnitDataSO` gibi SO'ları CSV'ye export eden ve import eden Editor aracı yazılacak |
+| **Auto-refresh (Editor only)** | ❌ Yok | Editor'de play/build alınmadan önce Sheet'ten otomatik veri çeken `[InitializeOnLoad]` veya `AssetPostprocessor` hook'u yazılacak |
+
+> **Öneri:** `Assets/Scripts/Editor/GoogleSheetsSyncTool.cs` altında bir Editor window oluşturulabilir. Sheets verisi → SO alanlarına `SerializedObject` / `SerializedProperty` üzerinden yazılır. Runtime kodu sıfır etkilenir.
+
+---
+
+### E — Level Load / Unload `[KISMİ — Additive Scenes Eksik]`
+
+| Konu | Durum | Yapılması Gereken |
+|---|---|---|
+| **Async loading** | ✅ Mevcut | `LoadSceneAsync` kullanılıyor |
+| **Memory cleanup** | ✅ Mevcut | Addressable handle release yapılıyor |
+| **Additive scenes** | ❌ Yok | `LoadSceneMode.Additive` ile sahneler birbirine eklenerek yüklenmiyor; şu an her sahne tüm öncekini replace ediyor |
+
+> **Öneri:** Örneğin `GridScene` içinde UI katmanı ayrı bir `UIScene` olarak additive yüklenirse, savaş arenası yeniden başlatılırken UI'ın memory'e yeniden yüklenmesine gerek kalmaz. `SceneManager.LoadSceneAsync("UIScene", LoadSceneMode.Additive)` şeklinde implemente edilebilir.
+
+---
+
+### H — Input System `[EKSİK — Hiç Belgelenmemiş]`
+
+Pre-Work Sheet'te üç madde var; projede hiçbirine dair mimari belge yok:
+
+| Konu | Durum | Yapılması Gereken |
+|---|---|---|
+| **New Unity Input System** | ❌ Belgelenmemiş | Projenin `Input System` paketini kullanıp kullanmadığı belirsiz. Eski `Input.GetMouseButton` vs yeni `InputAction` ayrımı netleştirilmeli |
+| **Gamepad desteği** | ❌ Yok | `PlayerInput` component + Action Map tanımlanmamış |
+| **Keyboard binding'leri** | ❌ Yok | Kısayol tuşları (örn. WAR! için `Space`, envanter için `I`) Action Map'e eklenmemiş |
+
+> **Öneri:** `Assets/Settings/InputActions.inputactions` dosyası oluşturulmalı. `UI`, `Battle`, `Upgrade` olmak üzere 3 Action Map tanımlanabilir. Drag-drop işlemleri için `Pointer` device'ı, klavye kısayolları için `Keyboard` device'ı eklenir. Gamepad için `Gamepad` device'ı ile navigation aksiyonları bağlanır.
+
+---
+
+### I — Quick Gameplay Test `[EKSİK — Hiç Uygulanmamış]`
+
+Bu başlık altındaki 4 maddenin tümü proje içinde mevcut değil:
+
+| Konu | Durum | Yapılması Gereken |
+|---|---|---|
+| **Herhangi bir sahne/stage'den başlatma** | ❌ Yok | Editor'de sahneye girildiğinde `LevelManager`'ın istenen level'dan başlamasını sağlayan `[SerializeField] int _debugStartLevel` parametresi eklenmeli |
+| **İstenen envanter/hero ile başlatma** | ❌ Yok | `PlayerArmyDataSO`'yu override eden bir `DebugArmyPresetSO` veya Inspector'dan doldurulan bir debug preset mekanizması yazılmalı |
+| **İstenen oyun zamanıyla başlatma** | ❌ Yok | `SaveManager`'ın debug modunda `totalPlayTimeSeconds` değerini override etmesine izin veren Editor-only bir alan eklenmeli |
+| **Stress testing** | ❌ Yok | `MaxArmySize`'ı bypass ederek sahneye çok sayıda unit spawn eden, FPS ve memory spike'larını ölçen bir Editor test aracı yazılmalı |
+
+> **Öneri:** `Assets/Scripts/Editor/DebugGameplayLauncher.cs` adıyla bir Editor Window açılabilir. Bu pencereden level index, inventory preset ve oyun zamanı seçilerek Play Mode'a girildiğinde `GameBootstrapper`'a debug parametreleri enjekte edilir. Tüm kod `#if UNITY_EDITOR` bloğuyla sarılır; build'e girmez.
+
+---
+
+### J — Unity Localization `[FARKLI İMPLEMENTASYON — Kural Eksik]`
+
+| Konu | Durum | Yapılması Gereken |
+|---|---|---|
+| **Unity Localization paketi** | ⚠️ Kullanılmıyor | Proje özel `LocalizationManager` + JSON dosyaları kullanıyor. Unity'nin resmi `com.unity.localization` paketi entegre edilmemiş |
+| **Key naming: `domain.object.field`** | ❌ Tanımlanmamış | `LocalizationKeys.cs` dosyasında key isimlendirme standartları belirlenmemiş |
+
+> **Key isimlendirme standardı önerisi:**
+> ```
+> ui.button.start_game
+> ui.button.war
+> ui.label.gold
+> ui.popup.victory.title
+> unit.name.melee_bot
+> unit.name.ranged_bot
+> equipment.name.iron_sword
+> equipment.description.iron_sword
+> error.save.corrupted
+> ```
+
+> **Paket kararı:** Mevcut JSON tabanlı sistem işlevsel ve iyi çalışıyor. Unity Localization paketi gerekli değilse değiştirilmesine gerek yok; ancak Pre-Work Sheet bunu açıkça istiyorsa `com.unity.localization` paketine geçiş yapılmalı ve tablolar `String Table` asset'lerine dönüştürülmeli.
+
+---
+
+## 📋 Eksikler Özet Tablosu
+
+| Pre-Work Başlığı | Durum | Öncelik |
+|---|---|---|
+| A — Data-Driven & Architecture | ✅ Tam | — |
+| B — Spawns & Pooling & MVP | ✅ Tam | — |
+| C — Addressables | ✅ Tam | — |
+| D — Google Sheets Sync | ❌ Hiç yok | 🔴 Yüksek |
+| E — Level Load / Unload | ⚠️ Kısmi (Additive eksik) | 🟡 Orta |
+| F — Animation Curve Mastery | ✅ Tam | — |
+| G — Save System | ✅ Tam | — |
+| H — Input System | ❌ Belgelenmemiş | 🔴 Yüksek |
+| I — Quick Gameplay Test | ❌ Hiç yok | 🟠 Orta-Yüksek |
+| J — Unity Localization (key naming) | ⚠️ Kısmi (standart eksik) | 🟡 Orta |
+
