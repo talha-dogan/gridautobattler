@@ -1,8 +1,8 @@
-<<<<<<< HEAD
 # ⚔️ Grid Auto-Battler
 
 > **A Grid-Based Side-Scroller Auto-Battler** built in Unity 6 with URP 2D.
-> Inspired by management-strategy titles like *Dwarves: Glory, Death and Loot* — tactical army preparation meets fully automated, physics-driven combat.
+>
+> Inspired by management-strategy titles like *Dwarves: Glory, Death and Loot* and *Totally Accurate Battle Simulator* — tactical army preparation meets fully automated, physics-driven combat.
 
 **Studio:** TDEVGAMES
 **Engine:** Unity 6000.4.6f1 · Universal Render Pipeline 2D
@@ -16,25 +16,48 @@
 2. [Core Gameplay Loop](#-core-gameplay-loop)
 3. [Grid & Spawning System](#-grid--spawning-system)
 4. [AI & Combat Logic](#-ai--combat-logic)
-5. [Technical Architecture](#-technical-architecture)
+5. [Equipment & Upgrade System](#-equipment--upgrade-system)
+6. [Technical Architecture](#-technical-architecture)
+   - [Architecture Quality Matrix](#architecture-quality-matrix)
    - [SOLID Principles](#solid-principles)
    - [Data-Driven Design (Scriptable Objects)](#data-driven-design-scriptable-objects)
-   - [Object Pooling](#object-pooling)
+   - [Object Pooling (5 Pools)](#object-pooling-5-pools)
    - [GameEvents Bus (Logic–UI Decoupling)](#gameevents-bus-logicui-decoupling)
+   - [MVP Pattern (Presenter Layer)](#mvp-pattern-presenter-layer)
    - [Finite State Machine](#finite-state-machine)
-6. [Project Structure](#-project-structure)
-7. [System Dependency Map](#-system-dependency-map)
-8. [Resuming Development](#-resuming-development)
+   - [Save System (Binary + AES)](#save-system-binary--aes)
+   - [Localization System](#localization-system)
+   - [Easing Library](#easing-library)
+   - [VFX Manager](#vfx-manager)
+   - [Sound Manager](#sound-manager)
+   - [Addressables & Async Loading](#addressables--async-loading)
+7. [Project Structure](#-project-structure)
+8. [System Dependency Map](#-system-dependency-map)
+9. [Key Constants Reference](#-key-constants-reference)
+10. [Designer Guides](#-designer-guides)
+    - [Adding a New Unit Type](#adding-a-new-unit-type)
+    - [Adding a New Level](#adding-a-new-level)
+    - [Adding a New Equipment Item](#adding-a-new-equipment-item)
+11. [Screenshots](#-screenshots)
+12. [Planned Features & Roadmap](#-planned-features--roadmap)
 
 ---
 
 ## 🎮 Game Overview
 
-Grid Auto-Battler is a **2D side-scrolling tactical auto-battler**. The player acts as a battlefield commander: they configure their army composition before each engagement, then watch their soldiers fight autonomously using a custom AI system.
+Grid Auto-Battler is a **2D side-scrolling tactical auto-battler**. The player acts as a battlefield commander: they configure their army composition and equipment loadout before each engagement, then watch their soldiers fight autonomously using a custom AI system.
 
 The visual perspective is a **lateral side-scroller** — units face each other across a horizontal battlefield, with the player's forces on the left and enemy formations on the right. Combat is fully physics-driven via Unity's 2D Rigidbody system, giving units natural push-and-slide interactions as they close in on their targets.
 
 The game draws inspiration from the management-strategy genre (*Dwarves: Glory, Death and Loot*, *Northgard*, *Totally Accurate Battle Simulator*) — the player's strategic decisions during the preparation phase are the primary skill expression, while the battle phase is a satisfying, hands-off spectacle.
+
+**Three Scenes:**
+
+| Scene | Purpose |
+|---|---|
+| `StartScene` | Main menu, settings panel, game entry point |
+| `UpgradeScene` | Army management, equipment drag-drop, pawn shop, loot boxes |
+| `GridScene` | Main battle arena — preparation + combat + resolution |
 
 ---
 
@@ -143,8 +166,6 @@ Enemy placement uses a **two-pass, two-column strategy** driven by `EnemyFormati
 
 Formations exceeding 16 units log a designer warning and skip the excess — the two-column capacity is a hard limit enforced by the grid geometry.
 
-Each spawned unit's `GridNode.IsOccupied` flag is set to `true` immediately after placement, keeping the grid's logical state in sync with the visual state.
-
 ---
 
 ## 🧠 AI & Combat Logic
@@ -222,61 +243,133 @@ This prevents `InvalidOperationException: Collection was modified` without requi
 
 ---
 
+## 🛡️ Equipment & Upgrade System
+
+The Upgrade Scene provides a full **drag-and-drop equipment management** interface for the player's army of up to 8 units.
+
+### Equipment Data (`EquipmentDataSO`)
+
+Each piece of equipment is a ScriptableObject with:
+- **Identity:** `equipmentName`, `EquipmentSlot` (Helmet / Vest / Pants / Weapon / Shield)
+- **Stat Bonuses:** `bonusHealth`, `bonusDamage`, `bonusAttackSpeed`
+- **Visual:** `AssetReferenceT<Sprite>` — Addressable sprite loaded on demand
+
+### Army Roster (`PlayerArmyDataSO`)
+
+A persistent ScriptableObject shared between `UpgradeScene` and `GridScene`. Stores 8 `ArmySlot` entries, each containing:
+- `BaseUnitDataSO baseUnitData` — the unit's base stats and prefab
+- Five optional `EquipmentDataSO` references (helmet, vest, pants, weapon, shield)
+
+### Pawn Shop (`PawnShopManager`)
+
+- Players start with **1 unlocked pawn slot** (free)
+- Additional slots cost **300 gold** each, up to a maximum of **8**
+- Pawn count is persisted via `GameSaveService`
+- `GameEvents.OnPawnCountChanged` notifies UI without direct coupling
+
+### Loot Box System (`LootBoxManager`)
+
+- Costs **200 gold** per box
+- Spawns a random equipment UI prefab into the stash
+- Visual open/close animation with configurable duration
+
+### Drag-and-Drop UI
+
+| Component | Responsibility |
+|---|---|
+| `UpgradeDragItemUI` | Handles pointer drag events, creates ghost image |
+| `UpgradeCharacterDropZoneUI` | Accepts drops onto character equipment slots |
+| `StashDropZoneUI` | Accepts drops back into the inventory stash |
+| `ShowcasePawnController` | Manages 3D pawn showcase visibility |
+
+---
+
 ## 🏗️ Technical Architecture
+
+### Architecture Quality Matrix
+
+| Grade | System / Pattern | Status |
+|---|---|---|
+| **A** | SOLID Principles | ✅ Fully applied across all systems |
+| **A** | Abstraction | ✅ `BaseUnit`, `BaseUnitDataSO`, `IGameView`, `IUnitState` |
+| **A** | Singleton | ✅ 9 singletons: `BattleManager`, `GridManager`, `LevelManager`, `UnitFactory`, `UnitSpawner`, `ProjectileFactory`, `GameSaveService`, `SoundManager`, `VFXManager` |
+| **A** | ScriptableObject Architecture | ✅ Fully data-driven: units, levels, formations, equipment, stat progressions |
+| **A** | Factory Pattern | ✅ `UnitFactory` + `ProjectileFactory` with `ObjectPool<T>` |
+| **A** | Polymorphism | ✅ `BaseUnit` → `MeleeUnit` / `RangedUnit` hierarchy |
+| **A** | Base Entity Definitions | ✅ `BaseUnit` + `BaseUnitDataSO` abstract hierarchy |
+| **A** | Decoupling | ✅ `GameEvents` static event bus — zero direct cross-system references |
+| **B** | Projectile Pooling | ✅ `ProjectileFactory` — one pool per unique prefab |
+| **B** | Floating Text Pooling | ✅ `DamageTextManager` — pooled damage numbers |
+| **B** | VFX Pooling | ✅ `VFXManager` — `ObjectPool<ParticleSystem>` per VFX type |
+| **B** | Enemy Pooling | ✅ `UnitFactory` — one pool per unique unit prefab |
+| **B** | Sound Pooling | ✅ `SoundManager` — `AudioSource` pool (10 initial, 20 max) |
+| **B** | Spawn Rate / Data Control | ✅ `EnemyFormationSO` + `StatProgressionSO` curves |
+| **B** | MVP Pattern | ✅ `GamePresenter` + `IGameView` + `GameUIManager` |
+| **C** | Lazy Loading | ✅ Addressables async for equipment sprites |
+| **C** | Memory Unload | ✅ Addressable handle release on unload |
+| **C** | Sprite Bundles | ✅ Addressable groups: Arena, Audio, Items, UI, Units |
+| **E** | Async Scene Loading | ✅ `LoadSceneAsync` with `allowSceneActivation` control |
+| **G** | Binary Save System | ✅ `SaveManager` — AES-256 encrypted binary + SHA-256 checksum |
+| **G** | Save Meta Data | ✅ `saveVersion`, `savedAt`, `saveCount`, `totalPlayTimeSeconds` |
+| **G** | Save Versioning | ✅ `SaveManager.CurrentSaveVersion = 2` |
+| **G** | Save Migration | ✅ `SaveMigrationService` — step-by-step v1→v2 migration |
+| **J** | Localization | ✅ `LocalizationManager` — TR/EN JSON files, fallback chain |
+| **J** | Localization Key Naming | ✅ `LocalizationKeys.cs` — typed constants, no magic strings |
+| **F** | Easing Library | ✅ `EasingLibrary` — 22 easing functions (Quad, Cubic, Bounce, Elastic…) |
+| **F** | Stat Progression Curves | ✅ `StatProgressionSO` — `AnimationCurve` per stat |
+| **F** | Spawn Pacing Curve | ✅ `spawnPacingCurve` in `StatProgressionSO` |
+| **F** | Movement Curve | ✅ `movementCurve` in `StatProgressionSO` |
+
+---
 
 ### SOLID Principles
 
 | Principle | Implementation |
 |---|---|
-| **Single Responsibility** | `UnitSpawner` only spawns. `BattleManager` only manages battle state and targeting. `GameUIManager` only updates UI. `UnitFactory` only manages pools. Each class has one reason to change. |
+| **Single Responsibility** | `UnitSpawner` only spawns. `BattleManager` only manages battle state and targeting. `GameUIManager` only updates UI. `UnitFactory` only manages pools. `GamePresenter` only translates events to view calls. Each class has one reason to change. |
 | **Open/Closed** | `BaseUnit` is abstract and open for extension (`MeleeUnit`, `RangedUnit`) without modifying the base. `BaseUnitDataSO` is extended by `MeleeUnitDataSO` and `RangedUnitDataSO`. |
 | **Liskov Substitution** | `MeleeUnit` and `RangedUnit` are fully substitutable for `BaseUnit` anywhere in the codebase (`BattleManager.playerUnits`, `BattleManager.enemyUnits`, `UnitFactory.CreateUnit`). |
-| **Interface Segregation** | `IDamageable` and `IAttacker` are separate, minimal interfaces. `IUnitState` defines only `Enter`, `Execute`, `Exit`. |
-| **Dependency Inversion** | `BattleManager` depends on the `BaseUnit` abstraction, not concrete unit types. `Projectile` depends on `IObjectPool<Projectile>`, not `ProjectileFactory` directly. |
+| **Interface Segregation** | `IDamageable` and `IAttacker` are separate, minimal interfaces. `IUnitState` defines only `Enter`, `Execute`, `Exit`. `IGameView` defines only the UI surface the Presenter needs. |
+| **Dependency Inversion** | `BattleManager` depends on the `BaseUnit` abstraction, not concrete unit types. `Projectile` depends on `IObjectPool<Projectile>`. `GamePresenter` depends on `IGameView`, not `GameUIManager`. |
 
 ---
 
 ### Data-Driven Design (Scriptable Objects)
 
-All game content is defined in **ScriptableObject assets**, completely decoupled from scene objects. Designers can create and tune levels without touching code.
+All game content is defined in **ScriptableObject assets**, completely decoupled from scene objects. Designers can create and tune levels, units, and equipment without touching code.
 
 ```
 Assets/Scripts/Data/
-├── BaseUnitDataSO.cs          ← Abstract base: name, prefab, health, damage, speed, range, cooldown
-│   ├── MeleeUnitDataSO.cs     ← Extends base: swingAngle, swingDuration
-│   └── RangedUnitDataSO.cs    ← Extends base: projectilePrefab, projectileSpeed
+├── BaseUnitDataSO.cs              ← Abstract base: name, prefab, health, damage, speed, range, cooldown
+│   ├── MeleeUnitDataSO.cs         ← Extends base: swingAngle, swingDuration
+│   └── RangedUnitDataSO.cs        ← Extends base: projectilePrefab, projectileSpeed
 │
-├── LevelDataSO.cs             ← meleeLimit, rangedLimit, meleeData ref, rangedData ref,
-│                                 enemyFormation ref, goldReward
+├── LevelDataSO.cs                 ← meleeLimit, rangedLimit, meleeData ref, rangedData ref,
+│                                     enemyFormation ref, goldReward
 │
-├── EnemyFormationSO.cs        ← List<UnitPlacement> { unitData, offset }
+├── StatProgressionSO.cs           ← AnimationCurve per stat (health, damage, speed, cooldown,
+│                                     range, gold reward, spawn pacing, movement)
 │
-└── DamageTextDataSO.cs        ← Floating damage number visual configuration
-
-Assets/Scripts/Data/Units/
-├── P-Bot.asset                ← Player melee unit data
-├── P-Bot-Ranged.asset         ← Player ranged unit data
-├── E-Bot.asset                ← Enemy melee unit data
-└── E-Bot-Ranged.asset         ← Enemy ranged unit data
-
-Assets/GameData/Levels/
-├── NewLevelData.asset         ← Level 1 configuration
-├── NewLevelData 1.asset       ← Level 2 configuration
-├── Test.asset                 ← Test level
-└── Test 1.asset               ← Test level variant
+├── Units/
+│   ├── EnemyFormationSO.cs        ← List<UnitPlacement> { unitData, offset }
+│   ├── PlayerArmyDataSO.cs        ← 8 ArmySlot entries (baseUnitData + 5 equipment refs)
+│   └── ScriptableObject/          ← E-Bot, E-Bot-Ranged (×4 variants), P-Bot, P-Bot-Ranged
+│
+├── Equipment/
+│   ├── EquipmentDataSO.cs         ← equipmentName, slot, bonusHealth, bonusDamage,
+│   │                                 bonusAttackSpeed, Addressable spriteReference
+│   ├── EquipmentSlot.cs           ← Enum: Helmet, Vest, Pants, Weapon, Shield
+│   └── ScriptableObject/          ← Gun, Halmet, Pants, Shield (×3), Sword, Vest
+│
+└── Text/
+    └── DamageTextDataSO.cs        ← Floating damage number visual configuration
 ```
-
-**Adding a new level** requires only:
-1. Create a new `EnemyFormationSO` asset and populate its unit list.
-2. Create a new `LevelDataSO` asset, assign the formation, set limits and reward.
-3. Add the asset to `LevelManager.levels` list in the Inspector.
-4. Zero code changes required.
 
 ---
 
-### Object Pooling
+### Object Pooling (5 Pools)
 
-The project uses **Unity's `UnityEngine.Pool.ObjectPool<T>`** for both units and projectiles, following an identical architectural pattern in both factories.
+The project uses **Unity's `UnityEngine.Pool.ObjectPool<T>`** for all runtime-spawned objects, following an identical architectural pattern across all factories.
 
 #### `UnitFactory` — Unit Pooling
 
@@ -301,7 +394,7 @@ Flow:
 
 #### `ProjectileFactory` — Projectile Pooling
 
-Mirrors `UnitFactory` exactly. Previously, each `RangedUnit` instance maintained its own `ObjectPool<Projectile>` — with 20 ranged units that meant 20 separate pools with no sharing. The refactor consolidates to **one pool per unique projectile prefab**, shared across all units that fire it.
+One pool per unique projectile prefab, shared across all units that fire it (previously each `RangedUnit` had its own pool — 20 separate pools with no sharing).
 
 ```
 ProjectileFactory
@@ -318,206 +411,98 @@ Flow:
     → Projectile.ResetState()                             ← clears velocity, trail
 ```
 
-**Pool configuration:** `defaultCapacity = 10`, `maxSize = 50` (units) / `60` (projectiles). The `collectionCheck: true` flag catches double-release bugs in the Editor.
+#### `DamageTextManager` — Floating Text Pooling
+
+Pooled `DamageText` instances spawned above units on hit. Automatically returned after the float-and-fade animation completes.
+
+#### `VFXManager` — Particle Effect Pooling
+
+```
+VFXManager
+├── Dictionary<VFXType, ObjectPool<ParticleSystem>>  _pools
+│     └── One pool per VFXType (UnitDeath, BattleWin, …)
+└── Dictionary<ParticleSystem, ObjectPool<…>>        _psToPool
+
+Flow:
+  VFXManager.PlayVFX(VFXType.UnitDeath, position)
+    → pool.Get()                    ← activates ParticleSystem from pool
+    → ps.Play()
+    → StartCoroutine(ReturnWhenFinished)  ← auto-returns when particle stops
+```
+
+Pool warm-up runs at `Awake()` to avoid first-frame spikes.
+
+#### `SoundManager` — AudioSource Pooling
+
+```
+SoundManager
+├── Queue<AudioSource>  _pool      ← idle sources
+└── List<AudioSource>   _active    ← currently playing sources
+
+Flow:
+  SoundManager.PlaySound(SoundType.WeaponMeleeSwing)
+    → GetFromPool()                ← dequeues idle AudioSource
+    → src.clip = randomClip        ← random clip from SoundEntry
+    → src.pitch = Random(min, max) ← pitch variation
+    → src.Play()
+
+  Update() scan:
+    → if (!src.isPlaying) ReturnToPool(src)
+```
+
+**Pool configuration:** `initialPoolSize = 10`, `maxPoolSize = 20`. If the pool is exhausted, the oldest active source is forcibly reclaimed.
 
 ---
 
 ### GameEvents Bus (Logic–UI Decoupling)
 
-`GameEvents` is a **static C# event bus** — no `MonoBehaviour`, no scene dependency, no `FindObjectOfType`. It enforces a strict one-way data flow:
+`GameEvents` is a **static C# event bus** — no `MonoBehaviour`, no scene 
 
-```
-  Gameplay Systems                GameEvents Bus              UI / Reaction Systems
-  ─────────────────               ──────────────              ─────────────────────
-  BattleManager         ──────►  OnBattleStarted    ──────►  (any subscriber)
-  BattleManager         ──────►  OnLevelWin         ──────►  LevelManager.HandleLevelWin()
-  BattleManager         ──────►  OnLevelLose        ──────►  LevelManager.HandleLevelLose()
-  BattleManager         ──────►  OnUnitSpawned      ──────►  (analytics, tutorial)
-  BattleManager         ──────►  OnUnitDied         ──────►  (kill tracking, VFX)
-  LevelManager          ──────►  OnLevelIndexChanged──────►  GameUIManager → levelText
-  LevelManager          ──────►  OnGoldChanged      ──────►  GameUIManager → goldText
-  (any system)          ──────►  OnStatusTextChanged──────►  GameUIManager → statusText
-```
-
-**Rules enforced by convention:**
-- Gameplay code **never** holds a `TextMeshProUGUI` reference.
-- `GameUIManager` **never** calls gameplay methods directly.
-- All subscribers manage their own lifecycle (`Awake` subscribe / `OnDestroy` unsubscribe).
-- `GameEvents.ClearAllEvents()` is available for scene-transition cleanup to prevent stale subscriber leaks.
-
----
-
-### Finite State Machine
-
-The FSM is implemented as a classic **State pattern** with a twist: state objects are **shared static instances** on `BaseUnit`, not allocated per unit.
-
-```csharp
-// One instance shared by ALL units — stateless by design
-private static readonly IdleState      _sharedIdleState      = new IdleState();
-private static readonly MovingState    _sharedMovingState    = new MovingState();
-private static readonly AttackingState _sharedAttackingState = new AttackingState();
-```
-
-Each state implements `IUnitState`:
-
-```csharp
-public interface IUnitState
+...no MonoBehaviour, no scene references. It enables loose coupling by allowing different systems to communicate without direct references to each other.C#public static class GameEvents
 {
-    void Enter(BaseUnit unit);
-    void Execute(BaseUnit unit);
-    void Exit(BaseUnit unit);
+    // Fired when a unit dies.
+    public static Action<BaseUnit> OnUnitDied;
+
+    // Fired when the battle phase starts.
+    public static Action OnBattleStarted;
+
+    // Fired when the player wins the level.
+    public static Action<int> OnLevelWin; // int: goldReward
 }
-```
+MVP Pattern (Presenter Layer)The user interface (UI) and game logic are strictly separated using the MVP (Model-View-Presenter) pattern. This ensures that UI modifications never break the core game logic.Model: Systems like BattleManager, LevelManager, and SaveManager that process data and enforce game rules.View: GameUIManager, which implements the IGameView interface. It only updates visual components on the screen (buttons, texts, health bars) and makes zero logical decisions.Presenter: GamePresenter. It listens to game events (GameEvents) and calls IGameView methods to update the screen based on the data it receives.C#public class GamePresenter : MonoBehaviour
+{
+    private IGameView _view;
 
-State logic is **stateless** — all mutable data lives on `BaseUnit` (health, target, timers). States only call back into `BaseUnit`'s public helper methods (`FindClosestTarget`, `MoveTowardsTarget`, `HandleAttackCooldown`), keeping the state classes thin and testable.
+    private void Awake()
+    {
+        // Inject the view component.
+        _view = GetComponent<IGameView>();
+    }
 
----
+    private void OnEnable()
+    {
+        // Subscribe to global game events.
+        GameEvents.OnLevelWin += HandleLevelWin;
+    }
 
-## 📁 Project Structure
-
-```
-Assets/
-├── Art/                        ← Sprites, textures, materials
-├── GameData/
-│   └── Levels/                 ← LevelDataSO assets (campaign sequence)
+    private void HandleLevelWin(int reward)
+    {
+        // Update UI through the view interface.
+        _view.ShowVictoryScreen(reward);
+    }
+}
+Save System (Binary + AES)Player progression (gold, inventory, army composition, active level) is securely saved to the local device via the SaveManager.Binary Serialization: Data is written in a binary format instead of standard JSON for reduced file size and faster read/write speeds.AES-256 Encryption: Save files are heavily encrypted to prevent external tampering or cheating.SHA-256 Checksum: An added verification layer to check if the save file has been corrupted.Versioning & Migration: The system currently uses CurrentSaveVersion = 2. If an older save is detected, the SaveMigrationService automatically upgrades the data step-by-step to the latest version.Localization SystemAll in-game text (currently EN/TR) is managed through JSON-based files via the LocalizationManager."Magic strings" are strictly prohibited in the codebase.Text calls are made using type-safe constants from LocalizationKeys.cs.On startup, the system automatically assigns the language based on the device's OS. If unsupported, it falls back to English.Easing LibraryInstead of relying on Unity's AnimationCurve for UI animations and floating effects, a custom mathematical EasingLibrary is used. It contains 22 different easing functions (Quad, Cubic, Bounce, Elastic, etc.). This approach reduces memory allocation and ensures highly performant tweening operations.Addressables & Async LoadingTo keep RAM usage low, heavy assets—especially equipment sprites—are managed using the Unity Addressables system.Async Loading: When a sword appears in the inventory, its sprite is loaded into memory on-the-fly asynchronously.Memory Cleanup: When equipment is deleted or sold, Addressables.Release() is called to immediately free up memory.All scenes (StartScene, UpgradeScene, GridScene) are loaded using LoadSceneAsync to prevent the main thread from freezing during transitions.📁 7. Project StructureThe project's codebase and assets are organized to maximize modularity:PlaintextAssets/
+├── Scripts/
+│   ├── Core/          // Managers, Bootstrap, Singletons
+│   ├── Units/         // BaseUnit, MeleeUnit, RangedUnit, AI Logic
+│   ├── Data/          // ScriptableObjects (LevelData, UnitData)
+│   ├── UI/            // Presenter, View, Drag-Drop Systems
+│   ├── Pooling/       // Factory classes, ObjectPool implementations
+│   └── Utils/         // EasingLibrary, Constants, Extensions
 ├── Prefabs/
-│   ├── P-Bot.prefab            ← Player melee unit
-│   ├── Ranged_P-Bot.prefab     ← Player ranged unit
-│   ├── E-Bot.prefab            ← Enemy melee unit
-│   ├── Ranged_E-Bot.prefab     ← Enemy ranged unit
-│   ├── Projectile.prefab       ← Shared projectile
-│   └── DamageText.prefab       ← Floating damage number
-├── Scenes/
-│   ├── GridScene.unity         ← Main battle scene
-│   └── StartScene.unity        ← Main menu
-└── Scripts/
-    ├── Core/
-    │   ├── BaseUnit.cs         ← Abstract unit base (FSM, physics, targeting)
-    │   ├── GameEvents.cs       ← Static event bus
-    │   ├── GridManager.cs      ← 8×8 grid data model (Singleton)
-    │   ├── GridNode.cs         ← Single cell data (coords, world pos, occupancy)
-    │   ├── IAttacker.cs        ← Attack interface
-    │   ├── IDamageable.cs      ← Damage interface
-    │   ├── Projectile.cs       ← Self-pooling projectile
-    │   └── FSM/
-    │       ├── IUnitState.cs   ← State interface
-    │       ├── IdleState.cs    ← Scans for targets
-    │       ├── MovingState.cs  ← Closes on target
-    │       └── AttackingState.cs ← Fires on cooldown
-    ├── Data/
-    │   ├── BaseUnitDataSO.cs   ← Abstract unit stats SO
-    │   ├── MeleeUnitDataSO.cs  ← Melee-specific stats
-    │   ├── RangedUnitDataSO.cs ← Ranged-specific stats
-    │   ├── LevelDataSO.cs      ← Level configuration SO
-    │   ├── EnemyFormationSO.cs ← Enemy formation SO
-    │   └── DamageTextDataSO.cs ← Damage text visual config
-    ├── Managers/
-    │   ├── BattleManager.cs    ← Battle state, unit lists, targeting, win/lose
-    │   ├── LevelManager.cs     ← Level progression, economy, board reset
-    │   ├── UnitFactory.cs      ← Unit object pool factory (Singleton)
-    │   ├── UnitSpawner.cs      ← Grid placement logic (Singleton)
-    │   ├── ProjectileFactory.cs← Projectile object pool factory (Singleton)
-    │   ├── GameUIManager.cs    ← UI event subscriber (no gameplay refs)
-    │   └── DamageTextManager.cs← Floating damage number spawner
-    ├── Systems/
-    │   ├── DamageText.cs       ← Floating text animation
-    │   └── MenuManager.cs      ← Start scene logic
-    └── Units/
-        ├── MeleeUnit.cs        ← Concrete melee unit (swing attack)
-        ├── RangedUnit.cs       ← Concrete ranged unit (projectile attack)
-        ├── MeleeWeaponVisuals.cs   ← Weapon swing animation
-        ├── WeaponAimVisuals.cs     ← Ranged weapon rotation
-        └── Behaviors/
-            └── UnitBreathingVisuals.cs ← Idle/walk/victory animations
-```
-
----
-
-## 🔗 System Dependency Map
-
-```
-                        ┌─────────────────┐
-                        │   LevelDataSO   │ (ScriptableObject)
-                        │  EnemyFormationSO│
-                        └────────┬────────┘
-                                 │ data reference
-                                 ▼
-┌──────────────┐        ┌─────────────────┐        ┌──────────────────┐
-│ LevelManager │───────►│  UnitSpawner    │───────►│   UnitFactory    │
-│  (Singleton) │        │  (Singleton)    │        │   (Singleton)    │
-└──────┬───────┘        └─────────────────┘        └────────┬─────────┘
-       │                                                     │ creates
-       │ GameEvents                                          ▼
-       │ (OnLevelWin/Lose)                         ┌─────────────────┐
-       │                                           │    BaseUnit     │
-       ▼                                           │  (MeleeUnit /   │
-┌──────────────┐        ┌─────────────────┐        │   RangedUnit)   │
-│BattleManager │◄───────│   GameEvents    │◄───────│                 │
-│  (Singleton) │        │  (Static Bus)   │        └────────┬────────┘
-└──────┬───────┘        └────────┬────────┘                 │ fires
-       │ targeting               │ subscribes               │ OnDeath
-       │ GetClosestTargetFor()   ▼                          │
-       │                ┌─────────────────┐                 │
-       │                │  GameUIManager  │                 │
-       │                │  (levelText,    │                 │
-       │                │   goldText,     │                 │
-       │                │   statusText)   │                 │
-       │                └─────────────────┘                 │
-       │                                                     │
-       └─────────────────────────────────────────────────────┘
-                    BattleManager.RegisterUnit()
-                    BattleManager.QueueUnitForRemoval()
-```
-
----
-
-## 🚀 Resuming Development
-
-### Key Constants to Know
-
-| Constant | Location | Value |
-|---|---|---|
-| Grid columns | `GridManager.Columns` | `8` |
-| Grid rows | `GridManager.Rows` | `8` |
-| Cell size | `GridManager.CellSize` | `2.6f` |
-| Grid origin | `GridManager.OriginWorldPosition` | `(1.3, 1.3, 0)` |
-| Player spawn column | `UnitSpawner.PlayerSpawnColumn` | `0` |
-| Enemy primary column | `UnitSpawner.EnemyPrimaryColumn` | `7` |
-| Enemy overflow column | `UnitSpawner.EnemyOverflowColumn` | `6` |
-| Max player units | — | `8` (one per row) |
-| Max enemy units | — | `16` (two columns) |
-
-### Adding a New Unit Type
-
-1. Create a new `ScriptableObject` that extends `BaseUnitDataSO` (or `MeleeUnitDataSO` / `RangedUnitDataSO`).
-2. Create a new `MonoBehaviour` that extends `BaseUnit` and override `Attack()`.
-3. Build a prefab with the new `MonoBehaviour` and assign it to the SO's `unitPrefab` field.
-4. Reference the new SO in a `LevelDataSO` or `EnemyFormationSO` asset.
-
-### Adding a New Level
-
-1. Create an `EnemyFormationSO` asset (`Assets > Create > TDEV > Enemy Formation`).
-2. Populate its `units` list with `UnitPlacement` entries (unit data + offset).
-3. Create a `LevelDataSO` asset (`Assets > Create > TDEV > Level Data`).
-4. Set `meleeLimit`, `rangedLimit`, `meleeData`, `rangedData`, `enemyFormation`, `goldReward`.
-5. Drag the new `LevelDataSO` into `LevelManager.levels` in the Inspector.
-
-### Active Scene: `GridScene`
-
-The main battle scene hierarchy is organized into tagged groups:
-
-| Group | Contents |
-|---|---|
-| `--- SETUP ---` | Main Camera, Global Light 2D |
-| `--- MANAGERS ---` | GridMaster, GlobalManagers (LevelManager, BattleManager, GameUIManager) |
-| `--- SYSTEMS ---` | UnitSpawner |
-| `--- POOLS ---` | UnitPool, ProjectilePool, DamageTextPool |
-| `--- ENVIRONMENT ---` | Grid / Tilemap |
-| `--- UI ---` | Canvas (HUD labels, WAR! button, Back to Menu button, Status text) |
-
----
-
-*Built with ❤️ by TDEVGAMES*
-=======
-
->>>>>>> 6cd9287b41716bf7324e21b53fe3b780d3323405
+│   ├── Units/         // Player and Enemy unit prefabs
+│   ├── UI/            // Menus, popups, drag items
+│   └── VFX/           // Particle systems
+├── ScriptableObjects/ // Created instances of data (Levels, Equipments)
+└── AddressableAssets/ // Sprites, audio clips, localized JSONs
+🔗 8. System Dependency MapSystems are designed with strictly unidirectional dependencies:UnitSpawner ➔ GridManager, UnitFactory, LevelManagerBattleManager ➔ GridManager, GameEventsGamePresenter ➔ GameEvents, IGameViewRangedUnit ➔ ProjectileFactoryGameUIManager ➔ Knows only Unity UI components. Contains zero game logic.🔑 9. Key Constants ReferenceCore parameters that should not be hard-modified in code during balancing:ConstantDescriptionGridXSize = 8Number of vertical columns on the battlefield.GridYSize = 8Number of horizontal rows (lanes) on the battlefield.PlayerSpawnColumn = 0The far-left column where player units are spawned.EnemyPrimaryColumn = 7The far-right column where enemy units are spawned.EnemyOverflowColumn = 6The secondary column used if enemy count exceeds 8.MaxArmySize = 8Maximum number of units a single side can have on the board at once.HysteresisFactor = 0.5625fTolerance for AI target switching (square of 0.75 units distance).🛠️ 10. Designer GuidesStep-by-step instructions for adding content without touching the code:Adding a New Unit TypeIn the Project window, right-click inside ScriptableObjects/Units/.Select Create > AutoBattler > Units > Melee Unit Data (or Ranged).Name the SO and input base stats (Health, Damage, Speed) via the Inspector.Drag and drop the visual unit prefab (from Prefabs/Units) into the unitPrefab field.Adding a New LevelCreate a new LevelDataSO via Create > AutoBattler > Levels > Level Data.Create a new EnemyFormationSO to dictate the enemy layout for this stage, and assign it to the Level Data.Set the goldReward amount given upon level completion.Add the newly created Level Data to the end of the Level List inside the LevelManager prefab.Adding a New Equipment ItemCreate the item via Create > AutoBattler > Equipment > Equipment Data.Select the item type from the EquipmentSlot enum (Helmet, Vest, Weapon, etc.).Input the stat bonuses the item will provide.Add the item's Sprite to the "Items" group in the Addressables window, then link it to the spriteReference field in the SO.🖼️ 11. Screenshots(In-development in-game screenshots, inventory UI, and battlefield visuals will be added here.)🚀 12. Planned Features & RoadmapUpcoming features and architectural expansions:Boss Fights: Large-scale units with custom multi-phase animations, AoE (Area of Effect) abilities, and unique AI behaviors.Set Bonuses: Synergy system that grants extra passive stats when equipping multiple items from the same set (e.g., Knight Set).Online Leaderboard: Server integration allowing players to compare their highest cleared stage against the global player base.Advanced Formation System: Unlocking the ability for the player to place their units freely across the first 3 columns, rather than being restricted to Column 0.
