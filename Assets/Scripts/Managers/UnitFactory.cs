@@ -45,7 +45,7 @@ public class UnitFactory : MonoBehaviour
     /// Retrieves a unit from the appropriate pool (or creates one if the pool is empty),
     /// positions it, and fully initialises it.
     /// </summary>
-    public BaseUnit CreateUnit(BaseUnitDataSO unitData, Vector3 spawnPosition, Team team)
+    public BaseUnit CreateUnit(BaseUnitDataSO unitData, Vector3 spawnPosition, Team team, int level = 1)
     {
         if (unitData.unitPrefab == null)
         {
@@ -71,8 +71,8 @@ public class UnitFactory : MonoBehaviour
         // Give it a clear name in the hierarchy for easy debugging.
         spawnedUnit.gameObject.name = unitData.unitName;
 
-        // Inject the full data and team into the unit.
-        spawnedUnit.Initialize(unitData, team);
+        // Inject the full data, team and level into the unit.
+        spawnedUnit.Initialize(unitData, team, level);
 
         // Register the unit to the BattleManager's active lists.
         if (BattleManager.Instance != null)

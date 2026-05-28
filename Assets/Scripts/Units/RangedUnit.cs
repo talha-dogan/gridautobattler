@@ -19,7 +19,7 @@ public class RangedUnit : BaseUnit
     // Initialisation
     // -------------------------------------------------------------------------
 
-    public override void Initialize(BaseUnitDataSO data, Team team)
+    public override void Initialize(BaseUnitDataSO data, Team team, int level = 1)
     {
         // 1. Cast to the specific data type first so rangedData is available
         //    before base.Initialize() runs (base reads shared stats from data).
@@ -33,7 +33,7 @@ public class RangedUnit : BaseUnit
         }
 
         // 2. Base initialise — fills health, speed, attack stats, boots the FSM.
-        base.Initialize(data, team);
+        base.Initialize(data, team, level);
 
         // No pool setup needed here — ProjectileFactory handles it lazily on first Get().
     }

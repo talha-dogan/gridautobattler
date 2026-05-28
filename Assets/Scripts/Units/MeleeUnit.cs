@@ -6,9 +6,9 @@ public class MeleeUnit : BaseUnit
     [SerializeField] private MeleeUnitDataSO meleeData;
     [SerializeField] private MeleeWeaponVisuals weaponVisuals;
 
-    public override void Initialize(BaseUnitDataSO data, Team team)
+    public override void Initialize(BaseUnitDataSO data, Team team, int level = 1)
     {
-        base.Initialize(data, team);
+        base.Initialize(data, team, level);
         meleeData = data as MeleeUnitDataSO; // Cast to get specific melee data
     }
 

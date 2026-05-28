@@ -295,7 +295,7 @@ public class DebugToolsWindow : EditorWindow
         EditorGUILayout.BeginVertical(_sectionStyle);
 
         // Get the level list from LevelManager
-        LevelManager levelManager = FindFirstObjectByType<LevelManager>();
+        LevelManager levelManager = FindAnyObjectByType<LevelManager>();
         int maxLevel = 0;
         string[] levelNames = null;
 
@@ -725,7 +725,7 @@ EditorGUILayout.BeginHorizontal();
         GameEvents.SetPawnCount(newCount);
 
         // Update the 3D showcase pawns visibility via reflection (private method call)
-        var pawnShop = FindFirstObjectByType<PawnShopManager>();
+        var pawnShop = FindAnyObjectByType<PawnShopManager>();
         if (pawnShop != null)
         {
             var applyVis = typeof(PawnShopManager).GetMethod("ApplyVisibility", 
@@ -1114,9 +1114,9 @@ EditorGUILayout.BeginHorizontal();
         _autoStartAttemptCount++;
 
         // Find managers safely
-        LevelManager lm = Object.FindFirstObjectByType<LevelManager>();
-        UnitSpawner us = Object.FindFirstObjectByType<UnitSpawner>();
-        BattleManager bm = Object.FindFirstObjectByType<BattleManager>();
+        LevelManager lm = Object.FindAnyObjectByType<LevelManager>();
+        UnitSpawner us = Object.FindAnyObjectByType<UnitSpawner>();
+        BattleManager bm = Object.FindAnyObjectByType<BattleManager>();
 
         // Wait until all necessary managers are ready in the scene
         if (lm != null && us != null && bm != null)

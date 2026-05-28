@@ -121,18 +121,35 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
         _contactFilter.useTriggers = true;
     }
 
-    public virtual void Initialize(BaseUnitDataSO data, Team team)
+    public virtual void Initialize(BaseUnitDataSO data, Team team, int level = 1)
     {
         unitTeam = team;
         unitData = data;
 
-        maxHealth = data.maxHealth;
-        currentHealth = maxHealth;
-        moveSpeed = data.moveSpeed;
-        attackRange = data.attackRange;
-        attackDamage = data.attackDamage;
-        attackCooldown = data.attackCooldown;
+        // ── Stat Scaling ──────────────────────────────────────────────────────
+        // Eğer SO'da statProgression atanmışsa curve'den hesapla,
+        // yoksa SO'daki sabit değerleri kullan. Bu sayede her unit tipi
+        // ister curve-driven ister sabit stat kullanabilir.
+        if (data.statProgression != null)
+        {
+            int resolvedMaxLevel = Mathf.Max(data.maxLevel, level);
+            maxHealth      = data.statProgression.EvaluateHealth(level, resolvedMaxLevel);
+            attackDamage   = data.statProgression.EvaluateDamage(level, resolvedMaxLevel);
+            moveSpeed      = data.statProgression.EvaluateSpeed(level, resolvedMaxLevel);
+            attackRange    = data.statProgression.EvaluateAttackRange(level, resolvedMaxLevel);
+            attackCooldown = data.statProgression.EvaluateAttackCooldown(level, resolvedMaxLevel);
+        }
+        else
+        {
+            // Fallback: SO'daki sabit değerler (level scaling yok)
+            maxHealth      = data.maxHealth;
+            moveSpeed      = data.moveSpeed;
+            attackRange    = data.attackRange;
+            attackDamage   = data.attackDamage;
+            attackCooldown = data.attackCooldown;
+        }
 
+        currentHealth = maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         idleBreathingSpeed = data.idleBreathingSpeed;

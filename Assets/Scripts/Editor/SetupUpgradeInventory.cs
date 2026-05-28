@@ -12,7 +12,7 @@ public class SetupUpgradeInventory
     public static void Execute()
     {
         // UpgradeManager'ı bul
-        UpgradeManager upgradeManager = Object.FindFirstObjectByType<UpgradeManager>();
+        UpgradeManager upgradeManager = Object.FindAnyObjectByType<UpgradeManager>();
         if (upgradeManager == null)
         {
             Debug.LogError("[SetupUpgradeInventory] UpgradeManager sahnede bulunamadı!");
@@ -76,14 +76,15 @@ public class SetupUpgradeInventory
 
         // Kök objeyi bul (sahne kökündeki obje)
         GameObject root = null;
-        foreach (GameObject go in Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-        {
-            if (go.transform.parent == null && go.name == parts[0])
-            {
-                root = go;
-                break;
-            }
-        }
+        GameObject[] allObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include);
+        foreach (GameObject go in allObjects)
+      {
+         if (go.transform.parent == null && go.name == parts[0])
+         {
+        root = go;
+        break;
+         }
+      }
 
         if (root == null) return null;
 

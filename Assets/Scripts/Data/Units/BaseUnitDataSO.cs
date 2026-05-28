@@ -7,7 +7,7 @@ public abstract class BaseUnitDataSO : ScriptableObject
 {
     [Header("General Info")]
     public string unitName;
-    public UnitType unitType; // AI will check this to counter you!
+    public UnitType unitType;
     public GameObject unitPrefab;
 
     [Header("Combat Stats")]
@@ -19,8 +19,15 @@ public abstract class BaseUnitDataSO : ScriptableObject
     [Header("Movement")]
     public float moveSpeed;
 
+    [Header("Stat Progression (optional)")]
+    [Tooltip("Eğer atanırsa, Combat Stats değerleri curve'den hesaplanır. " +
+             "Boş bırakılırsa sabit Combat Stats kullanılır.")]
+    public StatProgressionSO statProgression;
+
+    [Tooltip("Bu unit'in hangi max level'da değerlendirildiği.")]
+    public int maxLevel = 20;
+
     [Header("Juice Settings")]
-    // Visual breathing effects for a more "alive" feel
     public float idleBreathingSpeed = 3f;
     public float moveBreathingSpeed = 8f;
     public float breathingAmplitude = 0.05f;

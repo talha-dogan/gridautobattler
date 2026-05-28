@@ -13,7 +13,7 @@ public class AssignSounds
         if (sm == null)
         {
             // Alternatif arama
-            sm = Object.FindFirstObjectByType<SoundManager>();
+            sm = Object.FindAnyObjectByType<SoundManager>();
         }
 
         if (sm == null)
