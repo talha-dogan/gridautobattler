@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8345865076430f94a932d10a678022f0, type: 3}
-  m_Name: Shield_Weapon 3
+  m_Name: Shield_2
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   equipmentName: Shield
   slot: 4
-  bonusHealth: 30
-  bonusDamage: 5
+  bonusHealth: 20
+  bonusDamage: 4
   bonusAttackSpeed: 0.2
   spriteReference:
-    m_AssetGUID: 1f7cb2c465487ce4fb6b205f6798b3a0
+    m_AssetGUID: 2779f594a385e9144899f31937ad73b9
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1

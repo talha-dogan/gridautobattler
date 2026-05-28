@@ -10,7 +10,7 @@ using System.Collections.Generic;
 /// │  X=0 (Player)              X=6  X=7 (Enemy)          │
 /// │  Y=7  [P]  ──────────────  [E2] [E1]  Y=7            │
 /// │  Y=6  [P]  ──────────────  [E2] [E1]  Y=6            │
-/// │  ...                        ...  ...                  │
+/// │  ...                       ...  ...                  │
 /// │  Y=0  [P]  ──────────────  [E2] [E1]  Y=0            │
 /// └──────────────────────────────────────────────────────┘
 ///
@@ -43,13 +43,13 @@ public class UnitSpawner : MonoBehaviour
     [Header("Campaign Data")]
     public LevelDataSO currentLevelData;
 
-    [Header("Player Army Data (Upgrade Scene'den gelir)")]
-    [Tooltip("Upgrade Scene'de yapılan ekipman ve karakter seçimlerini taşıyan ScriptableObject. " +
-             "Her iki sahneye de aynı asset atanmalı.")]
+    [Header("Player Army Data (From Upgrade Scene)")]
+    [Tooltip("ScriptableObject carrying the equipment and character selections made in the Upgrade Scene. " +
+             "The same asset must be assigned in both scenes.")]
     [SerializeField] public PlayerArmyDataSO playerArmyData;
 
-    [Tooltip("Oyuncu birimlerinin spawn edileceği temel prefab. " +
-             "PlayerArmyDataSO'daki slot başına bir tane spawn edilir.")]
+    [Tooltip("The base prefab for spawning player units. " +
+             "One is spawned per active slot in PlayerArmyDataSO.")]
     [SerializeField] public GameObject playerPawnPrefab;
 
     private void Awake()
@@ -74,17 +74,8 @@ public class UnitSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// Spawns enemy units from the formation asset using a two-column strategy:
-    ///
-    ///   Pass 1 — Primary column (X=7):
-    ///     Fill rows Y=0..7 sequentially. Handles up to 8 enemies.
-    ///
-    ///   Pass 2 — Overflow column (X=6):
-    ///     If the formation contains more than 8 units, continue filling
-    ///     rows Y=0..7 on the adjacent inward column. Handles enemies 9–16.
-    ///
-    /// Any formation with more than 16 units will have the excess skipped
-    /// with a warning, as the two-column capacity is the hard limit.
+    /// Spawns enemy units from the formation asset using a two-column strategy.
+    /// Handles up to 16 enemies.
     /// </summary>
     private void SpawnEnemyFormation(EnemyFormationSO formation)
     {
@@ -102,47 +93,34 @@ public class UnitSpawner : MonoBehaviour
         {
             GridNode node = GridManager.Instance.GetNode(EnemyPrimaryColumn, row);
             if (node == null) continue;
-
-            // Defensive guard: skip a lane that is already occupied.
             if (node.IsOccupied) continue;
 
-            // Place the unit at the exact world-space center of this grid node.
             UnitFactory.Instance.CreateUnit(
                 formation.units[unitIndex].unitData,
                 node.WorldPosition,
                 Team.Enemy);
 
-            // Mark the node so the grid reflects the current board state.
             node.IsOccupied = true;
-
             unitIndex++;
         }
 
         // ── Pass 2: Spill overflow enemies into the adjacent column (X=6) ─────
-        // Only entered when the formation has more than 8 units.
         for (int row = 0; row < GridManager.Rows && unitIndex < totalUnits; row++)
         {
             GridNode node = GridManager.Instance.GetNode(EnemyOverflowColumn, row);
             if (node == null) continue;
-
-            // Defensive guard: skip a lane that is already occupied.
             if (node.IsOccupied) continue;
 
-            // Place the overflow unit at the exact world-space center of this node.
             UnitFactory.Instance.CreateUnit(
                 formation.units[unitIndex].unitData,
                 node.WorldPosition,
                 Team.Enemy);
 
-            // Mark the node so the grid reflects the current board state.
             node.IsOccupied = true;
-
             unitIndex++;
         }
 
         // ── Overflow guard ────────────────────────────────────────────────────
-        // If the formation still has units left after filling both columns (>16),
-        // log a warning so designers know the formation exceeds the hard limit.
         if (unitIndex < totalUnits)
         {
             int skipped = totalUnits - unitIndex;
@@ -150,28 +128,23 @@ public class UnitSpawner : MonoBehaviour
                              $"16-unit two-column capacity. Extra units skipped.");
         }
     }
+    
 
     // ── Battle start — entry point for the "WAR!" button ─────────────────────
 
     /// <summary>
     /// Called by the "WAR!" button in Campaign and Wave mode.
-    /// Spawns player units onto the grid, then signals BattleManager to begin.
-    ///
-    /// Priority:
-    ///   1. If playerArmyData is assigned, spawn from the army roster (Upgrade Scene flow).
-    ///   2. Otherwise fall back to the legacy LevelDataSO melee/ranged limits.
+    /// Spawns player units directly from the Army Roster, then signals BattleManager to begin.
     /// </summary>
     public void StartBattle()
     {
-        // ── Priority 1: Upgrade Scene army roster ─────────────────────────────
         if (playerArmyData != null && playerPawnPrefab != null)
         {
             SpawnPlayerUnitsFromArmy();
         }
-        // ── Priority 2: Legacy LevelDataSO fallback ───────────────────────────
-        else if (currentLevelData != null)
+        else
         {
-            SpawnPlayerUnits(currentLevelData);
+            Debug.LogError("[UnitSpawner] PlayerArmyDataSO or PlayerPawnPrefab is missing! Cannot spawn player units.");
         }
 
         if (BattleManager.Instance != null)
@@ -186,9 +159,9 @@ public class UnitSpawner : MonoBehaviour
     /// Spawns player units from the PlayerArmyDataSO army roster.
     ///
     /// Rules:
-    ///   • Only slots within unlockedPawnCount are spawned.
-    ///   • Each spawned unit gets its equipment applied via UnitEquipmentManager.
-    ///   • Slots are filled from row 0 upward on Column X=0.
+    ///  • Only slots within unlockedPawnCount are spawned.
+    ///  • Each spawned unit gets its equipment applied via UnitEquipmentManager.
+    ///  • Slots are filled from row 0 upward on Column X=0.
     /// </summary>
     private void SpawnPlayerUnitsFromArmy()
     {
@@ -215,8 +188,7 @@ public class UnitSpawner : MonoBehaviour
             if (armySlot == null) { row++; continue; }
 
             GridNode node = GridManager.Instance.GetNode(PlayerSpawnColumn, row);
-            if (node == null) { row++; continue; }
-            if (node.IsOccupied) { row++; continue; }
+            if (node == null || node.IsOccupied) { row++; continue; }
 
             // Spawn the pawn prefab at the grid node's world position.
             GameObject go = Instantiate(playerPawnPrefab, node.WorldPosition, Quaternion.identity);
@@ -231,7 +203,7 @@ public class UnitSpawner : MonoBehaviour
                 continue;
             }
 
-            // Use the slot's baseUnitData if available; otherwise fall back to LevelDataSO.
+            // Use the slot's baseUnitData if available; otherwise fall back to the default melee data as a safety net.
             BaseUnitDataSO dataToUse = armySlot.baseUnitData;
             if (dataToUse == null && currentLevelData != null)
                 dataToUse = currentLevelData.meleeData;
@@ -266,77 +238,6 @@ public class UnitSpawner : MonoBehaviour
             row++;
 
             Debug.Log($"[UnitSpawner] Army slot {slotIndex} spawned at row {row - 1} with data '{dataToUse.unitName}'.");
-        }
-    }
-
-    // ── Player grid spawning — Legacy LevelDataSO ─────────────────────────────
-
-    /// <summary>
-    /// Spawns all player units (melee first, then ranged) onto Column X=0 (far left),
-    /// filling rows Y=0..7 sequentially from the bottom lane upward.
-    ///
-    /// Total units spawned = meleeLimit + rangedLimit.
-    /// If the combined count exceeds 8 (the number of rows), extra units are skipped.
-    /// </summary>
-    private void SpawnPlayerUnits(LevelDataSO levelData)
-    {
-        if (GridManager.Instance == null)
-        {
-            Debug.LogError("[UnitSpawner] GridManager.Instance is null — cannot spawn player units.");
-            return;
-        }
-
-        // Tracks the next available row on the player column.
-        int row = 0;
-
-        // ── Spawn Melee Units ─────────────────────────────────────────────────
-        // Melee units fill the lower lanes first so they form the front line.
-        for (int i = 0; i < levelData.meleeLimit; i++)
-        {
-            if (row >= GridManager.Rows)
-            {
-                Debug.LogWarning("[UnitSpawner] Player column is full. Remaining melee units skipped.");
-                break;
-            }
-
-            GridNode node = GridManager.Instance.GetNode(PlayerSpawnColumn, row);
-            if (node == null) { row++; continue; }
-
-            // Defensive guard: skip a lane that is already occupied.
-            if (node.IsOccupied) { row++; continue; }
-
-            // Place the unit at the exact world-space center of this grid node.
-            UnitFactory.Instance.CreateUnit(levelData.meleeData, node.WorldPosition, Team.Player);
-
-            // Mark the node so the grid reflects the current board state.
-            node.IsOccupied = true;
-
-            row++;
-        }
-
-        // ── Spawn Ranged Units ────────────────────────────────────────────────
-        // Ranged units fill the remaining lanes directly above the melee line.
-        for (int i = 0; i < levelData.rangedLimit; i++)
-        {
-            if (row >= GridManager.Rows)
-            {
-                Debug.LogWarning("[UnitSpawner] Player column is full. Remaining ranged units skipped.");
-                break;
-            }
-
-            GridNode node = GridManager.Instance.GetNode(PlayerSpawnColumn, row);
-            if (node == null) { row++; continue; }
-
-            // Defensive guard: skip a lane that is already occupied.
-            if (node.IsOccupied) { row++; continue; }
-
-            // Place the unit at the exact world-space center of this grid node.
-            UnitFactory.Instance.CreateUnit(levelData.rangedData, node.WorldPosition, Team.Player);
-
-            // Mark the node so the grid reflects the current board state.
-            node.IsOccupied = true;
-
-            row++;
         }
     }
 }

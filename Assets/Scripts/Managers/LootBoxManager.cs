@@ -57,7 +57,7 @@ public class LootBoxManager : MonoBehaviour
     /// Called via UI Button to open a box.
     /// Checks gold, deducts it, and triggers the visual sequence.
     /// </summary>
-    public void TryOpenBox()
+  public void TryOpenBox()
     {
         // Block interaction if the box is already in the opening process
         if (_isOpening) return;
@@ -74,9 +74,13 @@ public class LootBoxManager : MonoBehaviour
             return;
         }
 
-        // Check economy
+        // --- ECONOMY CHECK (UPDATED) ---
+        // LevelManager varsa oradan, yoksa GameSaveService'ten oku. 
+        // PlayerPrefs kullanımı tamamen kaldırıldı.
         LevelManager levelManager = LevelManager.Instance;
-        int currentGold = levelManager != null ? levelManager.currentGold : PlayerPrefs.GetInt(GOLD_SAVE_KEY, 0);
+        int currentGold = levelManager != null 
+            ? levelManager.currentGold 
+            : (GameSaveService.Instance != null ? GameSaveService.Instance.GetGold() : 0);
 
         if (currentGold < BoxCost)
         {
@@ -84,18 +88,16 @@ public class LootBoxManager : MonoBehaviour
             return;
         }
 
-        // Deduct gold safely
+        // --- DEDUCT GOLD (UPDATED) ---
         if (levelManager != null)
         {
             levelManager.SpendGold(BoxCost);
         }
-        else
+        else if (GameSaveService.Instance != null)
         {
-            currentGold -= BoxCost;
-            PlayerPrefs.SetInt(GOLD_SAVE_KEY, currentGold);
-            PlayerPrefs.Save();
-            // Assuming GameEvents.SetGold exists in your project
-            // GameEvents.SetGold(currentGold); 
+            int newGold = currentGold - BoxCost;
+            GameSaveService.Instance.SetGold(newGold);
+            GameEvents.SetGold(newGold); // Tells the UI to update
         }
 
         // Start the visual change and spawning process

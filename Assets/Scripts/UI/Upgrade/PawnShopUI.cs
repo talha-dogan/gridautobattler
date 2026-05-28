@@ -50,12 +50,13 @@ public class PawnShopUI : MonoBehaviour
         GameEvents.OnPawnCountChanged -= HandlePawnCountChanged;
     }
 
-    private void Start()
+ private void Start()
     {
-        // Try to get current gold from LevelManager first. 
-        // If LevelManager doesn't exist (e.g., in UpgradeScene), fallback to PlayerPrefs.
+        // --- READ INITIAL GOLD (UPDATED) ---
         LevelManager lm = LevelManager.Instance;
-        int currentGold = lm != null ? lm.currentGold : PlayerPrefs.GetInt(GOLD_SAVE_KEY, 0);
+        int currentGold = lm != null 
+            ? lm.currentGold 
+            : (GameSaveService.Instance != null ? GameSaveService.Instance.GetGold() : 0);
 
         RefreshCoinText(currentGold);
         RefreshButtonState(currentGold, GetCurrentPawnCount());
@@ -76,14 +77,15 @@ public class PawnShopUI : MonoBehaviour
         RefreshButtonState(newTotal, GetCurrentPawnCount());
     }
 
-    private void HandlePawnCountChanged(int newCount)
+private void HandlePawnCountChanged(int newCount)
     {
         LevelManager lm = LevelManager.Instance;
-        // Fallback to PlayerPrefs if LevelManager is null
-        int currentGold = lm != null ? lm.currentGold : PlayerPrefs.GetInt(GOLD_SAVE_KEY, 0);
+        int currentGold = lm != null 
+            ? lm.currentGold 
+            : (GameSaveService.Instance != null ? GameSaveService.Instance.GetGold() : 0);
+            
         RefreshButtonState(currentGold, newCount);
     }
-
     // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------
@@ -91,7 +93,7 @@ public class PawnShopUI : MonoBehaviour
     private void RefreshCoinText(int coins)
     {
         if (_coinText != null)
-            _coinText.text = $"🪙 {coins}";
+            _coinText.text = $"{coins}T";
     }
 
     private void RefreshButtonState(int coins, int pawnCount)

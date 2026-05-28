@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8345865076430f94a932d10a678022f0, type: 3}
-  m_Name: Shield_Weapon 1
+  m_Name: Shield_1
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   equipmentName: Shield
   slot: 4

@@ -36,6 +36,10 @@ public class UpgradeCharacterDropZoneUI : MonoBehaviour, IDropHandler
     [Tooltip("Her ekipman slotu için Image bileşenlerini tutan sözlük. Inspector'dan doldurulur.")]
     [SerializeField] private List<EquipmentSlotImageEntry> _equipmentSlotImages = new List<EquipmentSlotImageEntry>();
 
+
+    [Header("Popup System")]
+    [Tooltip("The local popup UI component for this specific drop zone.")]
+    [SerializeField] private EquipmentPopupUI _localPopup;
     // -------------------------------------------------------------------------
     // Nested serializable type for Inspector slot-image mapping
     // -------------------------------------------------------------------------
@@ -157,8 +161,16 @@ public class UpgradeCharacterDropZoneUI : MonoBehaviour, IDropHandler
 
         Debug.Log($"[UpgradeCharacterDropZoneUI] Slot {_armySlotIndex}: '{incomingEquipment.equipmentName}' ({targetSlot}) takıldı.");
 
+       // Generate and show local popup info
+        if (_localPopup != null)
+        {
+            string infoText = GenerateEquipText(incomingEquipment);
+            _localPopup.ShowPopup(infoText);
+        }
         // Item tek kullanımlık: başarıyla takıldıktan sonra sahneden kaldır.
         dragItem.ConsumeItem();
+
+        
     }
 
     // -------------------------------------------------------------------------
@@ -246,5 +258,28 @@ public class UpgradeCharacterDropZoneUI : MonoBehaviour, IDropHandler
                 return entry.slotImage;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Generates a formatted English string displaying the equipped item and its positive stats.
+    /// </summary>
+    private string GenerateEquipText(EquipmentDataSO eq)
+    {
+        if (eq == null) return string.Empty;
+
+        List<string> bonuses = new List<string>();
+
+        if (eq.bonusHealth > 0)
+            bonuses.Add($"bonus health +{eq.bonusHealth}");
+
+        if (eq.bonusDamage > 0)
+            bonuses.Add($"bonus damage +{eq.bonusDamage}");
+
+        if (eq.bonusAttackSpeed > 0)
+            bonuses.Add($"bonus attack speed +{eq.bonusAttackSpeed}");
+
+        string bonusText = bonuses.Count > 0 ? " " + string.Join(" ", bonuses) : "";
+        
+        return $"{eq.equipmentName} equipped{bonusText}";
     }
 }
