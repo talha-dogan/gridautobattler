@@ -884,3 +884,30 @@ Bu başlık altındaki 4 maddenin tümü proje içinde mevcut değil:
 | I — Quick Gameplay Test | ❌ Hiç yok | 🟠 Orta-Yüksek |
 | J — Unity Localization (key naming) | ⚠️ Kısmi (standart eksik) | 🟡 Orta |
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<img width="537" height="648" alt="StatProgressionEnemySO" src="https://github.com/user-attachments/assets/c5c60fda-4a4b-4e73-a275-9a65eb0d1dc0" />
+
+
