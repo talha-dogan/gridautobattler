@@ -119,19 +119,26 @@ public class BattleSpeedController : MonoBehaviour
     // We listen to GameEvents so the speed is applied the moment the battle
     // starts (in case the player pre-selected 2x or 3x before pressing WAR!).
 
-    private void OnEnable()
-    {
-        GameEvents.OnBattleStarted += HandleBattleStarted;
-        GameEvents.OnLevelWin      += HandleBattleEnded;
-        GameEvents.OnLevelLose     += HandleBattleEnded;
-    }
 
-    private void OnDisable()
-    {
-        GameEvents.OnBattleStarted -= HandleBattleStarted;
-        GameEvents.OnLevelWin      -= HandleBattleEnded;
-        GameEvents.OnLevelLose     -= HandleBattleEnded;
-    }
+private void OnEnable()
+{
+    GameEvents.OnBattleStarted += HandleBattleStarted;
+    GameEvents.OnLevelWin      += HandleBattleEnded;
+    GameEvents.OnLevelLose     += HandleBattleEnded;
+
+    if (GameInputHandler.Instance != null)
+        GameInputHandler.Instance.OnSpeedCycle += CycleSpeed;
+}
+
+private void OnDisable()
+{
+    GameEvents.OnBattleStarted -= HandleBattleStarted;
+    GameEvents.OnLevelWin      -= HandleBattleEnded;
+    GameEvents.OnLevelLose     -= HandleBattleEnded;
+
+    if (GameInputHandler.Instance != null)
+        GameInputHandler.Instance.OnSpeedCycle -= CycleSpeed;
+}
 
     private void HandleBattleStarted()
     {
