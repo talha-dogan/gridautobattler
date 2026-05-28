@@ -20,6 +20,8 @@ MonoBehaviour:
   attackRange: 10
   attackCooldown: 0.35
   moveSpeed: 20
+  statProgression: {fileID: 11400000, guid: 0ed235d7ea0752a449ed348630833f90, type: 2}
+  maxLevel: 20
   idleBreathingSpeed: 3
   moveBreathingSpeed: 8
   breathingAmplitude: 0.05
