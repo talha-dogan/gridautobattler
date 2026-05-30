@@ -18,4 +18,4 @@ MonoBehaviour:
   meleeData: {fileID: 11400000, guid: 794720ecc319aaa46b751afb33be9d35, type: 2}
   rangedData: {fileID: 11400000, guid: 610a1c3fcabab7a47973a71b5379a4f8, type: 2}
   enemyFormation: {fileID: 11400000, guid: 07dcb7fca1723064d8fcb0c8d0bd9adc, type: 2}
-  goldReward: 39400
+  goldReward: 78800

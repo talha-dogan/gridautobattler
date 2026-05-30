@@ -13,35 +13,13 @@ MonoBehaviour:
   m_Name: L108_Formation
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFormationSO
   units:
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
     offset: {x: 0, y: 0}

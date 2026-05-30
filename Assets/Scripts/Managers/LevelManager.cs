@@ -50,6 +50,36 @@ public class LevelManager : MonoBehaviour
         GameEvents.OnLevelLose         += HandleLevelLose;
     }
 
+    private void Start()
+{
+    if (GameSaveService.Instance != null)
+    {
+        currentGold        = GameSaveService.Instance.GetGold();
+        _currentLevelIndex = GameSaveService.Instance.GetLevelIndex();
+    }
+
+    GameEvents.SetGold(currentGold);
+    StartCoroutine(WaitAndLoadLevel());
+}
+
+private IEnumerator WaitAndLoadLevel()
+{
+    float timeout = 3f;
+    while (UnitSpawner.Instance == null && timeout > 0f)
+    {
+        timeout -= Time.deltaTime;
+        yield return null;
+    }
+
+    if (UnitSpawner.Instance == null)
+    {
+        Debug.LogError("[LevelManager] UnitSpawner 3 saniye içinde hazır olmadı!");
+        yield break;
+    }
+
+    LoadLevel(_currentLevelIndex);
+}
+
     private void OnDestroy()
     {
         GameEvents.OnStatusTextChanged -= HandleStatusTextChanged;
@@ -57,18 +87,7 @@ public class LevelManager : MonoBehaviour
         GameEvents.OnLevelLose         -= HandleLevelLose;
     }
 
-    private void Start()
-    {
-        // GameSaveService varsa oradan yükle, yoksa varsayılan 0
-        if (GameSaveService.Instance != null)
-        {
-            currentGold        = GameSaveService.Instance.GetGold();
-            _currentLevelIndex = GameSaveService.Instance.GetLevelIndex();
-        }
 
-        GameEvents.SetGold(currentGold);
-        LoadLevel(_currentLevelIndex);
-    }
 
     // -------------------------------------------------------------------------
     // GameEvents handlers
@@ -156,7 +175,7 @@ public class LevelManager : MonoBehaviour
     // Coroutines
     // -------------------------------------------------------------------------
 
-    private IEnumerator NextLevelRoutine()
+  private IEnumerator NextLevelRoutine()
     {
         yield return new WaitForSeconds(3f);
         if (this == null) yield break;
@@ -169,7 +188,6 @@ public class LevelManager : MonoBehaviour
         if (this == null) yield break;
         LoadLevel(_currentLevelIndex);
     }
-
     // -------------------------------------------------------------------------
     // Board cleanup
     // -------------------------------------------------------------------------

@@ -19,29 +19,9 @@ MonoBehaviour:
     offset: {x: 0, y: 0}
   - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
+  - unitData: {fileID: 11400000, guid: f14ca63eaf937c84085a2b84c7dd4847, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
+  - unitData: {fileID: 11400000, guid: f14ca63eaf937c84085a2b84c7dd4847, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: f00eefba0eb1cb749a20f15aede5c634, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: f14ca63eaf937c84085a2b84c7dd4847, type: 2}
     offset: {x: 0, y: 0}

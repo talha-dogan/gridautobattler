@@ -84,6 +84,10 @@ public class GameInputHandler : MonoBehaviour
 
     private void OnDisable()
     {
+        // _actions is null when this is a duplicate instance being destroyed
+        // before Awake() had a chance to initialise it — guard against that.
+        if (_actions == null) return;
+
         _actions.Disable();
 
         _actions.UI.Click.performed          -= _ => OnConfirm?.Invoke();

@@ -16,7 +16,29 @@ public class MenuManager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene(gameSceneName);
+        // SceneLoader varsa additive geçiş kullan
+        if (SceneLoader.Instance != null)
+        {
+            // Geçiş zaten devam ediyorsa ikinci tıklamayı yoksay
+            if (SceneLoader.Instance.IsTransitioning)
+            {
+                Debug.LogWarning("[MenuManager] Geçiş zaten devam ediyor, istek yoksayildi.");
+                return;
+            }
+
+            // StartScene'i unload et, UpgradeScene'i yükle
+            SceneLoader.Instance.TransitionTo(
+                targetScene:   gameSceneName,
+                sceneToUnload: "StartScene",
+                onComplete:    () => Debug.Log($"[MenuManager] '{gameSceneName}' yüklendi.")
+            );
+        }
+        else
+        {
+            // Fallback: SceneLoader yoksa CoreScene'i yükle, o StartScene'i yükler
+            // Doğrudan UpgradeScene'e geç
+            SceneManager.LoadScene(gameSceneName);
+        }
     }
 
     public void QuitGame()

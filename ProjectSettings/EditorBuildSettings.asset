@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/CoreScene.unity
+    guid: a54d06fd66b323346ac4ea3e16936a25
+  - enabled: 1
     path: Assets/Scenes/StartScene.unity
     guid: b0601fd782e29d14197e9c3f39c97e6f
   - enabled: 1
@@ -14,9 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GridScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 0
-    path: Assets/Scenes/AiWaveScene.unity
-    guid: 1d66717a6649aa248a83d1b00f14dec0
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 76d98dcd146ec6f4a926f0ebc41d2660, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

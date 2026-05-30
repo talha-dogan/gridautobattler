@@ -179,18 +179,37 @@ public class UpgradeManager : MonoBehaviour
         GameSaveService.Instance.SetInventory(names);
     }
 
-    private IEnumerator LoadGridSceneAsync()
+    private System.Collections.IEnumerator LoadGridSceneAsync()
     {
-        Debug.Log($"[UpgradeManager] GridScene yükleniyor: '{_gridSceneName}'...");
+        Debug.Log($"[UpgradeManager] GridScene geçişi başlıyor: '{_gridSceneName}'...");
 
-        GameEvents.ClearAllEvents();
+        // SceneLoader varsa additive geçiş kullan
+        if (SceneLoader.Instance != null)
+        {
+            // SceneLoader.TransitionTo: önce GridScene'i yükler, sonra UpgradeScene'i unload eder.
+            // Cleanup pipeline (Addressables release, pool clear, GC) otomatik çalışır.
+            string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            SceneLoader.Instance.TransitionTo(
+                targetScene:   _gridSceneName,
+                sceneToUnload: currentSceneName,
+                onComplete:    () => Debug.Log($"[UpgradeManager] '{_gridSceneName}' geçişi tamamlandı.")
+            );
+        }
+        else
+        {
+            // Fallback: SceneLoader yoksa eski yöntemi kullan
+            Debug.LogWarning("[UpgradeManager] SceneLoader bulunamadı. Eski LoadScene yöntemi kullanılıyor.");
+            GameEvents.ClearAllEvents();
 
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_gridSceneName);
-        asyncLoad.allowSceneActivation = false;
+            AsyncOperation asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(_gridSceneName);
+            asyncLoad.allowSceneActivation = false;
 
-        while (asyncLoad.progress < 0.9f)
-            yield return null;
+            while (asyncLoad.progress < 0.9f)
+                yield return null;
 
-        asyncLoad.allowSceneActivation = true;
+            asyncLoad.allowSceneActivation = true;
+        }
+
+        yield break;
     }
 }

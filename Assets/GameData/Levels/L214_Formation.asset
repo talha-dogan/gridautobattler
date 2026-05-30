@@ -13,35 +13,17 @@ MonoBehaviour:
   m_Name: L214_Formation
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFormationSO
   units:
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+  - unitData: {fileID: 11400000, guid: 8027afcdb67c92f418fd1457c456caed, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+  - unitData: {fileID: 11400000, guid: 8027afcdb67c92f418fd1457c456caed, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+  - unitData: {fileID: 11400000, guid: 8027afcdb67c92f418fd1457c456caed, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: 544c8d7a7dfcc134682c7ad73be48159, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}

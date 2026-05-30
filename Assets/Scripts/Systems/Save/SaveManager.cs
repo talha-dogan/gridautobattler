@@ -31,7 +31,7 @@ public static class SaveManager
     private const string BackupSuffix  = ".bak";
 
     // AES şifreleme için sabit anahtar ve IV (production'da güvenli bir yerde saklanmalı)
-    private static readonly byte[] AesKey = Encoding.UTF8.GetBytes("TDEV_GridBattler_AES_Key_32Bytes!");  // 32 byte
+    private static readonly byte[] AesKey = Encoding.UTF8.GetBytes("TDEV_GridBattler_AES_Key_32Bytes");// 32 byte
     private static readonly byte[] AesIV  = Encoding.UTF8.GetBytes("TDEV_AES_IV_16B!");                  // 16 byte
 
     // ─────────────────────────────────────────────────────────────────────────

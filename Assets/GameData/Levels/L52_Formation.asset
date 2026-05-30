@@ -13,21 +13,11 @@ MonoBehaviour:
   m_Name: L52_Formation
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFormationSO
   units:
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
-    offset: {x: 0, y: 0}
-  - unitData: {fileID: 11400000, guid: d0a911b0143cf984c96d31151a0e76d6, type: 2}
+  - unitData: {fileID: 11400000, guid: b34d3cf1b70bd204bbf5ff2fdf629ad1, type: 2}
     offset: {x: 0, y: 0}

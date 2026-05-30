@@ -94,6 +94,20 @@ public class GameUIManager : MonoBehaviour, IGameView
     public void ReturnToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(menuSceneName);
+
+        // SceneLoader varsa additive geçiş kullan
+        if (SceneLoader.Instance != null)
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            SceneLoader.Instance.TransitionTo(
+                targetScene:   menuSceneName,
+                sceneToUnload: currentScene,
+                onComplete:    () => Debug.Log($"[GameUIManager] '{menuSceneName}' yüklendi.")
+            );
+        }
+        else
+        {
+            SceneManager.LoadScene(menuSceneName);
+        }
     }
 }
