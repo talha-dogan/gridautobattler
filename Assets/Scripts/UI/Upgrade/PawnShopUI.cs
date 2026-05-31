@@ -50,16 +50,26 @@ public class PawnShopUI : MonoBehaviour
         GameEvents.OnPawnCountChanged -= HandlePawnCountChanged;
     }
 
- private void Start()
+    private System.Collections.IEnumerator Start()
     {
-        // --- READ INITIAL GOLD (UPDATED) ---
-        LevelManager lm = LevelManager.Instance;
-        int currentGold = lm != null 
-            ? lm.currentGold 
-            : (GameSaveService.Instance != null ? GameSaveService.Instance.GetGold() : 0);
+        // GameSaveService DontDestroyOnLoad singleton'ı — SceneCleanupPipeline'ın
+        // GameEvents.ClearAllEvents() çağrısından sonra UpgradeScene yüklendiğinde
+        // bir frame bekleyerek tüm singleton'ların Awake'ini tamamlamasını garantile.
+        yield return null;
 
+        // --- READ INITIAL GOLD ---
+        // LevelManager sadece GridScene'de var; UpgradeScene'de her zaman
+        // GameSaveService'ten okuruz.
+        int currentGold = GameSaveService.Instance != null
+            ? GameSaveService.Instance.GetGold()
+            : 0;
+
+        // UI'ı direkt güncelle
         RefreshCoinText(currentGold);
         RefreshButtonState(currentGold, GetCurrentPawnCount());
+
+        // GameEvents üzerinden de yayınla — başka subscriber'lar varsa onlar da güncellensin
+        GameEvents.SetGold(currentGold);
     }
 
     // -------------------------------------------------------------------------

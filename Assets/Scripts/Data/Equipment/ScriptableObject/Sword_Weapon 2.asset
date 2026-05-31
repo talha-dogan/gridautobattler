@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8345865076430f94a932d10a678022f0, type: 3}
-  m_Name: Shield_2
+  m_Name: Sword_Weapon 2
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
-  equipmentName: Shield
-  slot: 4
-  bonusHealth: 30
-  bonusDamage: 5
-  bonusAttackSpeed: 0.2
+  equipmentName: Sword
+  slot: 3
+  bonusHealth: 0
+  bonusDamage: 4
+  bonusAttackSpeed: 0.5
   spriteReference:
-    m_AssetGUID: 1f7cb2c465487ce4fb6b205f6798b3a0
+    m_AssetGUID: 48cdfc8188d198e46865475029ac05e3
     m_SubObjectName: 
-    m_SubObjectType: 
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0

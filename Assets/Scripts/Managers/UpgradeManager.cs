@@ -38,6 +38,10 @@ public class UpgradeManager : MonoBehaviour
     [Tooltip("READY butonuna basıldığında yüklenecek sahnenin adı.")]
     [SerializeField] private string _gridSceneName = "GridScene";
 
+    [Tooltip("Back To Menu butonuna basıldığında yüklenecek menü sahnesinin adı.")]
+    [SerializeField] private string _menuSceneName = "StartScene"; 
+    // -------------------------
+
     // -------------------------------------------------------------------------
     // Runtime state
     // -------------------------------------------------------------------------
@@ -155,6 +159,36 @@ public class UpgradeManager : MonoBehaviour
     {
         PersistArmySlots();
     }
+
+// -------------------------------------------------------------------------
+    // Public API — Menu transition
+    // -------------------------------------------------------------------------
+    public void OnBackToMenuButtonPressed()
+    {
+        // İsteğe bağlı: Oyuncu menüye dönerken o anki envanter/ordu dizilimini kaydetmek istersen 
+        // aşağıdaki iki satırın başındaki "//" işaretlerini kaldırabilirsin.
+        // PersistArmySlots();
+        // PersistInventory();
+
+        Debug.Log($"[UpgradeManager] Ana menüye dönülüyor: '{_menuSceneName}'...");
+
+        // Mevcut sisteme sadık kalarak Addressables ve memory temizliği yapan SceneLoader'ı kullanıyoruz
+        if (SceneLoader.Instance != null)
+        {
+            SceneLoader.Instance.TransitionTo(
+                targetScene:   _menuSceneName,
+                sceneToUnload: "UpgradeScene",
+                onComplete:    () => Debug.Log($"[UpgradeManager] '{_menuSceneName}' geçişi tamamlandı.")
+            );
+        }
+        else
+        {
+            // Fallback (SceneLoader yoksa) senaryosu
+            UnityEngine.SceneManagement.SceneManager.LoadScene(_menuSceneName);
+        }
+    }
+
+
 
     // -------------------------------------------------------------------------
     // Private helpers

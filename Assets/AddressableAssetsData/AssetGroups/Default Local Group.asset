@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 6ac28de5949127b409fdbd04773da6b8
   m_SerializeEntries:
+  - m_GUID: 07e6f2a97c9953a42935c2457ef7b9a1
+    m_Address: Assets/Art/Items/Vest.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0c6f6737022d3f041a8ee8ac32c1b64e
     m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 1.asset
     m_ReadOnly: 0

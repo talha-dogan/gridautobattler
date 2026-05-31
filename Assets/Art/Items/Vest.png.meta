@@ -3,8 +3,8 @@ guid: 07e6f2a97c9953a42935c2457ef7b9a1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3651916750573402290
-    second: armor_only-Photoroom_0
+      213: 375973823004284259
+    second: Vest_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: armor_only-Photoroom_0
+      name: Vest_0
       rect:
         serializedVersion: 2
         x: 4
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2b8f93b9fe63ea230800000000000000
-      internalID: 3651916750573402290
+      spriteID: 3651405333ab73500800000000000000
+      internalID: 375973823004284259
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      armor_only-Photoroom_0: 3651916750573402290
+      Vest_0: 375973823004284259
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

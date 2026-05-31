@@ -15,12 +15,11 @@ MonoBehaviour:
   equipmentName: Pistol
   slot: 3
   bonusHealth: 0
-  bonusDamage: 2
+  bonusDamage: 5
   bonusAttackSpeed: 0.5
   spriteReference:
     m_AssetGUID: 4e5fd9db8fa862b4d8e4abe71d2ebead
-    m_SubObjectName: Glock34Trijicon
-    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+    m_SubObjectName: 
+    m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 1

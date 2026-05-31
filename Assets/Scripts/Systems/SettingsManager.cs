@@ -156,10 +156,49 @@ public class SettingsManager : MonoBehaviour
 
     public void ConfirmResetGameData()
     {
-        // Ayarlar korunarak oyun verisi sıfırlanır
+        // 1. Reset all base game data while keeping settings intact
         GameSaveService.Instance?.ResetGameData();
 
-        Debug.Log("[SettingsManager] Oyun verisi sıfırlandı.");
+        // 2. Define startup defaults (500 Gold, Level 1)
+        int startupGold = 500;
+        int startingLevelIndex = 0; // 0-based index for Level 1
+
+        // 3. Apply changes to PlayerPrefs (Simulate 'First Time' state)
+        PlayerPrefs.SetInt("PlayerGold", startupGold);
+        PlayerPrefs.SetInt("IsFirstTimePlaying", 1);
+        
+        // Replace "CurrentLevel" with the exact key your system uses if it's different
+        PlayerPrefs.SetInt("CurrentLevel", startingLevelIndex); 
+        PlayerPrefs.Save();
+
+        // 4. Sync with GameSaveService if it's active
+        if (GameSaveService.Instance != null)
+        {
+            GameSaveService.Instance.SetGold(startupGold);
+            GameSaveService.Instance.SetUnlockedPawnCount(1); // Reset inventory slots to 1
+            
+            // If your GameSaveService has a SetLevel or SetCurrentLevel method, call it here:
+            // GameSaveService.Instance.SetCurrentLevel(startingLevelIndex);
+        }
+
+        // 5. Broadcast the gold update so the UI instantly reflects the 500 startup money
+        GameEvents.SetGold(startupGold);
+
+        // 6. Force reload the scene to cleanly start from Level 1
+        // Note: Make sure UnityEngine.SceneManagement is added at the top if you use this
+        if (Application.isPlaying)
+        {
+            LevelManager lm = FindAnyObjectByType<LevelManager>();
+            if (lm != null)
+            {
+                // Optionally trigger a level reload through LevelManager if available
+                var loadMethod = typeof(LevelManager).GetMethod("LoadLevel", 
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                loadMethod?.Invoke(lm, new object[] { startingLevelIndex });
+            }
+        }
+
+        Debug.Log("[SettingsManager] Game data completely reset. Injected 500 startup gold and reverted to Level 1.");
 
         if (resetConfirmPanel != null) resetConfirmPanel.SetActive(false);
     }

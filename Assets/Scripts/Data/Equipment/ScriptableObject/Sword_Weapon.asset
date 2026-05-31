@@ -15,7 +15,7 @@ MonoBehaviour:
   equipmentName: Sword
   slot: 3
   bonusHealth: 0
-  bonusDamage: 5
+  bonusDamage: 2
   bonusAttackSpeed: 0.5
   spriteReference:
     m_AssetGUID: a59fff6cde49f6f4bb3150bfbf4eacff
