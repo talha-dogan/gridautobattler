@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 418d94a49a1eeb7459373abd32153b35, type: 3}
-  m_Name: P-Bot
+  m_Name: Turk
   m_EditorClassIdentifier: Assembly-CSharp::MeleeUnitDataSO
   unitName: P-Bot
   unitType: 0
