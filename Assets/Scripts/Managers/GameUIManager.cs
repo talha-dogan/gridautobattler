@@ -95,13 +95,14 @@ public class GameUIManager : MonoBehaviour, IGameView
     {
         Time.timeScale = 1f;
 
-        // SceneLoader varsa additive geçiş kullan
+        // Use SceneLoader for additive scene transition if available
         if (SceneLoader.Instance != null)
         {
-            string currentScene = SceneManager.GetActiveScene().name;
+            // Use a hardcoded string instead of GetActiveScene().name to guarantee the correct
+            // scene is unloaded even if the active scene changes during the transition.
             SceneLoader.Instance.TransitionTo(
                 targetScene:   menuSceneName,
-                sceneToUnload: currentScene,
+                sceneToUnload: "GridScene",
                 onComplete:    () => Debug.Log($"[GameUIManager] '{menuSceneName}' yüklendi.")
             );
         }

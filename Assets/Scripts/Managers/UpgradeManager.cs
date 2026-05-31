@@ -186,12 +186,13 @@ public class UpgradeManager : MonoBehaviour
         // SceneLoader varsa additive geçiş kullan
         if (SceneLoader.Instance != null)
         {
-            // SceneLoader.TransitionTo: önce GridScene'i yükler, sonra UpgradeScene'i unload eder.
-            // Cleanup pipeline (Addressables release, pool clear, GC) otomatik çalışır.
-            string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            // SceneLoader.TransitionTo: loads GridScene first, then unloads UpgradeScene.
+            // Cleanup pipeline (Addressables release, pool clear, GC) runs automatically.
+            // Use a hardcoded string instead of GetActiveScene().name to guarantee the correct
+            // scene is unloaded even if the active scene changes during the transition.
             SceneLoader.Instance.TransitionTo(
                 targetScene:   _gridSceneName,
-                sceneToUnload: currentSceneName,
+                sceneToUnload: "UpgradeScene",
                 onComplete:    () => Debug.Log($"[UpgradeManager] '{_gridSceneName}' geçişi tamamlandı.")
             );
         }
