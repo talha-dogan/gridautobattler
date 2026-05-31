@@ -16,7 +16,8 @@ MonoBehaviour:
   slot: 3
   bonusHealth: 0
   bonusDamage: 8
-  bonusAttackSpeed: 0.5
+  bonusAttackSpeed: 0.1
+  weaponBehaviour: {fileID: 11400000, guid: bb2cde62dcddf2e4db39d372abaa4732, type: 2}
   spriteReference:
     m_AssetGUID: 1bb451a59cdb00e4eba976edf85fc976
     m_SubObjectName: 

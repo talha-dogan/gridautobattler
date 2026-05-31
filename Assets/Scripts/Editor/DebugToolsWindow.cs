@@ -153,22 +153,19 @@ public class DebugToolsWindow : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
-    private void ApplyStartupMoney(int amount)
+private void ApplyStartupMoney(int amount)
+{
+    PlayerPrefs.SetInt("PlayerGold", amount);
+    PlayerPrefs.SetInt("IsFirstTimePlaying", 0);
+    PlayerPrefs.Save();
+
+    if (Application.isPlaying)
     {
-        // Update PlayerPrefs
-        PlayerPrefs.SetInt("PlayerGold", amount);
-        PlayerPrefs.SetInt("IsFirstTimePlaying", 0);
-        PlayerPrefs.Save();
-
-        // Update GameSaveService if it's running
-        if (Application.isPlaying && GameSaveService.Instance != null)
-        {
-            GameSaveService.Instance.SetGold(amount);
-            GameEvents.SetGold(amount);
-        }
-
-        Debug.Log($"[DebugTools] Injected {amount} startup gold into the save file.");
+        GameSaveService saveService = GetOrCreateSaveService();
+        saveService.SetGold(amount);
+        GameEvents.SetGold(amount);
     }
+}
 
     // -------------------------------------------------------------------------
     // 2. Memory Cleanup
@@ -543,97 +540,84 @@ EditorGUILayout.BeginHorizontal();
 
         EditorGUILayout.BeginHorizontal();
 
-        if (GUILayout.Button("💰 +1000 Gold", GUILayout.Height(24)))
+if (GUILayout.Button("💰 +1000 Gold", GUILayout.Height(24)))
+{
+    if (Application.isPlaying)
+    {
+        LevelManager lm = FindFirstObjectByType<LevelManager>();
+        if (lm != null)
         {
-            if (Application.isPlaying)
-            {
-                if (LevelManager.Instance != null)
-                {
-                    // Add gold using LevelManager if it exists in the current scene
-                    LevelManager.Instance.AddGold(1000);
-                    Debug.Log("[DebugTools] Added +1000 Gold (runtime via LevelManager).");
-                }
-                else
-                {
-                    // Handle scenes without LevelManager (e.g. UpgradeScene)
-                    int current = GameSaveService.Instance != null 
-                        ? GameSaveService.Instance.GetGold() 
-                        : PlayerPrefs.GetInt("PlayerGold", 0);
-                        
-                    int newTotal = current + 1000;
-                    
-                    PlayerPrefs.SetInt("PlayerGold", newTotal);
-                    PlayerPrefs.Save();
-                    
-                    if (GameSaveService.Instance != null)
-                        GameSaveService.Instance.SetGold(newTotal);
-                        
-                    // Broadcast the update so the UI catches it instantly
-                    GameEvents.SetGold(newTotal);
-                    Debug.Log($"[DebugTools] Added +1000 Gold (runtime via GameEvents). New total: {newTotal}");
-                }
-            }
-            else
-            {
-                // Editor mode behavior when the game is not playing
-                int current = PlayerPrefs.GetInt("PlayerGold", 0);
-                PlayerPrefs.SetInt("PlayerGold", current + 1000);
-                PlayerPrefs.Save();
-                Debug.Log($"[DebugTools] +1000 Gold added to PlayerPrefs. New total: {current + 1000}");
-            }
+            lm.AddGold(1000);
         }
+        else
+        {
+            GameSaveService saveService = GetOrCreateSaveService();
+            int current = saveService.GetGold();
+            int newTotal = current + 1000;
+            
+            PlayerPrefs.SetInt("PlayerGold", newTotal);
+            PlayerPrefs.Save();
+            
+            saveService.SetGold(newTotal);
+            GameEvents.SetGold(newTotal);
+        }
+    }
+    else
+    {
+        int current = PlayerPrefs.GetInt("PlayerGold", 0);
+        PlayerPrefs.SetInt("PlayerGold", current + 1000);
+        PlayerPrefs.Save();
+    }
+}
 
-        if (GUILayout.Button("💸 Reset Gold", GUILayout.Height(24)))
+if (GUILayout.Button("💸 Reset Gold", GUILayout.Height(24)))
+{
+    if (Application.isPlaying)
+    {
+        LevelManager lm = FindFirstObjectByType<LevelManager>();
+        if (lm != null)
         {
-            if (Application.isPlaying)
-            {
-                if (LevelManager.Instance != null)
-                {
-                    // Reset gold using LevelManager
-                    LevelManager.Instance.SpendGold(LevelManager.Instance.currentGold);
-                    Debug.Log("[DebugTools] Gold reset (runtime via LevelManager).");
-                }
-                else
-                {
-                    // Handle reset for scenes without LevelManager
-                    PlayerPrefs.SetInt("PlayerGold", 0);
-                    PlayerPrefs.Save();
-                    
-                    if (GameSaveService.Instance != null)
-                        GameSaveService.Instance.SetGold(0);
-                        
-                    // Broadcast the reset so the UI updates
-                    GameEvents.SetGold(0);
-                    Debug.Log("[DebugTools] Gold reset (runtime via GameEvents).");
-                }
-            }
-            else
-            {
-                // Editor mode behavior when the game is not playing
-                PlayerPrefs.SetInt("PlayerGold", 0);
-                PlayerPrefs.Save();
-                Debug.Log("[DebugTools] Gold reset in PlayerPrefs.");
-            }
+            lm.SpendGold(lm.currentGold);
         }
+        else
+        {
+            PlayerPrefs.SetInt("PlayerGold", 0);
+            PlayerPrefs.Save();
+            
+            GameSaveService saveService = GetOrCreateSaveService();
+            saveService.SetGold(0);
+            GameEvents.SetGold(0);
+        }
+    }
+    else
+    {
+        PlayerPrefs.SetInt("PlayerGold", 0);
+        PlayerPrefs.Save();
+    }
+}
 
-        if (GUILayout.Button("📋 Show Gold", GUILayout.Height(24)))
+if (GUILayout.Button("📋 Show Gold", GUILayout.Height(24)))
+{
+    int gold = 0;
+    if (Application.isPlaying)
+    {
+        LevelManager lm = FindFirstObjectByType<LevelManager>();
+        if (lm != null)
         {
-            int gold = 0;
-            if (Application.isPlaying)
-            {
-                if (LevelManager.Instance != null) 
-                    gold = LevelManager.Instance.currentGold;
-                else if (GameSaveService.Instance != null) 
-                    gold = GameSaveService.Instance.GetGold();
-                else 
-                    gold = PlayerPrefs.GetInt("PlayerGold", 0);
-            }
-            else
-            {
-                gold = PlayerPrefs.GetInt("PlayerGold", 0);
-            }
-            Debug.Log($"[DebugTools] Current Gold: {gold}");
+            gold = lm.currentGold;
         }
+        else
+        {
+            GameSaveService saveService = GetOrCreateSaveService();
+            gold = saveService.GetGold();
+        }
+    }
+    else
+    {
+        gold = PlayerPrefs.GetInt("PlayerGold", 0);
+    }
+    Debug.Log($"[DebugTools] Current Gold: {gold}");
+}
 
         EditorGUILayout.EndHorizontal();
 
@@ -1019,6 +1003,23 @@ EditorGUILayout.BeginHorizontal();
     // Helpers
     // -------------------------------------------------------------------------
 
+    private GameSaveService GetOrCreateSaveService()
+{
+    GameSaveService service = GameSaveService.Instance;
+    
+    if (service == null)
+    {
+        service = FindFirstObjectByType<GameSaveService>();
+        
+        if (service == null)
+        {
+            GameObject go = new GameObject("GameSaveService_Debug");
+            service = go.AddComponent<GameSaveService>();
+        }
+    }
+    
+    return service;
+}   
     private bool DrawSectionHeader(string title, bool foldout)
     {
         EditorGUILayout.Space(2);

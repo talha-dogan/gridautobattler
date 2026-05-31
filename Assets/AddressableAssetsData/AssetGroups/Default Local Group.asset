@@ -50,8 +50,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ae86d4b4d341e247acdb598d2167076
+    m_Address: "Assets/Prefabs/\u0130tems/So/WB_Melee_Sword.asset"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 51f3933304cec364eaa9169ad20adcd6
     m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb2cde62dcddf2e4db39d372abaa4732
+    m_Address: "Assets/Prefabs/\u0130tems/So/WB_Ranged_Gun.asset"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

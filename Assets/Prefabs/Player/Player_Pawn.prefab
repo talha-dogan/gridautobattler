@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1294073423774160608
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5227571605721415133}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5227571605721415133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294073423774160608}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.646, y: 0.112, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5141922851205219222}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3605762489337565890
 GameObject:
   m_ObjectHideFlags: 0
@@ -101,6 +132,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5141922851205219222}
   - component: {fileID: 3142784862182683170}
+  - component: {fileID: 5334775731760749646}
+  - component: {fileID: 2027483381077750349}
   m_Layer: 0
   m_Name: Weapon_Renderer
   m_TagString: Untagged
@@ -120,7 +153,8 @@ Transform:
   m_LocalPosition: {x: 0.498, y: -0.121, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5227571605721415133}
   m_Father: {fileID: 7172092582424595197}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3142784862182683170
@@ -177,11 +211,36 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.36666667, y: 0.85333335}
+  m_Size: {x: 1.28, y: 1.28}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5334775731760749646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4132475565238983679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b204e913267a33478fccd2496da2c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeWeaponVisuals
+--- !u!114 &2027483381077750349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4132475565238983679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 265cd486eb11bbc4e86f3d597198fc70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponAimVisuals
+  weaponSprite: {fileID: 0}
 --- !u!1 &4178004136450040032
 GameObject:
   m_ObjectHideFlags: 0
@@ -691,7 +750,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8553699396459336297}
-  - component: {fileID: 1250843249913616086}
+  - component: {fileID: 7507200986377473031}
   - component: {fileID: -6275670081153356298}
   - component: {fileID: 9050168865525035965}
   - component: {fileID: 8538521609954104026}
@@ -719,7 +778,7 @@ Transform:
   - {fileID: 7172092582424595197}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1250843249913616086
+--- !u!114 &7507200986377473031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -728,18 +787,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 7983632528740636094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 073898abba4794c42bd25abaa05deab8, type: 3}
+  m_Script: {fileID: 11500000, guid: 662a4253e1eb9cb4792e72306c897540, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeUnit
+  m_EditorClassIdentifier: Assembly-CSharp::AdaptiveUnit
   unitTeam: 0
   unitData: {fileID: 11400000, guid: 794720ecc319aaa46b751afb33be9d35, type: 2}
-  _minFocusTime: 0
+  _minFocusTime: 0.5
   breathingVisuals: {fileID: 5613376396537005212}
   walkSwayAngle: 8
   victoryBounceSpeed: 15
   victoryBounceHeight: 0.5
-  meleeData: {fileID: 11400000, guid: 794720ecc319aaa46b751afb33be9d35, type: 2}
-  weaponVisuals: {fileID: 0}
+  _weaponVisuals: {fileID: 5334775731760749646}
+  _weaponAim: {fileID: 2027483381077750349}
+  _firePoint: {fileID: 5227571605721415133}
 --- !u!70 &-6275670081153356298
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

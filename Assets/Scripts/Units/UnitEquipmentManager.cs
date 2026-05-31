@@ -7,12 +7,12 @@ using UnityEngine;
 ///   1. Read the ArmySlot assigned to this unit from PlayerArmyDataSO.
 ///   2. Aggregate all equipment stat bonuses and apply them on top of the
 ///      base stats that BaseUnit.Initialize() already set.
-///   3. Delegate every visual update to CharacterEquipmentVisuals — this
-///      component never touches SpriteRenderers directly.
+///   3. Delegate every visual update to CharacterEquipmentVisuals.
+///   4. When a Weapon slot item is equipped, push its WeaponBehaviourSO to
+///      AdaptiveUnit so the unit's attack strategy updates at runtime.
 ///
-/// Attach this component to the same GameObject as BaseUnit (or a subclass).
-/// Call ApplyEquipment(armySlot) after BaseUnit.Initialize() has run so that
-/// the base stats are already cached before bonuses are added.
+/// Attach this component to the same GameObject as AdaptiveUnit (or BaseUnit subclass).
+/// Call ApplyEquipment(armySlot) after BaseUnit.Initialize() has run.
 /// </summary>
 [RequireComponent(typeof(BaseUnit))]
 public class UnitEquipmentManager : MonoBehaviour
@@ -29,8 +29,10 @@ public class UnitEquipmentManager : MonoBehaviour
     // Internal state
     // -------------------------------------------------------------------------
 
-    // Cached reference to the owning unit — used to apply stat bonuses.
     private BaseUnit _unit;
+
+    // Cached AdaptiveUnit reference — null if the unit is not an AdaptiveUnit.
+    private AdaptiveUnit _adaptiveUnit;
 
     // -------------------------------------------------------------------------
     // Unity lifecycle
@@ -38,7 +40,8 @@ public class UnitEquipmentManager : MonoBehaviour
 
     private void Awake()
     {
-        _unit = GetComponent<BaseUnit>();
+        _unit         = GetComponent<BaseUnit>();
+        _adaptiveUnit = GetComponent<AdaptiveUnit>();
     }
 
     // -------------------------------------------------------------------------
@@ -46,11 +49,11 @@ public class UnitEquipmentManager : MonoBehaviour
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Reads all equipment from the given ArmySlot, applies stat bonuses to the
-    /// unit's cached fields, and triggers async sprite loads for each filled slot.
+    /// Reads all equipment from the given ArmySlot, applies stat bonuses,
+    /// triggers async sprite loads, and pushes the weapon behaviour to
+    /// AdaptiveUnit (if present).
     ///
-    /// Must be called AFTER BaseUnit.Initialize() so that base stats are already
-    /// written to the unit's protected fields before bonuses are stacked on top.
+    /// Must be called AFTER BaseUnit.Initialize().
     /// </summary>
     public void ApplyEquipment(PlayerArmyDataSO.ArmySlot armySlot)
     {
@@ -60,21 +63,18 @@ public class UnitEquipmentManager : MonoBehaviour
             return;
         }
 
-        // Reset any previously applied bonuses before re-applying the new loadout.
-        // This is important when a unit is recycled from the pool and re-initialized.
         ResetEquipmentBonuses();
 
-        // Aggregate bonuses from every filled slot and push visuals simultaneously.
         foreach (EquipmentDataSO equipment in armySlot.GetAllEquipment())
         {
             ApplyStatBonus(equipment);
             TriggerVisualUpdate(equipment);
+            TryApplyWeaponBehaviour(equipment);
         }
     }
 
     /// <summary>
     /// Equips a single item at runtime (e.g. drag-and-drop in the Upgrade Scene).
-    /// Applies the stat delta and updates the visual for the affected slot only.
     /// </summary>
     public void EquipSingleItem(EquipmentDataSO equipment)
     {
@@ -82,11 +82,12 @@ public class UnitEquipmentManager : MonoBehaviour
 
         ApplyStatBonus(equipment);
         TriggerVisualUpdate(equipment);
+        TryApplyWeaponBehaviour(equipment);
     }
 
     /// <summary>
-    /// Removes all equipment bonuses and clears all visual slots.
-    /// Call this before returning the unit to the pool.
+    /// Removes all equipment bonuses, clears all visual slots, and strips the
+    /// weapon behaviour from AdaptiveUnit.
     /// </summary>
     public void StripAllEquipment()
     {
@@ -94,30 +95,23 @@ public class UnitEquipmentManager : MonoBehaviour
 
         if (equipmentVisuals != null)
             equipmentVisuals.ClearAllSlots();
+
+        // Remove the active weapon behaviour so the unit doesn't keep attacking
+        // with a weapon that has been unequipped.
+        if (_adaptiveUnit != null)
+            _adaptiveUnit.SetWeaponBehaviour(null);
     }
 
     // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Adds the equipment's stat bonuses directly to the unit's protected fields.
-    /// BaseUnit exposes these fields as protected so subclasses and trusted
-    /// components in the same assembly can modify them without a full re-init.
-    /// </summary>
     private void ApplyStatBonus(EquipmentDataSO equipment)
     {
         if (_unit == null || equipment == null) return;
-
-        // Apply bonuses through the public method on BaseUnit so the unit can
-        // broadcast any relevant events (e.g. OnHealthChanged after a health buff).
         _unit.ApplyEquipmentBonus(equipment.bonusHealth, equipment.bonusDamage, equipment.bonusAttackSpeed);
     }
 
-    /// <summary>
-    /// Forwards the equipment data to CharacterEquipmentVisuals for async sprite loading.
-    /// No-ops gracefully if the visual component is not assigned.
-    /// </summary>
     private void TriggerVisualUpdate(EquipmentDataSO equipment)
     {
         if (equipmentVisuals == null)
@@ -131,15 +125,24 @@ public class UnitEquipmentManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Resets all equipment-derived stat bonuses on the unit back to zero.
-    /// Called before re-applying a new loadout to avoid stacking bonuses across
-    /// multiple Initialize/ApplyEquipment cycles (e.g. object pool reuse).
+    /// If the equipment occupies the Weapon slot and carries a WeaponBehaviourSO,
+    /// push it to AdaptiveUnit so the attack strategy updates immediately.
+    /// Non-weapon slots and null behaviours are silently ignored.
     /// </summary>
+    private void TryApplyWeaponBehaviour(EquipmentDataSO equipment)
+    {
+        if (equipment == null) return;
+        if (equipment.slot != EquipmentSlot.Weapon) return;
+        if (_adaptiveUnit == null) return;
+
+        // weaponBehaviour may be null (e.g. a cosmetic-only weapon skin).
+        // SetWeaponBehaviour handles null gracefully — it just clears the behaviour.
+        _adaptiveUnit.SetWeaponBehaviour(equipment.weaponBehaviour);
+    }
+
     private void ResetEquipmentBonuses()
     {
         if (_unit == null) return;
-
-        // Passing all-zero values signals a full bonus reset.
         _unit.ResetEquipmentBonuses();
     }
 }

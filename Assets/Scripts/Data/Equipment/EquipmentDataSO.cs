@@ -30,6 +30,15 @@ public class EquipmentDataSO : ScriptableObject
     public float bonusAttackSpeed;
 
     // -------------------------------------------------------------------------
+    // Weapon Behaviour (only relevant for Weapon slot)
+    // -------------------------------------------------------------------------
+
+    [Header("Weapon Behaviour (Weapon slot only)")]
+    [Tooltip("Defines how this weapon attacks (melee swing, ranged projectile, etc.). " +
+             "Leave null for non-weapon equipment (helmet, vest, pants, shield).")]
+    public WeaponBehaviourSO weaponBehaviour;
+
+    // -------------------------------------------------------------------------
     // Visual Reference (Addressable)
     // -------------------------------------------------------------------------
 

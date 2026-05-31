@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 915a538aa74748640aa14983d66c0f6b, type: 3}
+  m_Name: WB_Ranged_Gun
+  m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponBehaviourSO
+  attackRange: 10
+  projectilePrefab: {fileID: 5938624687632628301, guid: 859a9d77c584c1c44b235c661283b7f6, type: 3}
+  projectileSpeed: 20

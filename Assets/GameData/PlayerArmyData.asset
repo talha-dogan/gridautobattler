@@ -14,51 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerArmyDataSO
   armySlots:
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
     weapon: {fileID: 11400000, guid: 6c040fdfd350bbb479c1d77326190ccc, type: 2}
-    shield: {fileID: 11400000, guid: 0c6f6737022d3f041a8ee8ac32c1b64e, type: 2}
+    shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
-    weapon: {fileID: 11400000, guid: 12811ad272efa6c4c8203e1029755bd6, type: 2}
-    shield: {fileID: 11400000, guid: 0c6f6737022d3f041a8ee8ac32c1b64e, type: 2}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 0}
+    shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
-    weapon: {fileID: 11400000, guid: 429c2069b2c485a4c90ed3d033d1a0bc, type: 2}
-    shield: {fileID: 11400000, guid: 2658f3a7acd73254ebcb56d77a1e7cee, type: 2}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 0}
+    shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
-    weapon: {fileID: 11400000, guid: 429c2069b2c485a4c90ed3d033d1a0bc, type: 2}
-    shield: {fileID: 11400000, guid: 0c6f6737022d3f041a8ee8ac32c1b64e, type: 2}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 0}
+    shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
-    weapon: {fileID: 11400000, guid: 12811ad272efa6c4c8203e1029755bd6, type: 2}
-    shield: {fileID: 11400000, guid: 0c6f6737022d3f041a8ee8ac32c1b64e, type: 2}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 0}
+    shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
-    weapon: {fileID: 11400000, guid: 6c040fdfd350bbb479c1d77326190ccc, type: 2}
-    shield: {fileID: 11400000, guid: 2658f3a7acd73254ebcb56d77a1e7cee, type: 2}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 0}
+    shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
-    weapon: {fileID: 11400000, guid: 6c040fdfd350bbb479c1d77326190ccc, type: 2}
-    shield: {fileID: 11400000, guid: 0c6f6737022d3f041a8ee8ac32c1b64e, type: 2}
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 0}
+    shield: {fileID: 0}
   - baseUnitData: {fileID: 0}
-    helmet: {fileID: 11400000, guid: c52dd0a4d29a7824b8206e8fa148ea98, type: 2}
-    vest: {fileID: 11400000, guid: 2308beb59aacb1d4eb57c504bad331b3, type: 2}
-    pants: {fileID: 11400000, guid: 39a15bedad0de1b46aaa3fe3d259a501, type: 2}
-    weapon: {fileID: 11400000, guid: 12811ad272efa6c4c8203e1029755bd6, type: 2}
-    shield: {fileID: 11400000, guid: 51f3933304cec364eaa9169ad20adcd6, type: 2}
-  unlockedPawnCount: 8
+    helmet: {fileID: 0}
+    vest: {fileID: 0}
+    pants: {fileID: 0}
+    weapon: {fileID: 0}
+    shield: {fileID: 0}
+  unlockedPawnCount: 1

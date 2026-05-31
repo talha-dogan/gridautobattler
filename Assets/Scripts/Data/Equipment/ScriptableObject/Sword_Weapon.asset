@@ -17,6 +17,7 @@ MonoBehaviour:
   bonusHealth: 0
   bonusDamage: 2
   bonusAttackSpeed: 0.5
+  weaponBehaviour: {fileID: 11400000, guid: 4ae86d4b4d341e247acdb598d2167076, type: 2}
   spriteReference:
     m_AssetGUID: a59fff6cde49f6f4bb3150bfbf4eacff
     m_SubObjectName: Sword
