@@ -564,6 +564,24 @@ SaveManager       ──►  GameSaveService (persists), SaveMigrationService
 
 Step-by-step instructions for adding content **without touching any code**:
 
+### Generating Campaign Levels via TDEV Level Generator
+
+<img width="717" height="675" alt="Ekran görüntüsü 2026-06-02 042144" src="https://github.com/user-attachments/assets/5c8d8518-94ef-41e6-8301-afc2491b1c2a" />
+
+Navigate to TDEV > Grid Level Generator from the top Unity menu to open the tool.
+
+Expand the Enemy Unit Pool list and assign the enemy Scriptable Object files you want to include in the pool.
+
+Under the Player Unit Setup section, drag and drop your player unit data into the Player Melee Data and Player Ranged Data fields.
+
+In the Campaign Settings, set the total number of levels you wish to create via the Levels to Generate slider and define the Base Gold Reward.
+
+Adjust the game's difficulty progression by modifying the Enemy Count Curve graph under Enemy Difficulty Curve (the X-axis represents normalized level progression, and the Y-axis sets the enemy count).
+
+Once your setup is complete, click the Generate Diverse Levels button (e.g., Generate 500 Diverse Levels) at the bottom to batch-create your levels.
+
+
+
 ### Adding a New Unit Type
 
 1. In the Project window, right-click inside `GameData/Units/`.
