@@ -487,8 +487,16 @@ Two action maps are toggled: `SwitchToUI()` (Upgrade scene — drag-and-drop) an
 - **Stress Testing** — Spawn 1–64 units on random grid nodes (both teams or enemy only); Clear All Units with full pool + state reset. Live unit count display per team.
 
 
-<img width="591" height="832" alt="image" src="https://github.com/user-attachments/assets/0cfb6b6e-43ed-43c2-9cd2-40706d432b46" />
-<img width="579" height="441" alt="image" src="https://github.com/user-attachments/assets/5405812a-9eaf-4310-bc9e-19e8f5ccbc60" />
+<table>
+  <tr>
+    <td valign="top">
+      <img width="591" height="832" alt="image" src="https://github.com/user-attachments/assets/0cfb6b6e-43ed-43c2-9cd2-40706d432b46" />
+    </td>
+    <td valign="top">
+      <img width="579" height="441" alt="image" src="https://github.com/user-attachments/assets/5405812a-9eaf-4310-bc9e-19e8f5ccbc60" />
+    </td>
+  </tr>
+</table>
 
 ---
 
