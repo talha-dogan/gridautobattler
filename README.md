@@ -416,7 +416,11 @@ All in-game text is managed through a custom JSON-based system via `Localization
 - **Live switching** — `LocalizationManager.SetLanguage(code)` swaps the active dictionary and fires `OnLanguageChanged` so all `LocalizedText` components refresh simultaneously without manual wiring.
 - **Parameterised keys** — `{0}`, `{1}` placeholders in JSON resolved via `string.Format`.
 
-![Localization System — TR / EN](media/localization_system.png)
++<img width="216" height="211" alt="image" src="https://github.com/user-attachments/assets/2658394d-370f-464a-ac27-0d6c15ad54f8" />
+<img width="250" height="246" alt="image" src="https://github.com/user-attachments/assets/e9964f69-f36c-462e-9ca3-b47d88702ca3" />
+<img width="231" height="283" alt="image" src="https://github.com/user-attachments/assets/5dbb6199-dc17-4969-8228-df50bd1b4f7d" />
+tr.json + en.json
+
 
 ---
 
@@ -435,9 +439,10 @@ movementCurve       EaseInOut(0,0, 1,1)    — unit acceleration profile
 spawnPacingCurve    EaseInOut(0,2s, 1,0.3s) — enemy trickle → assault
 ```
 
-![Stat Progression Curves — Inspector](media/stat_progression_curves.png)
 
-![Movement Curve & Spawn Pacing Curve](media/movement_spawn_curves.png)
+<img width="814" height="335" alt="image" src="https://github.com/user-attachments/assets/684fad38-ab25-44e1-862f-fe68b9e8a252" />
+
+<img width="814" height="357" alt="image" src="https://github.com/user-attachments/assets/b44d3aeb-ab71-40ec-8314-d883055f1ac1" />
 
 ---
 
@@ -448,7 +453,7 @@ spawnPacingCurve    EaseInOut(0,2s, 1,0.3s) — enemy trickle → assault
 - **Async Scene Loading** — `SceneLoader.TransitionTo()` fades to black → cleans up → loads additively with `allowSceneActivation = false` (holds at 90% until ready) → activates → fades back in. An `OnLoadProgress` action fires at each step for accurate progress bar display.
 - **Scene Cleanup Pipeline** — A deterministic 7-step `SceneCleanupPipeline` runs before every unload: release Addressable handles → return pooled units → stop VFX → log sound state → clear GameEvents → `UnloadUnusedAssets` → `GC.Collect()`.
 
-![Addressables — Sprite Bundles & Lazy Loading](media/addressables_bundles.png)
+<img width="987" height="566" alt="image" src="https://github.com/user-attachments/assets/08679c8a-b403-4594-949c-6caac3de830e" />
 
 ---
 
@@ -466,7 +471,9 @@ spawnPacingCurve    EaseInOut(0,2s, 1,0.3s) — enemy trickle → assault
 
 Two action maps are toggled: `SwitchToUI()` (Upgrade scene — drag-and-drop) and `SwitchToPlayer()` (Grid scene — battle controls). `GamepadCursor` drives a `VirtualMouseInput` component from the left stick, enabling UGUI drag-and-drop to work identically on gamepad and mouse.
 
-![Input System — Keyboard & Gamepad](media/input_system.png)
+<img width="422" height="169" alt="image" src="https://github.com/user-attachments/assets/67d4c12f-e3a6-4c03-924b-2379f55a7214" />
+<img width="423" height="153" alt="image" src="https://github.com/user-attachments/assets/4572aba9-d1af-4bdc-a197-7a90d3e081c4" />
+
 
 ---
 
