@@ -279,6 +279,9 @@ The Upgrade Scene provides a full **drag-and-drop equipment management** interfa
 | **Interface Segregation** | `IDamageable` and `IAttacker` are separate, minimal interfaces. `IUnitState` defines only `Enter`, `Execute`, `Exit`. `IGameView` defines only the UI surface the Presenter needs. |
 | **Dependency Inversion** | `BattleManager` depends on the `BaseUnit` abstraction, not concrete types. `Projectile` depends on `IObjectPool<Projectile>`. `GamePresenter` depends on `IGameView`, not `GameUIManager`. |
 
+<img width="574" height="62" alt="Ekran görüntüsü 2026-06-02 033545" src="https://github.com/user-attachments/assets/1a4bfdaf-423f-4eda-8ec8-59ffacf616f4" />
+
+
 ---
 
 ### Data-Driven Design (Scriptable Objects)
@@ -305,6 +308,9 @@ Assets/Scripts/Data/
 └── Text/
     └── DamageTextDataSO.cs        ← Floating damage number visual configuration
 ```
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/09b60c2e-40d3-45e8-9424-f4455cb216d9" />
+<img width="330" alt="image" src="https://github.com/user-attachments/assets/f1485c10-3a4f-4902-bec4-a4dba1ef8175" />
+
 
 ---
 
@@ -321,6 +327,8 @@ All five pools use **Unity's `UnityEngine.Pool.ObjectPool<T>`** and follow an id
 **`VFXManager`** — One `ObjectPool<ParticleSystem>` per `VFXType` enum entry. All pools are pre-warmed at `Awake()`. A `WaitWhile(() => ps.isPlaying)` coroutine auto-returns each effect on completion.
 
 **`SoundManager`** — `Queue<AudioSource>` idle pool + `List<AudioSource>` active list. 10 initial sources, 20 max. If the pool is exhausted, the oldest active source is forcibly reclaimed. Pitch variation and random clip selection are applied per-play.
+
+![Object Pooling — UnitFactory & ProjectileFactory](media/object_pooling.png)
 
 ---
 
@@ -344,6 +352,8 @@ GameEvents.OnLevelWin += HandleLevelWin;
 
 `GameEvents.ClearAllEvents()` is called by `SceneCleanupPipeline` on every scene unload to prevent stale scene-local subscribers from receiving events after their scene is gone.
 
+![GameEvents Bus — Decoupling](media/gameevents_bus.png)
+
 ---
 
 ### MVP Pattern (Presenter Layer)
@@ -356,15 +366,19 @@ The battle UI follows a strict **Model → Presenter → View** flow:
 
 The entire UI layer can be replaced or mocked by swapping the `IGameView` implementation.
 
+![MVP Pattern — Presenter Layer](media/mvp_pattern.png)
+
 ---
 
 ### Finite State Machine
 
-See [AI & Combat Logic](#-ai--combat-logic) for the full FSM diagram. Key design decisions:
+See [AI & Combat Logic](#ai--combat-logic) for the full FSM diagram. Key design decisions:
 
 - State objects are **shared static instances** — no per-unit allocation.
 - `Dead` and `Victory` states are handled inline in `BaseUnit.Update()` to avoid unnecessary interface dispatch.
 - Visual updates (`UpdateVisuals()`) run **before** the battle-logic gate, ensuring animations play during the pre-battle placement phase.
+
+![Finite State Machine — Unit AI](media/fsm_unit_ai.png)
 
 ---
 
@@ -378,6 +392,8 @@ Player progression (gold, inventory, army composition, active level) is securely
 - **Versioning & Migration** — `CurrentSaveVersion = 2`. `SaveMigrationService` applies migrations step-by-step (v1→v2: added inventory list, language code, null-safe army slots). No data is ever discarded.
 - **Meta Fields** — Every save carries `saveVersion`, `savedAt` (ISO 8601 UTC), `totalPlayTimeSeconds`, and `saveCount`.
 
+![Save System — Binary + AES](media/save_system.png)
+
 ---
 
 ### Localization System
@@ -388,6 +404,8 @@ All in-game text is managed through a custom JSON-based system via `Localization
 - **Two-level fallback chain** — Current language → English → raw key string.
 - **Live switching** — `LocalizationManager.SetLanguage(code)` swaps the active dictionary and fires `OnLanguageChanged` so all `LocalizedText` components refresh simultaneously without manual wiring.
 - **Parameterised keys** — `{0}`, `{1}` placeholders in JSON resolved via `string.Format`.
+
+![Localization System — TR / EN](media/localization_system.png)
 
 ---
 
@@ -406,6 +424,10 @@ movementCurve       EaseInOut(0,0, 1,1)    — unit acceleration profile
 spawnPacingCurve    EaseInOut(0,2s, 1,0.3s) — enemy trickle → assault
 ```
 
+![Stat Progression Curves — Inspector](media/stat_progression_curves.png)
+
+![Movement Curve & Spawn Pacing Curve](media/movement_spawn_curves.png)
+
 ---
 
 ### Addressables & Async Loading
@@ -414,6 +436,8 @@ spawnPacingCurve    EaseInOut(0,2s, 1,0.3s) — enemy trickle → assault
 - **Sprite Bundles** — Five Addressable groups (`Units`, `Items`, `UI`, `Arena`, `Audio`), each bundled as `PackTogether`.
 - **Async Scene Loading** — `SceneLoader.TransitionTo()` fades to black → cleans up → loads additively with `allowSceneActivation = false` (holds at 90% until ready) → activates → fades back in. An `OnLoadProgress` action fires at each step for accurate progress bar display.
 - **Scene Cleanup Pipeline** — A deterministic 7-step `SceneCleanupPipeline` runs before every unload: release Addressable handles → return pooled units → stop VFX → log sound state → clear GameEvents → `UnloadUnusedAssets` → `GC.Collect()`.
+
+![Addressables — Sprite Bundles & Lazy Loading](media/addressables_bundles.png)
 
 ---
 
@@ -431,6 +455,8 @@ spawnPacingCurve    EaseInOut(0,2s, 1,0.3s) — enemy trickle → assault
 
 Two action maps are toggled: `SwitchToUI()` (Upgrade scene — drag-and-drop) and `SwitchToPlayer()` (Grid scene — battle controls). `GamepadCursor` drives a `VirtualMouseInput` component from the left stick, enabling UGUI drag-and-drop to work identically on gamepad and mouse.
 
+![Input System — Keyboard & Gamepad](media/input_system.png)
+
 ---
 
 ### Debug & QA Tools
@@ -441,6 +467,8 @@ Two action maps are toggled: `SwitchToUI()` (Upgrade scene — drag-and-drop) an
 - **Quick Inventory Test** — Unlock all 8 pawn slots; fill random equipment into all army slots; clear all equipment; add/reset gold.
 - **Quick Time Test** — `Time.timeScale` slider (0–10) with preset buttons (0.25×, 0.5×, 1×, 2×, 4×, 8×). Live FPS and Fixed Timestep readout.
 - **Stress Testing** — Spawn 1–64 units on random grid nodes (both teams or enemy only); Clear All Units with full pool + state reset. Live unit count display per team.
+
+![Debug & QA Tools — DebugToolsWindow](media/debug_tools.png)
 
 ---
 
@@ -535,21 +563,14 @@ Step-by-step instructions for adding content **without touching any code**:
 ## 📸 Screenshots <a name="screenshots"></a>
 
 ### 🎮 Gameplay — Battle Phase
-![Gameplay - Battle](media/gameplay_battle.gif)
+<img width="1920" height="1080" alt=" Grid Overview" src="https://github.com/user-attachments/assets/a46e8671-630a-4b65-a258-9d9edff60927" />
+
 
 ### 🗂️ Upgrade Scene — Equipment & Army Management
-![Upgrade Scene - Inventory](media/upgrade_inventory.png)
+<img width="1920" height="1080" alt="Upgrade Scene" src="https://github.com/user-attachments/assets/b85288ea-4f71-4e37-820e-aa9bc20269ea" />
+
 
 ### 🛒 Pawn Shop & Loot Box
-![Pawn Shop](media/pawnshop.png)
+<img width="1920" height="1080" alt="Pawn Shop" src="https://github.com/user-attachments/assets/1f186a08-1926-4486-8713-3ed2bf2fd8ee" />
 
-### 🗺️ Grid Overview — Pre-Battle Formation
-![Grid Formation](media/grid_formation.png)
 
-> _Replace the paths above with your actual screenshots and recordings. Recommended: GIFs for dynamic gameplay, PNGs for UI and static scenes._
-
----
-
-## 🗺️ Planned Features & Roadmap <a name="planned-features--roadmap"></a>
-
-> Roadmap items will be listed here.
