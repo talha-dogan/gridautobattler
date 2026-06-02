@@ -328,7 +328,12 @@ All five pools use **Unity's `UnityEngine.Pool.ObjectPool<T>`** and follow an id
 
 **`SoundManager`** — `Queue<AudioSource>` idle pool + `List<AudioSource>` active list. 10 initial sources, 20 max. If the pool is exhausted, the oldest active source is forcibly reclaimed. Pitch variation and random clip selection are applied per-play.
 
-![Object Pooling — UnitFactory & ProjectileFactory](media/object_pooling.png)
+
+
+<img width="168" height="382" alt="AuttoBattlerPool-ezgif com-crop" src="https://github.com/user-attachments/assets/f92e7133-502b-478d-8a94-f4ee4c3ac1df" />
+
+
+
 
 ---
 
@@ -352,7 +357,9 @@ GameEvents.OnLevelWin += HandleLevelWin;
 
 `GameEvents.ClearAllEvents()` is called by `SceneCleanupPipeline` on every scene unload to prevent stale scene-local subscribers from receiving events after their scene is gone.
 
-![GameEvents Bus — Decoupling](media/gameevents_bus.png)
+
+<img width="629" height="692" alt="image" src="https://github.com/user-attachments/assets/515242a1-f06b-43b7-8e35-3ab633206395" />
+
 
 ---
 
@@ -366,7 +373,8 @@ The battle UI follows a strict **Model → Presenter → View** flow:
 
 The entire UI layer can be replaced or mocked by swapping the `IGameView` implementation.
 
-![MVP Pattern — Presenter Layer](media/mvp_pattern.png)
+<img width="1519" height="796" alt="image" src="https://github.com/user-attachments/assets/90bc8e7c-8465-4d9a-ac90-87bc58d15606" />
+
 
 ---
 
@@ -378,7 +386,10 @@ See [AI & Combat Logic](#ai--combat-logic) for the full FSM diagram. Key design 
 - `Dead` and `Victory` states are handled inline in `BaseUnit.Update()` to avoid unnecessary interface dispatch.
 - Visual updates (`UpdateVisuals()`) run **before** the battle-logic gate, ensuring animations play during the pre-battle placement phase.
 
-![Finite State Machine — Unit AI](media/fsm_unit_ai.png)
+
+<img width="683" height="124" alt="image" src="https://github.com/user-attachments/assets/f66101a4-fb5b-42f8-9e90-2c38253b6f26" />
+<img width="318" height="87" alt="image" src="https://github.com/user-attachments/assets/792d9df2-d8f4-4540-9202-cdb6e3d777e6" />
+
 
 ---
 
@@ -392,7 +403,7 @@ Player progression (gold, inventory, army composition, active level) is securely
 - **Versioning & Migration** — `CurrentSaveVersion = 2`. `SaveMigrationService` applies migrations step-by-step (v1→v2: added inventory list, language code, null-safe army slots). No data is ever discarded.
 - **Meta Fields** — Every save carries `saveVersion`, `savedAt` (ISO 8601 UTC), `totalPlayTimeSeconds`, and `saveCount`.
 
-![Save System — Binary + AES](media/save_system.png)
+<img width="810" height="633" alt="image" src="https://github.com/user-attachments/assets/6aa4627e-4717-4009-b9ff-147bb4545157" />
 
 ---
 
