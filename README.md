@@ -566,7 +566,7 @@ Step-by-step instructions for adding content **without touching any code**:
 
 ### Generating Campaign Levels via TDEV Level Generator
 
-<img width="717" height="675" alt="Ekran görüntüsü 2026-06-02 042144" src="https://github.com/user-attachments/assets/5c8d8518-94ef-41e6-8301-afc2491b1c2a" />
+<img width="500" height="400" alt="Ekran görüntüsü 2026-06-02 042144" src="https://github.com/user-attachments/assets/5c8d8518-94ef-41e6-8301-afc2491b1c2a" />
 
 Navigate to TDEV > Grid Level Generator from the top Unity menu to open the tool.
 
@@ -590,12 +590,20 @@ Once your setup is complete, click the Generate Diverse Levels button (e.g., Gen
 4. Drag the unit prefab from `Prefabs/Units/` into the `unitPrefab` field.
 5. Optionally assign a `StatProgressionSO` to enable level-based scaling.
 
+<img width="351" height="330" alt="image" src="https://github.com/user-attachments/assets/c0925707-4908-4015-805e-de8215295a55" />
+<img width="298" height="296" alt="image" src="https://github.com/user-attachments/assets/26293fa5-c761-4858-bf7c-0cbbc7912b5f" />
+
+
 ### Adding a New Level
 
-1. Create a new `LevelDataSO` via **Create > AutoBattler > Levels > Level Data**.
+1. Create a new `LevelDataSO` via **Create > TDEV >  Level Data**.
 2. Create a new `EnemyFormationSO` to define the enemy grid layout, and assign it to the Level Data.
 3. Set `goldReward` for level completion and the melee/ranged unit limits for the player.
 4. Add the Level Data to the end of the Level List inside the `LevelManager` prefab.
+
+<img width="401" height="335" alt="image" src="https://github.com/user-attachments/assets/34c680d8-2df3-4013-997c-b6e30c43f919" />
+<img width="297" height="180" alt="image" src="https://github.com/user-attachments/assets/740f70c3-a975-43e5-b539-7094547f5a28" />
+
 
 ### Adding a New Equipment Item
 
@@ -604,6 +612,8 @@ Once your setup is complete, click the Generate Diverse Levels button (e.g., Gen
 3. Input the stat bonuses (`bonusHealth`, `bonusDamage`, `bonusAttackSpeed`).
 4. Add the item's sprite to the **"Items"** Addressables group, then link it to the `spriteReference` field.
 
+<img width="332" height="80" alt="image" src="https://github.com/user-attachments/assets/5c8ae426-4cc3-46ba-ae8e-6e3451dc50d2" />
+<img width="296" height="146" alt="image" src="https://github.com/user-attachments/assets/89ac1ed8-1f90-4943-84b6-20200337131a" />
 ---
 
 ## 📸 Screenshots <a name="screenshots"></a>
