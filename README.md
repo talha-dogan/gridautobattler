@@ -486,7 +486,9 @@ Two action maps are toggled: `SwitchToUI()` (Upgrade scene — drag-and-drop) an
 - **Quick Time Test** — `Time.timeScale` slider (0–10) with preset buttons (0.25×, 0.5×, 1×, 2×, 4×, 8×). Live FPS and Fixed Timestep readout.
 - **Stress Testing** — Spawn 1–64 units on random grid nodes (both teams or enemy only); Clear All Units with full pool + state reset. Live unit count display per team.
 
-![Debug & QA Tools — DebugToolsWindow](media/debug_tools.png)
+
+<img width="591" height="832" alt="image" src="https://github.com/user-attachments/assets/0cfb6b6e-43ed-43c2-9cd2-40706d432b46" />
+<img width="579" height="441" alt="image" src="https://github.com/user-attachments/assets/5405812a-9eaf-4310-bc9e-19e8f5ccbc60" />
 
 ---
 
