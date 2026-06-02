@@ -15,11 +15,6 @@ MonoBehaviour:
   m_GroupName: Arena
   m_GUID: 6166d8c418df54540a994a483fb00e77
   m_SerializeEntries:
-  - m_GUID: 15f67b4ceb169e14face8b20613bd4ad
-    m_Address: steampunk_war_ui
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 20039c2281e8af04d9e3f29ce5f6f339
     m_Address: Grey
     m_ReadOnly: 0
@@ -35,11 +30,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4591512e8650f784a8cb9b323d5fac64
-    m_Address: thermopylae_war_ui
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4ab8ee8909c013943ae510e872dc1c85
     m_Address: Arena
     m_ReadOnly: 0
@@ -50,18 +40,8 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5dd0ced5bfa2aa44a8646aa7a2d6a219
-    m_Address: canakkale_gameplay_ui_v2
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 62c0fd0e173d302428ca83d9e9ff0f82
     m_Address: canakkale_gameplay_ui_v2
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 68e5ac5dc6f4de248b6b110d08c9bcef
-    m_Address: underwater_war_ui
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -75,11 +55,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9189f541e61955147ae77945f6bfadc0
-    m_Address: space_viking_cats_ui
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b468e13eb50883744ba2581a789f43fb
     m_Address: gameplay_ui_v2
     m_ReadOnly: 0
@@ -90,16 +65,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c1aa932c1921b544bbf897f0223856a5
-    m_Address: waterloo_war_ui
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: db6cae2dad904304fad08c7474a6f1a0
-    m_Address: normandy_war_ui
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: de7d04176f7deba48bcc6560c2435d95
     m_Address: White
     m_ReadOnly: 0
@@ -107,21 +72,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dfd6897a36308de429b33c5e78644196
     m_Address: BlueLightMat
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e6fcaaa7d7f5ab144826378d876b1baf
-    m_Address: tenochtitlan_war_ui
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f67b8c7aa7124d24ea53d2434ec75e9b
-    m_Address: red_cliffs_war_ui
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fe4f3a2246a3e0d429eec70dffdd1513
-    m_Address: hastings_war_ui
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

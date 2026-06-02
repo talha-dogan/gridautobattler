@@ -15,38 +15,38 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 6ac28de5949127b409fdbd04773da6b8
   m_SerializeEntries:
-  - m_GUID: 07e6f2a97c9953a42935c2457ef7b9a1
-    m_Address: Assets/Art/Items/Vest.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0c6f6737022d3f041a8ee8ac32c1b64e
-    m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 1.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Shield.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 12811ad272efa6c4c8203e1029755bd6
-    m_Address: Assets/Scripts/Data/Equipment/Gun_Weapon.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Gun_Weapon.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2308beb59aacb1d4eb57c504bad331b3
-    m_Address: Assets/Scripts/Data/Equipment/Vest.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Vest.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 253d631ad3de8d94283707d5ed09be8d
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Sword_Weapon 3.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2658f3a7acd73254ebcb56d77a1e7cee
-    m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 3.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Shield_2.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 39a15bedad0de1b46aaa3fe3d259a501
-    m_Address: Assets/Scripts/Data/Equipment/Pants.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Pants.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 429c2069b2c485a4c90ed3d033d1a0bc
-    m_Address: Assets/Scripts/Data/Equipment/Sword_Weapon.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Sword_Weapon.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -56,7 +56,17 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 51f3933304cec364eaa9169ad20adcd6
-    m_Address: Assets/Scripts/Data/Equipment/Shield_Weapon 2.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Shield_1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c040fdfd350bbb479c1d77326190ccc
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Pistol_Weapon.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7ddd5b15208f74148bec489e764360e3
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Sword_Weapon 1.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -66,12 +76,17 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c52dd0a4d29a7824b8206e8fa148ea98
-    m_Address: Assets/Scripts/Data/Equipment/Halmet.asset
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Halmet.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: df7493b00e2a1474a92f3a16dd5a9557
     m_Address: Assets/GameData/PlayerArmyData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5bdd55409cc6124ba0c1ba3ba899e97
+    m_Address: Assets/Scripts/Data/Equipment/ScriptableObject/Sword_Weapon 2.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

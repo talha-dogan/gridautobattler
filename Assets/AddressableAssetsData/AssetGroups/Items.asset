@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Items
   m_GUID: 6169eaf7f4184364899a2a6f0eefd2cd
   m_SerializeEntries:
+  - m_GUID: 07e6f2a97c9953a42935c2457ef7b9a1
+    m_Address: Assets/Art/Items/Vest.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1bb451a59cdb00e4eba976edf85fc976
     m_Address: pistol_weapon
     m_ReadOnly: 0
