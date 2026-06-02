@@ -6,7 +6,7 @@
 
 🎮 **Play on itch.io:** [talha-dogan.itch.io/ottomanchessauto](https://talha-dogan.itch.io/ottomanchessauto)
 
-**Studio:** TDEVGAMES · **Engine:** Unity 6000.4.6f1 · Universal Render Pipeline 2D · **Language:** C# / .NET Standard 2.1
+**Engine:** Unity 6000.4.6f1 · Universal Render Pipeline 2D · **Language:** C# / .NET Standard 2.1
 
 ---
 
