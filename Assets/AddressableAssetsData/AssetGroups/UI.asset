@@ -30,11 +30,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8d768dc08d04e324da2cab8edeb9fbf3
-    m_Address: StartScene
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7ad48603922ebe4db96c500a047bb82
     m_Address: game_ui_background
     m_ReadOnly: 0

@@ -54,38 +54,36 @@ public static class SaveManager
     {
         if (data == null)
         {
-            Debug.LogError("[SaveManager] Save çağrıldı ama data null!");
             return;
         }
 
-        // Meta data güncelle
         data.saveVersion = CurrentSaveVersion;
         data.savedAt     = DateTime.UtcNow.ToString("o");
         data.saveCount++;
 
-        // Checksum hesapla (checksum alanı hariç)
+
         data.checksum = string.Empty;
         string json   = JsonUtility.ToJson(data, prettyPrint: false);
         data.checksum = ComputeChecksum(json);
 
-        // Tekrar serialize et (checksum dahil)
         json = JsonUtility.ToJson(data, prettyPrint: false);
 
         try
         {
-            // Mevcut dosyayı yedekle
             if (File.Exists(SaveFilePath))
                 File.Copy(SaveFilePath, BackupFilePath, overwrite: true);
 
-            // Şifrele ve yaz
             byte[] encrypted = Encrypt(json);
             File.WriteAllBytes(SaveFilePath, encrypted);
 
-            Debug.Log($"[SaveManager] Kaydedildi → v{data.saveVersion} | #{data.saveCount} | {data.savedAt}");
+            Debug.Log($"[SaveManager] save → v{data.saveVersion} | #{data.saveCount} | {data.savedAt}");
         }
         catch (Exception ex)
         {
-            Debug.LogError($"[SaveManager] Kayıt hatası: {ex.Message}");
+            Debug.LogError($"[SaveManager] save error: {ex.Message}");
+        }
+        {
+
         }
     }
 

@@ -8,7 +8,7 @@
 public static class LocalizationKeys
 {
     // ─────────────────────────────────────────────────────────────────────────
-    // UI — Genel
+    // UI — General
     // ─────────────────────────────────────────────────────────────────────────
     public const string UI_START_BUTTON      = "ui.start_button";
     public const string UI_BACK_TO_MENU      = "ui.back_to_menu";
@@ -21,7 +21,7 @@ public static class LocalizationKeys
     public const string UI_LEVEL_LABEL       = "ui.level_label";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // UI — Savaş Durumu
+    // UI —  State of War
     // ─────────────────────────────────────────────────────────────────────────
     public const string BATTLE_PRESS_WAR     = "battle.press_war";
     public const string BATTLE_VICTORY       = "battle.victory";
@@ -30,7 +30,7 @@ public static class LocalizationKeys
     public const string BATTLE_BASE_REWARD   = "battle.base_reward";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // UI — Yenilgi Mesajları
+    // UI — Defeat Messages
     // ─────────────────────────────────────────────────────────────────────────
     public const string DEFEAT_0             = "defeat.0";
     public const string DEFEAT_1             = "defeat.1";
@@ -41,7 +41,7 @@ public static class LocalizationKeys
     public const string DEFEAT_6             = "defeat.6";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // UI — Ayarlar Paneli
+    // UI — Settings Panel
     // ─────────────────────────────────────────────────────────────────────────
     public const string SETTINGS_TITLE       = "settings.title";
     public const string SETTINGS_SFX         = "settings.sfx";
@@ -63,7 +63,7 @@ public static class LocalizationKeys
     public const string PAWNSHOP_COST        = "pawnshop.cost";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // UI — Upgrade / Ekipman
+    // UI — Upgrade / Equipment
     // ─────────────────────────────────────────────────────────────────────────
     public const string UPGRADE_TITLE        = "upgrade.title";
     public const string UPGRADE_WEAPON       = "upgrade.weapon";
@@ -75,7 +75,7 @@ public static class LocalizationKeys
     public const string UPGRADE_DRAG_HINT    = "upgrade.drag_hint";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Ekipman İsimleri
+    // Equipment Names
     // ─────────────────────────────────────────────────────────────────────────
     public const string ITEM_SWORD           = "item.sword";
     public const string ITEM_GUN             = "item.gun";
@@ -85,7 +85,7 @@ public static class LocalizationKeys
     public const string ITEM_PANTS           = "item.pants";
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Genel Mesajlar
+    // General Messages
     // ─────────────────────────────────────────────────────────────────────────
     public const string COMMON_LOADING       = "common.loading";
     public const string COMMON_ERROR         = "common.error";

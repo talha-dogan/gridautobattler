@@ -112,9 +112,6 @@ public class UnitFactory : MonoBehaviour
         if (_pools.TryGetValue(prefab, out ObjectPool<BaseUnit> existingPool))
             return existingPool;
 
-        // We need a forward reference to the pool inside createFunc so that
-        // _unitToPool can be populated. We use a one-element array as a
-        // ref-capture workaround since C# lambdas cannot capture 'out' vars.
         ObjectPool<BaseUnit>[] poolHolder = new ObjectPool<BaseUnit>[1];
 
         GameObject capturedPrefab = prefab;

@@ -36,10 +36,6 @@ public class GamePresenter
     // Lifecycle
     // ─────────────────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// GameEvents'e abone olur.
-    /// GameUIManager.Awake() içinde çağrılır (Presenter constructor'ı ile birlikte).
-    /// </summary>
     private void Subscribe()
     {
         GameEvents.OnStatusTextChanged += HandleStatusText;
@@ -50,10 +46,6 @@ public class GamePresenter
         GameEvents.OnLevelLose         += HandleLevelLose;
     }
 
-    /// <summary>
-    /// GameEvents aboneliklerini iptal eder.
-    /// GameUIManager.OnDestroy() içinde çağrılmalıdır.
-    /// </summary>
     public void Dispose()
     {
         GameEvents.OnStatusTextChanged -= HandleStatusText;

@@ -23,7 +23,6 @@ public abstract class BaseUnit : MonoBehaviour, IDamageable, IAttacker
 
     private IUnitState _currentStateObj;
 
-    // Public read-only accessor so subclasses (e.g. RangedUnit) can still read the enum
     public UnitState currentState { get; private set; } = UnitState.Idle;
 
     // ── Target ────────────────────────────────────────────────────────────────

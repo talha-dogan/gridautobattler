@@ -62,50 +62,31 @@ public static class GameEvents
     // Battle Lifecycle Events
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Raised when the battle officially begins (after the WAR! button is pressed
-    /// and all units are registered). Subscribers can react to combat starting.
-    /// </summary>
     public static event Action OnBattleStarted;
 
-    /// <summary>Broadcasts that the battle has started.</summary>
+
     public static void BattleStarted()
     {
         OnBattleStarted?.Invoke();
     }
 
-    /// <summary>
-    /// Raised when the player wins the current level.
-    /// Parameter: gold reward breakdown string for the status display.
-    /// </summary>
+
     public static event Action<string> OnLevelWin;
 
-    /// <summary>Broadcasts a level win with the reward summary message.</summary>
+
     public static void LevelWin(string rewardMessage)
     {
         OnLevelWin?.Invoke(rewardMessage);
     }
 
-    /// <summary>
-    /// Raised when the player loses the current level.
-    /// Parameter: flavour defeat message for the status display.
-    /// </summary>
+
     public static event Action<string> OnLevelLose;
 
-    /// <summary>Broadcasts a level loss with the defeat flavour message.</summary>
     public static void LevelLose(string defeatMessage)
     {
         OnLevelLose?.Invoke(defeatMessage);
     }
 
-    // -------------------------------------------------------------------------
-    // Unit Lifecycle Events
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Raised when any unit is spawned and registered to the battlefield.
-    /// Useful for analytics, tutorial triggers, or visual feedback systems.
-    /// </summary>
     public static event Action<BaseUnit> OnUnitSpawned;
 
     /// <summary>Broadcasts that a unit has been spawned.</summary>

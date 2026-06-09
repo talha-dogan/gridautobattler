@@ -1580,7 +1580,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 3b3138334777cfb479b06c6ff6d36072, type: 3}
+  m_Sprite: {fileID: -1249827969425220346, guid: 86870df25c8ca0440986948bdfce7479, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1604,7 +1604,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BackgroundChanger
   changeBGOnLevelChange: 1
   backgrounds:
-  - {fileID: -1165657257794819003, guid: 5dd0ced5bfa2aa44a8646aa7a2d6a219, type: 3}
+  - {fileID: 21300000, guid: 3b3138334777cfb479b06c6ff6d36072, type: 3}
   - {fileID: 21300000, guid: b99465b4fe16a7c4898a2d55527085fd, type: 3}
   - {fileID: 21300000, guid: b468e13eb50883744ba2581a789f43fb, type: 3}
 --- !u!1 &565262735
@@ -1951,8 +1951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e247fa403af6dc48a2c54fdd0a90ce6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
-  originWorldPosition: {x: 1.95, y: 1.95, z: 0}
-  cellSize: 2.3
+  originWorldPosition: {x: 2.49, y: 3.09, z: 0}
+  cellSize: 2.16
 --- !u!1 &874409223
 GameObject:
   m_ObjectHideFlags: 0
