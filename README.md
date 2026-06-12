@@ -6,7 +6,7 @@
 
 # Technical Architectural Documentation
 
-[Talha's Researches - Go to Web Documentation] [https://talhas-researches.netlify.app/](https://talhas-researches.netlify.app](https://talhas-researches.netlify.app/))
+[Talha's Researches - Go to Web Documentation](https://talhas-researches.netlify.app/)
 
 🎮 **Play on itch.io:** [talha-dogan.itch.io/ottomanchessauto](https://talha-dogan.itch.io/ottomanchessauto)
 
