@@ -4,6 +4,10 @@
 >
 > Inspired by management-strategy titles like *Dwarves: Glory, Death and Loot* and *Totally Accurate Battle Simulator* — tactical army preparation meets fully automated, physics-driven combat.
 
+# Technical Architectural Documentation
+
+[Talha's Researches - Go to Web Documentation]([https://talhas-researches.netlify.app/](https://talhas-researches.netlify.app/))
+
 🎮 **Play on itch.io:** [talha-dogan.itch.io/ottomanchessauto](https://talha-dogan.itch.io/ottomanchessauto)
 
 **Engine:** Unity 6000.4.6f1 · Universal Render Pipeline 2D · **Language:** C# / .NET Standard 2.1
